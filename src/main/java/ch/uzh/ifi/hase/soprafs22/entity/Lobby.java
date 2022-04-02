@@ -24,7 +24,7 @@ public class Lobby {
 
     public String getInviteLink(){
         // TODO: Should this return only id or a full Link? full link would need to distinguish between prod and dev
-        return this.lobbyId.toString();
+        return this.lobbyUuid;
     }
 
     public void addPlayer(Player player){
@@ -40,6 +40,7 @@ public class Lobby {
         return this.lobbyId;
     }
 
+    // FIXME: Same as getInviteLink()
     public String getLobbyUuid() {
         return this.lobbyUuid;
     }

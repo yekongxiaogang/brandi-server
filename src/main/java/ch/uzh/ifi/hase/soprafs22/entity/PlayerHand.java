@@ -5,8 +5,8 @@ import java.util.ArrayList;
 public class PlayerHand {
     private ArrayList<Card> activeCards = new ArrayList<>();
     
-    public PlayerHand(ArrayList<Card> cards){
-        this.activeCards = cards;
+    public PlayerHand(){
+        this.activeCards = new ArrayList<Card>();
     }
     
     /* Delete a card from playerHand, used when card is played */
@@ -20,9 +20,15 @@ public class PlayerHand {
     }
 
     /* Draw new cards, used at beginning of new round */
-    public void drawCards(Deck deck, int amount){
-        for(int i = 0; i < amount; i++){
-            this.activeCards.add(deck.drawCard());
+    public void drawCards(ArrayList<Card> cards){
+        if(!(cards == null)){
+            try {
+                this.activeCards = cards;
+            } catch (Exception e) {
+                System.out.println("Something went wrong while drawing cards:" + e);
+            }
+        } else{
+            System.out.println("Array of cards passed to PlayerHand is null");
         }
     }
 

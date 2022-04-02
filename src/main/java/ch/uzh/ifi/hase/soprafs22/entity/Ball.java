@@ -17,6 +17,7 @@ public class Ball {
         this.state = state;
     }
 
+    // position = -1 means ball still in base, not played yet
     public Integer getPosition() {
         return this.position;
     }

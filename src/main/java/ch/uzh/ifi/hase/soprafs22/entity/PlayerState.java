@@ -1,5 +1,7 @@
 package ch.uzh.ifi.hase.soprafs22.entity;
 
+import java.util.ArrayList;
+
 public class PlayerState {
     private Player player;
     private Boolean isPlaying;
@@ -7,9 +9,9 @@ public class PlayerState {
     private Boolean playerStatus;
     private PlayerHand playerHand;
 
-    public PlayerState(Player player, Boolean isPlaying, Integer team, Boolean playerStatus, PlayerHand playerHand) {
+    public PlayerState(Player player, Integer team, Boolean playerStatus, PlayerHand playerHand) {
         this.player = player;
-        this.isPlaying = isPlaying;
+        this.isPlaying = true;
         this.team = team;
         this.playerStatus = playerStatus;
         this.playerHand = playerHand;
@@ -42,6 +44,11 @@ public class PlayerState {
     public PlayerHand getPlayerHand() {
         return this.playerHand;
     }
+
+    public void drawCards(ArrayList<Card> cards){
+        this.playerHand.drawCards(cards);
+    }
+
 
     /* public void setPlayerHand(PlayerHand playerHand) {
         this.playerHand = playerHand;
