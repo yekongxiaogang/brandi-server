@@ -41,18 +41,13 @@ public class LobbyController {
 
     // TODO: I think we go with PUT here as we update the Lobby's userlist? We have GET in spec
     // and we also need to know which user is joining and this goes into @requestbody
-    // Also need to do PUTDTO
     @PutMapping("/lobby/{uuid}")
-    @ResponseStatus(HttpStatus.OK)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     @ResponseBody
     public void joinLobby(@PathVariable("lobbyUuid") String lobbyUuid,
-    @RequestBody UserPostDTO ) {
-
-        // convert API user to internal representation
-        User joiningUser = DTOMapper.INSTANCE.convertUserPostDTOtoEntity(userPostDTO);
-    
+    @RequestBody String userId ) {
         // join lobby
-        lobbyService.joinLobby(lobbyUuid, joiningUser);
+        lobbyService.joinLobby(lobbyUuid, userId);
     }
    
 }

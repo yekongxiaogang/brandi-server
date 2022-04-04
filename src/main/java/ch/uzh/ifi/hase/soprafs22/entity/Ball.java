@@ -21,10 +21,11 @@ public class Ball {
     private BallState state;
 
 
-    public Ball(Color color, Integer position, BallState state) {
+    // EDIT: When initializing a ball we want it to be in base and have pos = -1
+    public Ball(Color color, BallState state) {
         this.color = color;
-        this.position = position;
-        this.state = state;
+        this.position = -1;
+        this.state = BallState.BASE;
     }
 
     // position = -1 means ball still in base, not played yet

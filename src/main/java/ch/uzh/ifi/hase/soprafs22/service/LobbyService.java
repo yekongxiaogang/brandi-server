@@ -60,20 +60,23 @@ public class LobbyService {
         Lobby newLobby = new Lobby(lobbyLeader);
         
         // Save it in the repo
-        lobbyRepository.save(newLobby);
-        lobbyRepository.saveAndFlush();
+        lobbyRepository.saveAndFlush(newLobby);
 
         log.debug("Created Information for Lobby: {}", newLobby);
         return newLobby;
     }
 
-    private void joinLobby(String lobbyUuid, User joiningUser) {
-        // TODO: Do we search for joiningUser in the repo just in case?
-        // Kinda seems pointless as that's the one making the request
+    private void joinLobby(String lobbyUuid, String userId) {
+        // Search for Lobby and User; if found add User to Lobby; otherwise throw exception
         try {
             Optional<Lobby> optionalLobby = lobbyRepository.findByUuid(lobbyUuid);
             Lobby lobbyByUuid = optionalLobby.get();
+
+            Optional<User> optionalUser = userRepository.findById(userId);
+            User joiningUser = optionalUser.get();
+
             lobbyByUuid.addPlayer(joiningUser);
+            lobbyRepository.saveAndFlush(lobbyByUuid);
           } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Lobby not found");
           }
