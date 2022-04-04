@@ -1,6 +1,8 @@
 package ch.uzh.ifi.hase.soprafs22.rest.mapper;
 
+import ch.uzh.ifi.hase.soprafs22.entity.Game;
 import ch.uzh.ifi.hase.soprafs22.entity.User;
+import ch.uzh.ifi.hase.soprafs22.rest.dto.GameGetDTO;
 import ch.uzh.ifi.hase.soprafs22.rest.dto.UserGetDTO;
 import ch.uzh.ifi.hase.soprafs22.rest.dto.UserPostDTO;
 import org.mapstruct.*;
@@ -30,4 +32,12 @@ public interface DTOMapper {
   @Mapping(source = "username", target = "username")
   @Mapping(source = "status", target = "status")
   UserGetDTO convertEntityToUserGetDTO(User user);
+
+  @Mapping(source = "id", target = "id")
+  @Mapping(source = "gameOver", target = "gameOver")
+  @Mapping(source = "gameOn", target = "gameOn")
+  @Mapping(source = "roundsPlayed", target = "roundsPlayed")
+  @Mapping(source = "playerStates", target = "playerStates")
+  @Mapping(source = "boardstate", target = "boardstate")
+  GameGetDTO convertEntityToGameGetDTO(Game createdGame);
 }

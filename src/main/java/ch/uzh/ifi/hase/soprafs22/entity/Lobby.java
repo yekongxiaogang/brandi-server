@@ -2,12 +2,16 @@ package ch.uzh.ifi.hase.soprafs22.entity;
 
 import java.util.ArrayList;
 
+import javax.persistence.Id;
+
 public class Lobby {
-    private Integer lobbyId;
+    @Id
     private String lobbyUuid;
+
+    private Integer lobbyId;
     private Boolean isInGame;
     private Integer playerLimit;
-    private ArrayList<Player> players;
+    private ArrayList<User> players;
 
 
     public Lobby(Integer lobbyId, String lobbyUuid, Boolean isInGame) {
@@ -27,13 +31,17 @@ public class Lobby {
         return this.lobbyUuid;
     }
 
-    public void addPlayer(Player player){
-        if(players.size() < 4){
+    public void addPlayer(User player){
+        if(this.isFull()){
             players.add(player);
         } else{
             // TODO: Should this throw error?
             System.out.println("Lobby already has 4 players, cant add new player");
         }
+    }
+
+    public Boolean isFull(){
+        return this.players.size() < 4;
     }
 
     public Integer getLobbyId() {

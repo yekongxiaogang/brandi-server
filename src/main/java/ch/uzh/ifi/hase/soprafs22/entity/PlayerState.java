@@ -2,14 +2,17 @@ package ch.uzh.ifi.hase.soprafs22.entity;
 
 import java.util.ArrayList;
 
+import ch.uzh.ifi.hase.soprafs22.rest.dto.UserGetDTO;
+import ch.uzh.ifi.hase.soprafs22.rest.mapper.DTOMapper;
+
 public class PlayerState {
-    private Player player;
+    private User player;
     private Boolean isPlaying;
     private Integer team;
     private Boolean playerStatus;
     private PlayerHand playerHand;
 
-    public PlayerState(Player player, Integer team, Boolean playerStatus, PlayerHand playerHand) {
+    public PlayerState(User player, Integer team, Boolean playerStatus, PlayerHand playerHand) {
         this.player = player;
         this.isPlaying = true;
         this.team = team;
@@ -48,6 +51,12 @@ public class PlayerState {
     public void drawCards(ArrayList<Card> cards){
         this.playerHand.drawCards(cards);
     }
+
+    // Returns PlayerGetDTO 
+    public UserGetDTO getPlayer() {
+        return DTOMapper.INSTANCE.convertEntityToUserGetDTO(this.player);
+    }
+
 
 
     /* public void setPlayerHand(PlayerHand playerHand) {

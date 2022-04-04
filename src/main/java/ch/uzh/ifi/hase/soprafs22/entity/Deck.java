@@ -3,10 +3,18 @@ package ch.uzh.ifi.hase.soprafs22.entity;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import javax.persistence.*;
+
 import ch.uzh.ifi.hase.soprafs22.constant.Rank;
 import ch.uzh.ifi.hase.soprafs22.constant.Suit;
 
+@Entity
 public class Deck {
+
+    @Id
+    @GeneratedValue
+    private Long id;
+    
     private ArrayList<Card> cards = new ArrayList<>();
 
     public Deck(){

@@ -1,9 +1,22 @@
 package ch.uzh.ifi.hase.soprafs22.entity;
 
 import java.util.ArrayList;
+import java.util.List;
 
+import javax.persistence.*;
+
+@Entity
 public class BoardState {
-    private ArrayList<Ball> balls;
+
+    @Id
+    @GeneratedValue
+    /* @OneToOne(targetEntity = Game.class)
+    @JoinColumn(name = "Boardstate_id") */
+    private Long id;
+
+    // @ElementCollection
+    @OneToMany
+    private List<Ball> balls;
 
 
     public BoardState(ArrayList<Ball> balls) {
@@ -11,7 +24,7 @@ public class BoardState {
     }
 
 
-    public ArrayList<Ball> getBalls() {
+    public List<Ball> getBalls() {
         return this.balls;
     }
 

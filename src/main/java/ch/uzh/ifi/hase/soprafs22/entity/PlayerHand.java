@@ -32,4 +32,13 @@ public class PlayerHand {
         }
     }
 
+
+    public ArrayList<Card> getActiveCards() {
+        return this.activeCards;
+    }
+
+    public void setActiveCards(ArrayList<Card> activeCards) {
+        this.activeCards = activeCards;
+    }
+
 }
