@@ -60,10 +60,10 @@ public class LobbyService {
         Lobby newLobby = new Lobby(lobbyLeader);
         
         // Save it in the repo
-        userRepository.save(newLobby);
-        userRepository.saveAndFlush();
+        lobbyRepository.save(newLobby);
+        lobbyRepository.saveAndFlush();
 
-        log.debug("Created Information for Lobby: {}", newUser);
+        log.debug("Created Information for Lobby: {}", newLobby);
         return newLobby;
     }
 

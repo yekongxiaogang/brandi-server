@@ -40,7 +40,9 @@ public class Lobby {
             players.add(player);
         } else{
             // TODO: Should this throw error?
-            // I guess
+            // I guess but in spec we got "not authorized to join this lobby" and
+            // I dunno whether it resorts to this or some other authorization problem
+            // like are we making password guarded lobbys also? If we do then that's later anyways
             System.out.println("Lobby already has 4 players, cant add new player");
         }
     }
