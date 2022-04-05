@@ -1,5 +1,6 @@
 package ch.uzh.ifi.hase.soprafs22.entity;
 
+import ch.uzh.ifi.hase.soprafs22.constant.Rank;
 import ch.uzh.ifi.hase.soprafs22.entity.Player;
 
 public class GameTurn {
@@ -18,6 +19,8 @@ public class GameTurn {
     public int calculateMoves() {
         // TODO: return possible moves combination
         // not sure about return type here
+        int someInt = 0;
+        return someInt;
     }
 
     public void makeMove(Rank cardRank) {

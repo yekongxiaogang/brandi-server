@@ -1,7 +1,9 @@
 package ch.uzh.ifi.hase.soprafs22.entity;
 
 import java.util.ArrayList;
+import java.util.UUID;
 
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
 public class Lobby {
@@ -51,7 +53,7 @@ public class Lobby {
         return this.players.size() < 4;
     }
 
-    public Integer getLobbyId() {
+    public String getLobbyId() {
         return this.lobbyId;
     }
 

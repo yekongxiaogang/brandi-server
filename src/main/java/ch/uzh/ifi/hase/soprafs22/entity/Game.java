@@ -57,7 +57,7 @@ public class Game {
         // Add 4 balls for each playerColor
         for(Color color: Color.values()){
             for(int i = 0; i < 4; i++){
-                balls.add(new Ball(color, -1, BallState.BASE));
+                balls.add(new Ball(color));
             }
         }
         this.boardstate = new BoardState(balls);

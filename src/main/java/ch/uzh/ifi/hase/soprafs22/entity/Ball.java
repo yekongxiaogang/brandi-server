@@ -22,7 +22,7 @@ public class Ball {
 
 
     // EDIT: When initializing a ball we want it to be in base and have pos = -1
-    public Ball(Color color, BallState state) {
+    public Ball(Color color) {
         this.color = color;
         this.position = -1;
         this.state = BallState.BASE;

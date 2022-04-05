@@ -1,8 +1,10 @@
 package ch.uzh.ifi.hase.soprafs22.service;
 
 import ch.uzh.ifi.hase.soprafs22.entity.Game;
+import ch.uzh.ifi.hase.soprafs22.entity.Lobby;
 import ch.uzh.ifi.hase.soprafs22.entity.User;
 import ch.uzh.ifi.hase.soprafs22.repository.GameRepository;
+import ch.uzh.ifi.hase.soprafs22.repository.LobbyRepository;
 import ch.uzh.ifi.hase.soprafs22.repository.UserRepository;
 import ch.uzh.ifi.hase.soprafs22.rest.dto.UserUpdateDTO;
 import org.slf4j.Logger;
@@ -21,9 +23,9 @@ import java.util.Optional;
 import java.util.UUID;
 
 /**
- * Game Service
+ * Lobby Service
  * This class is the "worker" and responsible for all functionality related to
- * the game
+ * the lobby
  * (e.g., it creates, modifies, deletes, finds). The result will be passed back
  * to the caller.
  */
@@ -66,7 +68,7 @@ public class LobbyService {
         return newLobby;
     }
 
-    private void joinLobby(String lobbyUuid, String userId) {
+    public void joinLobby(String lobbyUuid, Long userId) {
         // Search for Lobby and User; if found add User to Lobby; otherwise throw exception
         try {
             Optional<Lobby> optionalLobby = lobbyRepository.findByUuid(lobbyUuid);
