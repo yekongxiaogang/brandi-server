@@ -1,9 +1,20 @@
 package ch.uzh.ifi.hase.soprafs22.entity;
 
 import java.util.ArrayList;
+import java.util.List;
 
+import javax.persistence.*;
+
+@Entity
 public class PlayerHand {
-    private ArrayList<Card> activeCards = new ArrayList<>();
+
+    @Id
+    @GeneratedValue
+    private Long id;
+    
+    @OneToMany(cascade = CascadeType.ALL)
+	@JoinColumn(name = "Card_id")
+    private List<Card> activeCards = new ArrayList<>();
     
     public PlayerHand(){
         this.activeCards = new ArrayList<Card>();
@@ -33,7 +44,7 @@ public class PlayerHand {
     }
 
 
-    public ArrayList<Card> getActiveCards() {
+    public List<Card> getActiveCards() {
         return this.activeCards;
     }
 

@@ -28,8 +28,9 @@ public class Game {
     @Column(nullable = false)
     private Integer roundsPlayed;
     
-    @Column(nullable = false)
-    private ArrayList<PlayerState> playerStates;
+    @OneToMany(cascade = CascadeType.ALL)
+	@JoinColumn(name = "PlayerState_id")
+    private List<PlayerState> playerStates;
 
     @OneToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "BoardState_id")
@@ -173,7 +174,7 @@ public class Game {
         this.roundsPlayed = roundsPlayed;
     }
 
-    public ArrayList<PlayerState> getPlayerStates() {
+    public List<PlayerState> getPlayerStates() {
         return this.playerStates;
     }
 

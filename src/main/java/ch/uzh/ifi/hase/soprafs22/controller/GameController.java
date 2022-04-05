@@ -38,7 +38,7 @@ public class GameController {
         
         System.out.println("/game called");
         Game createdGame = gameService.createGame(lobbyLeaderId.getLobbyLeaderId());
-
+        
         return DTOMapper.INSTANCE.convertEntityToGameGetDTO(createdGame);
     }
 

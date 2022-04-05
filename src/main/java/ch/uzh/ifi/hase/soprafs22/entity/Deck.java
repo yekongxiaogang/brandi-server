@@ -2,6 +2,7 @@ package ch.uzh.ifi.hase.soprafs22.entity;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 import javax.persistence.*;
 
@@ -15,7 +16,8 @@ public class Deck {
     @GeneratedValue
     private Long id;
     
-    private ArrayList<Card> cards = new ArrayList<>();
+    @OneToMany(cascade = CascadeType.ALL)
+    private List<Card> cards = new ArrayList<>();
 
     public Deck(){
         newDeck();

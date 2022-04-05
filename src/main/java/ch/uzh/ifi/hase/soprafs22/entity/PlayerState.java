@@ -2,17 +2,40 @@ package ch.uzh.ifi.hase.soprafs22.entity;
 
 import java.util.ArrayList;
 
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.OneToOne;
+
 import ch.uzh.ifi.hase.soprafs22.rest.dto.UserGetDTO;
 import ch.uzh.ifi.hase.soprafs22.rest.mapper.DTOMapper;
 
+@Entity
 public class PlayerState {
+
+    @Id
+    @GeneratedValue
+    private Long id;
+
+    @OneToOne(cascade = CascadeType.ALL)
     private User player;
+    
+    @Column(nullable=false)
     private Boolean isPlaying;
+    
+    @Column(nullable=false)
     private Integer team;
+    
+    @Column(nullable=false)
     private Boolean playerStatus;
+    
+    @OneToOne(cascade = CascadeType.ALL)
     private PlayerHand playerHand;
 
     public PlayerState(User player, Integer team, Boolean playerStatus, PlayerHand playerHand) {
+        //FIXME: player probably doesnt need to be the whole user because this includes pwd and token
         this.player = player;
         this.isPlaying = true;
         this.team = team;

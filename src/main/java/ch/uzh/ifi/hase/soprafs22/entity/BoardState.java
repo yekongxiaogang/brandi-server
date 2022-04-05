@@ -10,12 +10,9 @@ public class BoardState {
 
     @Id
     @GeneratedValue
-    /* @OneToOne(targetEntity = Game.class)
-    @JoinColumn(name = "Boardstate_id") */
     private Long id;
 
-    // @ElementCollection
-    @OneToMany
+    @OneToMany(cascade = CascadeType.ALL)
     private List<Ball> balls;
 
 

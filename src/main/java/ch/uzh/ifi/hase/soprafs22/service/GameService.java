@@ -54,6 +54,9 @@ public class GameService {
         Optional<User> lobbyLeader = this.userRepository.findById(lobbyLeaderId);
         if(lobbyLeader.isPresent()){
             Game newGame = new Game(lobbyLeader.get());
+            newGame = gameRepository.save(newGame);
+            gameRepository.flush();
+            System.out.println("Created Information for Game: " + newGame.getId() + newGame.getPlayerStates());
             return newGame;
         } else{
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Couldnt find Lobbyleader");
