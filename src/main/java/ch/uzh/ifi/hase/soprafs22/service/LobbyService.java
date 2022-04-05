@@ -29,47 +29,57 @@ import java.util.UUID;
  */
 @Service
 @Transactional
-public class GameService {
+public class LobbyService {
 
     private final Logger log = LoggerFactory.getLogger(GameService.class);
+    private final LobbyRepository lobbyRepository;
     private final GameRepository gameRepository;
     private final UserRepository userRepository;
-    private final LobbyRepository lobbyRepository;
 
     @Autowired
-    public GameService(@Qualifier("gameRepository") GameRepository gameRepository,
+    public LobbyService(@Qualifier("lobbyRepository") LobbyRepository lobbyRepository,
     @Qualifier("userRepository") UserRepository userRepository,
-    @Qualifier("lobbyRepository") LobbyRepository lobbyRepository) {
+    @Qualifier("gameRepository") GameRepository gameRepository) {
 
+        this.lobbyRepository = lobbyRepository;
         this.gameRepository = gameRepository;
         this.userRepository = userRepository;
-        this.lobbyRepository = lobbyRepository;
     }
 
-    public Game getGame(Long Id) {
-        Optional<Game> game = this.gameRepository.findById(Id);
-        if(game.isPresent()){
-            return game.get();
+    public Lobby getLobby(Long Id) {
+        Optional<Lobby> lobby = this.lobbyRepository.findById(Id);
+        if(lobby.isPresent()){
+            return lobby.get();
         } else {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Couldn't find Game");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Couldn't find Lobby");
         }
     }
 
-    //TODO: I guess if we have lobbyLeader then we need one user assigned to lobby in the Lobby class?
-    // Also a lobbyLeader is the one creating the lobby but when he leaves it we randomly assign next one?
-    // Then in such implementation I guess we use User instead of Long here as we can easily check if lobbyLeader is in lobby through players ArrayList?
-    public Game createGame(Long lobbyLeaderId) {
-        Optional<User> lobbyLeader = this.userRepository.findById(lobbyLeaderId);
-        if(lobbyLeader.isPresent()){
-            Game newGame = new Game(lobbyLeader.get());
-            newGame = gameRepository.save(newGame);
-            gameRepository.flush();
-            System.out.println("Created Information for Game: " + newGame.getId() + newGame.getPlayerStates());
-            return newGame;
-        } else{
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Couldn't find Lobbyleader");
-        }
+    public Lobby createLobby(User lobbyLeader) {
+        // Create new lobby
+        Lobby newLobby = new Lobby(lobbyLeader);
         
+        // Save it in the repo
+        lobbyRepository.saveAndFlush(newLobby);
+
+        log.debug("Created Information for Lobby: {}", newLobby);
+        return newLobby;
+    }
+
+    private void joinLobby(String lobbyUuid, String userId) {
+        // Search for Lobby and User; if found add User to Lobby; otherwise throw exception
+        try {
+            Optional<Lobby> optionalLobby = lobbyRepository.findByUuid(lobbyUuid);
+            Lobby lobbyByUuid = optionalLobby.get();
+
+            Optional<User> optionalUser = userRepository.findById(userId);
+            User joiningUser = optionalUser.get();
+
+            lobbyByUuid.addPlayer(joiningUser);
+            lobbyRepository.saveAndFlush(lobbyByUuid);
+          } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Lobby not found");
+          }
     }
     
 }

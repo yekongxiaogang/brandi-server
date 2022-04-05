@@ -5,20 +5,24 @@ import java.util.ArrayList;
 import javax.persistence.Id;
 
 public class Lobby {
-    @Id
-    private String lobbyUuid;
 
-    private Integer lobbyId;
+    @Id
+    @GeneratedValue
+    private String lobbyId;
+
+    private String lobbyUuid;
     private Boolean isInGame;
     private Integer playerLimit;
     private ArrayList<User> players;
+    private User lobbyLeader;
 
-
-    public Lobby(Integer lobbyId, String lobbyUuid, Boolean isInGame) {
-        this.lobbyId = lobbyId;
-        this.lobbyUuid = lobbyUuid;
-        this.isInGame = isInGame;
+    //TODO EDIT: Now we create UUID for lobby when constructing it and
+    // set isInGame to false
+    public Lobby(User lobbyLeader) {
+        this.lobbyUuid = UUID.randomUUID().toString();
+        this.isInGame = false;
         this.playerLimit = 4;
+        this.lobbyLeader = lobbyLeader;
     }
 
     public void startGame(){
@@ -36,6 +40,9 @@ public class Lobby {
             players.add(player);
         } else{
             // TODO: Should this throw error?
+            // I guess but in spec we got "not authorized to join this lobby" and
+            // I dunno whether it resorts to this or some other authorization problem
+            // like are we making password guarded lobbys also? If we do then that's later anyways
             System.out.println("Lobby already has 4 players, cant add new player");
         }
     }
@@ -51,6 +58,14 @@ public class Lobby {
     // FIXME: Same as getInviteLink()
     public String getLobbyUuid() {
         return this.lobbyUuid;
+    }
+
+    public User getLobbyLeader() {
+        return this.lobbyLeader;
+    }
+
+    public void setLobbyLeader(User lobbyLeader) {
+        this.lobbyLeader = lobbyLeader;
     }
 
     
