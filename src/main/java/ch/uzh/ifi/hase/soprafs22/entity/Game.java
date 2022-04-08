@@ -5,9 +5,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import javax.persistence.*;
-import javax.servlet.http.PushBuilder;
-
-import ch.uzh.ifi.hase.soprafs22.constant.BallState;
 import ch.uzh.ifi.hase.soprafs22.constant.Color;
 
 

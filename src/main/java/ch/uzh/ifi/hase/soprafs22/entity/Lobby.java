@@ -1,11 +1,11 @@
 package ch.uzh.ifi.hase.soprafs22.entity;
 
-import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
 
+@Entity
 public class Lobby {
 
     @Id
@@ -15,7 +15,11 @@ public class Lobby {
     private String lobbyUuid;
     private Boolean isInGame;
     private Integer playerLimit;
-    private ArrayList<User> players;
+
+    @OneToMany(cascade = CascadeType.ALL)
+	@JoinColumn(name = "user_id")
+    private List<User> users;
+
     private User lobbyLeader;
 
     //TODO EDIT: Now we create UUID for lobby when constructing it and
@@ -39,7 +43,7 @@ public class Lobby {
 
     public void addPlayer(User player){
         if(this.isFull()){
-            players.add(player);
+            users.add(player);
         } else{
             // TODO: Should this throw error?
             // I guess but in spec we got "not authorized to join this lobby" and
@@ -50,7 +54,7 @@ public class Lobby {
     }
 
     public Boolean isFull(){
-        return this.players.size() < 4;
+        return this.users.size() < 4;
     }
 
     public String getLobbyId() {

@@ -10,5 +10,5 @@ import org.springframework.stereotype.Repository;
 @Repository("lobbyRepository")
 public interface LobbyRepository extends JpaRepository<Lobby, Long> {
   Optional<Lobby> findById(Long id);
-  Optional<Lobby> findByUuid(String uuid);
+  Optional<Lobby> findByLobbyUuid(String uuid);
 }
