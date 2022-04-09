@@ -5,6 +5,7 @@ import ch.uzh.ifi.hase.soprafs22.entity.Player;
 
 public class GameTurn {
 
+    //TODO: Change to user
     private Player activePlayer;
 
     public GameTurn(Player activePlayer) {

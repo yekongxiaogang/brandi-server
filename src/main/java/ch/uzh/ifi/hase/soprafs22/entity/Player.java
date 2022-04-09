@@ -2,6 +2,7 @@ package ch.uzh.ifi.hase.soprafs22.entity;
 
 import ch.uzh.ifi.hase.soprafs22.constant.Color;
 
+// TODO: Remove all occurences of player, remove Player class
 public class Player {
     private String username;
     private Integer id;
