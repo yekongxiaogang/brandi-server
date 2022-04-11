@@ -1,5 +1,7 @@
 package ch.uzh.ifi.hase.soprafs22.entity;
 
+
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -10,7 +12,8 @@ public class Lobby {
 
     @Id
     @GeneratedValue
-    private String lobbyId;
+    private Long lobbyId;
+
 
     private String lobbyUuid;
     private Boolean isInGame;
@@ -20,15 +23,19 @@ public class Lobby {
 	@JoinColumn(name = "user_id")
     private List<User> users;
 
-    private User lobbyLeader;
+    // https://www.yawintutor.com/unexpected-error-no-default-constructor-for-entity/
+    public Lobby() {
+    }
+
 
     //TODO EDIT: Now we create UUID for lobby when constructing it and
     // set isInGame to false
     public Lobby(User lobbyLeader) {
+        this.users = new ArrayList<>();
+        this.users.add(lobbyLeader);
         this.lobbyUuid = UUID.randomUUID().toString();
         this.isInGame = false;
         this.playerLimit = 4;
-        this.lobbyLeader = lobbyLeader;
     }
 
     public void startGame(){
@@ -54,25 +61,24 @@ public class Lobby {
     }
 
     public Boolean isFull(){
-        return this.users.size() < 4;
+        return this.users.size() >= this.playerLimit;
     }
 
-    public String getLobbyId() {
+    public Long getLobbyId() {
         return this.lobbyId;
     }
 
     // FIXME: Same as getInviteLink()
     public String getLobbyUuid() {
         return this.lobbyUuid;
+    }    
+
+    public List<User> getUsers(){
+        return this.users;
     }
 
-    public User getLobbyLeader() {
-        return this.lobbyLeader;
+    public Boolean getIsInGame(){
+        return this.isInGame;
     }
 
-    public void setLobbyLeader(User lobbyLeader) {
-        this.lobbyLeader = lobbyLeader;
-    }
-
-    
 }

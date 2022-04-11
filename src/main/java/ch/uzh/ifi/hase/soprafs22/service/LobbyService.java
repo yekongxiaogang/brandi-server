@@ -51,15 +51,25 @@ public class LobbyService {
         }
     }
 
-    public Lobby createLobby(User lobbyLeader) {
-        // Create new lobby
-        Lobby newLobby = new Lobby(lobbyLeader);
-        
-        // Save it in the repo
-        lobbyRepository.saveAndFlush(newLobby);
+    public Lobby createLobby(Long leaderId) {
+        try {
+            Optional<User> user = this.userRepository.findById(leaderId);
+            if(!user.isPresent()){
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Couldnt find user who created lobby");
+            }
+            // Create new lobby
+            Lobby newLobby = new Lobby(user.get());
+                
+            // Save it in the repo
+            lobbyRepository.save(newLobby);
+            lobbyRepository.flush();
 
-        log.debug("Created Information for Lobby: {}", newLobby);
-        return newLobby;
+            log.debug("Created Information for Lobby: {}", newLobby);
+            return newLobby;
+        } catch (Exception e) {
+            System.out.println(e);
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Something went wrong when creating your lobby");
+        }
     }
 
     public void joinLobby(String lobbyUuid, Long userId) {
@@ -75,6 +85,19 @@ public class LobbyService {
             lobbyRepository.saveAndFlush(lobbyByUuid);
           } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Lobby not found");
+          }
+    }
+
+    public Boolean isFull(String lobbyUuid) {
+        try {
+            Optional<Lobby> optionalLobby = lobbyRepository.findByLobbyUuid(lobbyUuid);
+            if(!optionalLobby.isPresent()){
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Lobby not found");
+            }
+            Lobby lobby = optionalLobby.get();
+            return lobby.isFull();
+          } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Something went wrong while getting your lobby");
           }
     }
     
