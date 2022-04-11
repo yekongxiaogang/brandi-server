@@ -3,6 +3,7 @@ package ch.uzh.ifi.hase.soprafs22.rest.dto;
 import java.util.ArrayList;
 
 import ch.uzh.ifi.hase.soprafs22.entity.BoardState;
+
 import ch.uzh.ifi.hase.soprafs22.entity.PlayerState;
 
 public class GameGetDTO {

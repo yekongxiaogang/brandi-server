@@ -70,7 +70,6 @@ public class LobbyService {
             System.out.println(e);
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Something went wrong when creating your lobby");
         }
-        
     }
 
     public void joinLobby(String lobbyUuid, Long userId) {

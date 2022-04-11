@@ -1,5 +1,6 @@
 package ch.uzh.ifi.hase.soprafs22.entity;
 
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -13,6 +14,7 @@ public class Lobby {
     @GeneratedValue
     private Long lobbyId;
 
+
     private String lobbyUuid;
     private Boolean isInGame;
     private Integer playerLimit;
@@ -24,6 +26,7 @@ public class Lobby {
     // https://www.yawintutor.com/unexpected-error-no-default-constructor-for-entity/
     public Lobby() {
     }
+
 
     //TODO EDIT: Now we create UUID for lobby when constructing it and
     // set isInGame to false
@@ -77,4 +80,5 @@ public class Lobby {
     public Boolean getIsInGame(){
         return this.isInGame;
     }
+
 }

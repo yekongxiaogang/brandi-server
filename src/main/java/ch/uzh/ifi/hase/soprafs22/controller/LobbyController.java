@@ -1,6 +1,7 @@
 package ch.uzh.ifi.hase.soprafs22.controller;
 
 import ch.uzh.ifi.hase.soprafs22.entity.Lobby;
+
 import ch.uzh.ifi.hase.soprafs22.rest.dto.LobbyGetDTO;
 import ch.uzh.ifi.hase.soprafs22.rest.dto.UserIdDTO;
 import ch.uzh.ifi.hase.soprafs22.rest.mapper.DTOMapper;
@@ -29,10 +30,12 @@ public class LobbyController {
     @PostMapping("/lobby")
     @ResponseStatus(HttpStatus.CREATED)
     @ResponseBody
+
     public LobbyGetDTO createLobby(@RequestBody UserIdDTO lobbyLeaderId) {
 
         Lobby createdLobby = lobbyService.createLobby(lobbyLeaderId.getLobbyLeaderId());
         return DTOMapper.INSTANCE.convertEntityToLobbyGetDTO(createdLobby);
+
     }
 
     // TODO: I think we go with PUT here as we update the Lobby's userlist? We have GET in spec
@@ -46,6 +49,7 @@ public class LobbyController {
         lobbyService.joinLobby(lobbyUuid, userId);
     }
 
+
     @GetMapping("/lobby/{lobbyUuid}/isFull")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
@@ -53,5 +57,6 @@ public class LobbyController {
         //TODO: implement
         return lobbyService.isFull(lobbyUuid);
     }
+
    
 }
