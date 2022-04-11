@@ -49,9 +49,9 @@ public class LobbyController {
     @GetMapping("/lobby/{lobbyUuid}/isFull")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public Boolean isFull(@RequestBody String lobbyUuid){
+    public Boolean isFull(@PathVariable("lobbyUuid") String lobbyUuid){
         //TODO: implement
-        return false;
+        return lobbyService.isFull(lobbyUuid);
     }
    
 }

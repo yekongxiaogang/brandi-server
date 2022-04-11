@@ -21,6 +21,10 @@ public class Lobby {
 	@JoinColumn(name = "user_id")
     private List<User> users;
 
+    // https://www.yawintutor.com/unexpected-error-no-default-constructor-for-entity/
+    public Lobby() {
+    }
+
     //TODO EDIT: Now we create UUID for lobby when constructing it and
     // set isInGame to false
     public Lobby(User lobbyLeader) {

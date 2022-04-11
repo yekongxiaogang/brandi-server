@@ -88,5 +88,18 @@ public class LobbyService {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Lobby not found");
           }
     }
+
+    public Boolean isFull(String lobbyUuid) {
+        try {
+            Optional<Lobby> optionalLobby = lobbyRepository.findByLobbyUuid(lobbyUuid);
+            if(!optionalLobby.isPresent()){
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Lobby not found");
+            }
+            Lobby lobby = optionalLobby.get();
+            return lobby.isFull();
+          } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Something went wrong while getting your lobby");
+          }
+    }
     
 }
