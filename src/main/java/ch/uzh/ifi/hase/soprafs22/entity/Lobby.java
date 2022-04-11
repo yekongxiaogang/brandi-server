@@ -54,7 +54,7 @@ public class Lobby {
     }
 
     public Boolean isFull(){
-        return this.users.size() >= 4;
+        return this.users.size() >= this.playerLimit;
     }
 
     public Long getLobbyId() {
@@ -68,5 +68,9 @@ public class Lobby {
 
     public List<User> getUsers(){
         return this.users;
+    }
+
+    public Boolean getIsInGame(){
+        return this.isInGame;
     }
 }
