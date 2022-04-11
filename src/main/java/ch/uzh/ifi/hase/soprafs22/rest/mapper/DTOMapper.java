@@ -1,8 +1,10 @@
 package ch.uzh.ifi.hase.soprafs22.rest.mapper;
 
 import ch.uzh.ifi.hase.soprafs22.entity.Game;
+import ch.uzh.ifi.hase.soprafs22.entity.Lobby;
 import ch.uzh.ifi.hase.soprafs22.entity.User;
 import ch.uzh.ifi.hase.soprafs22.rest.dto.GameGetDTO;
+import ch.uzh.ifi.hase.soprafs22.rest.dto.LobbyGetDTO;
 import ch.uzh.ifi.hase.soprafs22.rest.dto.UserGetDTO;
 import ch.uzh.ifi.hase.soprafs22.rest.dto.UserPostDTO;
 import org.mapstruct.*;
@@ -40,4 +42,10 @@ public interface DTOMapper {
   @Mapping(source = "playerStates", target = "playerStates")
   @Mapping(source = "boardstate", target = "boardstate")
   GameGetDTO convertEntityToGameGetDTO(Game createdGame);
+  
+  @Mapping(source = "lobbyId", target = "lobbyId")
+  @Mapping(source = "lobbyUuid", target = "lobbyUuid")
+  @Mapping(source = "isInGame", target = "isInGame")
+  @Mapping(source = "users", target = "users")
+  LobbyGetDTO convertEntityToLobbyGetDTO(Lobby createdLobby);
 }
