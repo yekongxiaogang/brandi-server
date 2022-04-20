@@ -38,6 +38,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                             "https://sopra-fs22-group-29-client.herokuapp.com"));
                     cors.setAllowedMethods(List.of("GET","POST", "PUT", "DELETE", "OPTIONS"));
                     cors.setAllowedHeaders(List.of("*"));
+                    cors.setAllowCredentials(true);
                     return cors;
                 }).and()
                 .csrf().disable()
