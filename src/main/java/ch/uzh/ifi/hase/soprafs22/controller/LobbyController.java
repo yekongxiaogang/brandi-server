@@ -7,8 +7,12 @@ import ch.uzh.ifi.hase.soprafs22.rest.dto.UserIdDTO;
 import ch.uzh.ifi.hase.soprafs22.rest.mapper.DTOMapper;
 import ch.uzh.ifi.hase.soprafs22.service.LobbyService;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+
 
 /**
  * Lobby Controller
@@ -43,10 +47,9 @@ public class LobbyController {
     @PutMapping("/lobby/{uuid}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @ResponseBody
-    public void joinLobby(@PathVariable("lobbyUuid") String lobbyUuid,
-    @RequestBody Long userId ) {
+    public void joinLobby(@PathVariable(name = "uuid") String uuid, @RequestBody UserIdDTO userId ) {
         // join lobby
-        lobbyService.joinLobby(lobbyUuid, userId);
+        lobbyService.joinLobby(uuid, userId.getLobbyLeaderId());
     }
 
 
@@ -56,6 +59,18 @@ public class LobbyController {
     public Boolean isFull(@PathVariable("lobbyUuid") String lobbyUuid){
         //TODO: implement
         return lobbyService.isFull(lobbyUuid);
+    }
+
+    @GetMapping("/lobby")
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    public List<LobbyGetDTO> getAllLobbies() {
+        List<Lobby> lobbies = lobbyService.getLobbies();
+        List<LobbyGetDTO> lobbyGetDTOs = new ArrayList<>();
+        for (Lobby lobby: lobbies){
+            lobbyGetDTOs.add(DTOMapper.INSTANCE.convertEntityToLobbyGetDTO(lobby));
+        }
+        return lobbyGetDTOs;
     }
 
    

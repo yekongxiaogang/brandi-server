@@ -49,7 +49,7 @@ public class Lobby {
     }
 
     public void addPlayer(User player){
-        if(this.isFull()){
+        if(!this.isFull()){
             users.add(player);
         } else{
             // TODO: Should this throw error?
