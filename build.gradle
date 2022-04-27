@@ -40,8 +40,8 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'org.springframework.security:spring-security-test'
-    implementation 'org.springframework:spring-websocket:5.2.20.RELEASE'
-    implementation 'org.springframework:spring-messaging:5.2.20.RELEASE'
+    implementation 'org.springframework:spring-websocket'
+    implementation 'org.springframework:spring-messaging'
 
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
     runtimeOnly 'com.h2database:h2'
