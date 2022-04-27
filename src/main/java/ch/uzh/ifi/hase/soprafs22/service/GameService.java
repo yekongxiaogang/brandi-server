@@ -16,6 +16,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 /**
  * Game Service
@@ -55,7 +56,7 @@ public class GameService {
     //TODO: I guess if we have lobbyLeader then we need one user assigned to lobby in the Lobby class?
     // Also a lobbyLeader is the one creating the lobby but when he leaves it we randomly assign next one?
     // Then in such implementation I guess we use User instead of Long here as we can easily check if lobbyLeader is in lobby through players ArrayList?
-    public Game createGame(Long userId) {
+    public String createGame(Long userId) {
         Optional<User> optUser = this.userRepository.findById(userId);
         if(optUser.isPresent()){
             // Create Game and set passed user as player in that game, return game
@@ -67,15 +68,16 @@ public class GameService {
             user.addGame(newGame);
             userRepository.saveAndFlush(user);
             System.out.println("Created Information for Game: " + newGame.getId());
-            return newGame;
+            System.out.println(newGame.getUuid());
+            return newGame.getUuid();
         } else{
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Couldn't find Lobbyleader");
         }
         
     }
 
-    public Game joinGame(Long gameId, String username){
-        Optional<Game> optGame = gameRepository.findById(gameId);
+    public Boolean joinGame(String uuid, String username){
+        Optional<Game> optGame = gameRepository.findByUuid(uuid);
         if(optGame.isPresent()){
             // If game exists, add User to game and persist in DB
             Game game = optGame.get();
@@ -88,12 +90,12 @@ public class GameService {
             // Add game to list of games in user, persist in DB
             user.addGame(game);
             userRepository.saveAndFlush(user);
-            return game;
+            return true;
         } else {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Couldn't find Game");
         }
     }
-    // public void addPlayerToGame()
+    
 
     public List<Game> getGames() {
         return gameRepository.findAll();

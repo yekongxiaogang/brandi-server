@@ -10,4 +10,6 @@ import org.springframework.stereotype.Repository;
 @Repository("gameRepository")
 public interface GameRepository extends JpaRepository<Game, Long> {
   Optional<Game> findById(Long id);
+
+  Optional<Game> findByUuid(String uuid);
 }

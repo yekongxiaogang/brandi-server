@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Game Controller
@@ -32,12 +33,20 @@ public class GameController {
     @PostMapping("/game")
     @ResponseStatus(HttpStatus.CREATED)
     @ResponseBody
-    public GameGetDTO createGame(@RequestBody IdDTO lobbyLeaderId) {
+    public String createGame(@RequestBody IdDTO lobbyLeaderId) {
         
         System.out.println("/game called");
-        Game createdGame = gameService.createGame(lobbyLeaderId.getId());
-        
-        return DTOMapper.INSTANCE.convertEntityToGameGetDTO(createdGame);
+
+        return gameService.createGame(lobbyLeaderId.getId());
+    }
+
+    @PutMapping("/game/{uuid}")
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    public Boolean joinGame(@PathVariable(name = "uuid") String uuid, Principal principal) {
+        String username = principal.getName();
+        Boolean success = gameService.joinGame(uuid, username);
+        return success;
     }
 
     //For testing purposes, state should be taken from Websocket by clients
@@ -52,14 +61,5 @@ public class GameController {
         }
         
         return allGamesDTO;
-    }
-
-    @PutMapping("/game")
-    @ResponseStatus(HttpStatus.OK)
-    @ResponseBody
-    public GameGetDTO joinGame(@RequestBody IdDTO gameId, Principal principal) {
-        String username = principal.getName();
-        Game game = gameService.joinGame(gameId.getId(), username);
-        return DTOMapper.INSTANCE.convertEntityToGameGetDTO(game);
     }
 }

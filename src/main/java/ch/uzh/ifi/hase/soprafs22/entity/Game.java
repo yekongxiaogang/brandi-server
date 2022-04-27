@@ -3,8 +3,12 @@ package ch.uzh.ifi.hase.soprafs22.entity;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
+import java.util.Optional;
 
 import javax.persistence.*;
+
+
 import ch.uzh.ifi.hase.soprafs22.constant.Color;
 import ch.uzh.ifi.hase.soprafs22.entity.websocket.Move;
 
@@ -16,6 +20,16 @@ public class Game {
     @Id
     @GeneratedValue
     private Long id;
+    
+    /* @GeneratedValue(generator = "UUID")
+    @GenericGenerator(
+        name = "UUID",
+        strategy = "org.hibernate.id.UUIDGenerator")
+    @Column(name = "id", updatable = false, nullable = false)
+    private UUID uuid; */
+
+    @Column(nullable = false)
+    private String uuid;
     
     @Column(nullable = false)
     private Boolean gameOver;
@@ -46,8 +60,9 @@ public class Game {
         this.roundsPlayed = 0;
         this.deck = new Deck();
         this.playerStates = new ArrayList<PlayerState>();
-        this.addPlayer(player);
+        // this.addPlayer(player);
         this.initBoardState();
+        this.uuid = UUID.randomUUID().toString();
         // this.startNewRound();
     }
 
@@ -79,9 +94,10 @@ public class Game {
     public Boolean addPlayer(User player){
         if(!this.isFull() && !this.gameOn){
             // Check if user is already in this game, if so dont let user join
-            if(!player.getGameById(this.id).isEmpty()){
+            Optional<Game> optGame= player.getGameById(this.id);
+            if(!optGame.isEmpty()){
                 System.out.println("Player is already in this game");
-                return false;
+                return true;
             }
 
             this.initPlayerState(player);
@@ -156,6 +172,14 @@ public class Game {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getUuid() {
+        return this.uuid;
+    }
+
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
     }
 
     public Boolean isGameOver() {
