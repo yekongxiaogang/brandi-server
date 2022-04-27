@@ -7,6 +7,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 
 import ch.uzh.ifi.hase.soprafs22.rest.dto.UserGetDTO;
@@ -19,7 +20,8 @@ public class PlayerState {
     @GeneratedValue
     private Long id;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    //FIXME: Does this mean that User gets deleted when one of his games is deleted?
+    @ManyToOne(cascade = CascadeType.ALL)
     private User player;
     
     @Column(nullable=false)
@@ -33,6 +35,8 @@ public class PlayerState {
     
     @OneToOne(cascade = CascadeType.ALL)
     private PlayerHand playerHand;
+
+    public PlayerState(){}
 
     public PlayerState(User player, Integer team, Boolean playerStatus, PlayerHand playerHand) {
         //FIXME: player probably doesnt need to be the whole user because this includes pwd and token

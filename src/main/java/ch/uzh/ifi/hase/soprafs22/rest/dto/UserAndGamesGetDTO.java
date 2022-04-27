@@ -2,16 +2,20 @@ package ch.uzh.ifi.hase.soprafs22.rest.dto;
 
 import java.util.ArrayList;
 
-import antlr.collections.List;
 import ch.uzh.ifi.hase.soprafs22.constant.UserStatus;
 import ch.uzh.ifi.hase.soprafs22.entity.Game;
 
-public class UserGetDTO {
+/*
+ * Used to get user data + data of all the games he's in 
+ * Needed because otherwise, when getting user, we also get the users games, which all include PlayerStates which include Users which include Games and so on
+ */
+
+public class UserAndGamesGetDTO {
 
   private Long id;
   private String username;
   private UserStatus status;
-  // private ArrayList<Game> games;
+  private ArrayList<Game> games;
 
   public Long getId() {
     return id;
@@ -37,13 +41,12 @@ public class UserGetDTO {
     this.status = status;
   }
 
-
-  /* public ArrayList<Game> getGames() {
+  public ArrayList<Game> getGames() {
     return this.games;
   }
 
   public void setGames(ArrayList<Game> games) {
     this.games = games;
-  } */
+  }
 
 }

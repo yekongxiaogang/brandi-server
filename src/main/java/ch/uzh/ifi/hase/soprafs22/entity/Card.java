@@ -17,10 +17,13 @@ public class Card {
     @Column(nullable=false)
     private Suit suit;
 
+    public Card(){}
+
     public Card(Rank cardRank, Suit cardSuit){
         this.rank = cardRank;
         this.suit = cardSuit;
     }
+
     public Rank getRank() { return rank; }
 
     public Suit getSuit() { return suit; }

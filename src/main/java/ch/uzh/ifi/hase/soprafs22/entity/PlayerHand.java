@@ -15,7 +15,7 @@ public class PlayerHand {
     @OneToMany(cascade = CascadeType.ALL)
 	@JoinColumn(name = "Card_id")
     private List<Card> activeCards = new ArrayList<>();
-    
+
     public PlayerHand(){
         this.activeCards = new ArrayList<Card>();
     }

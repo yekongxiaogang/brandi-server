@@ -20,6 +20,7 @@ public class Ball {
     @Column(nullable = false)
     private BallState state;
 
+    public Ball() {}
 
     // EDIT: When initializing a ball we want it to be in base and have pos = -1
     public Ball(Color color) {

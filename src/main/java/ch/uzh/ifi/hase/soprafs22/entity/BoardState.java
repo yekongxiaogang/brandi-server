@@ -15,6 +15,7 @@ public class BoardState {
     @OneToMany(cascade = CascadeType.ALL)
     private List<Ball> balls;
 
+    public BoardState() {}
 
     public BoardState(ArrayList<Ball> balls) {
         this.balls = balls;
