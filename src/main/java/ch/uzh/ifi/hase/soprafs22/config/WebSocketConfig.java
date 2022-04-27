@@ -25,9 +25,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         // handshake endpoint
-        registry.addEndpoint("/move");
-        registry.addEndpoint("/move").setAllowedOrigins("http://localhost:3000", "https://sopra-fs22-group-29-client.herokuapp.com").withSockJS();
-        registry.addEndpoint("/connected");
-        registry.addEndpoint("/connected").setAllowedOrigins("http://localhost:3000", "https://sopra-fs22-group-29-client.herokuapp.com").withSockJS();
+        registry.addEndpoint("/websocket");
+        registry.addEndpoint("/websocket").setAllowedOrigins("http://localhost:3000", "https://sopra-fs22-group-29-client.herokuapp.com").withSockJS();
     }
 }

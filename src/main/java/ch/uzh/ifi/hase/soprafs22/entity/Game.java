@@ -11,22 +11,16 @@ import javax.persistence.*;
 
 import ch.uzh.ifi.hase.soprafs22.constant.Color;
 import ch.uzh.ifi.hase.soprafs22.entity.websocket.Move;
-
+import org.springframework.transaction.annotation.Transactional;
 
 @Entity
 @Table(name = "GAME")
+@Transactional
 public class Game {
 
     @Id
     @GeneratedValue
     private Long id;
-    
-    /* @GeneratedValue(generator = "UUID")
-    @GenericGenerator(
-        name = "UUID",
-        strategy = "org.hibernate.id.UUIDGenerator")
-    @Column(name = "id", updatable = false, nullable = false)
-    private UUID uuid; */
 
     @Column(nullable = false)
     private String uuid;
@@ -40,7 +34,7 @@ public class Game {
     @Column(nullable = false)
     private Integer roundsPlayed;
     
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	@JoinColumn(name = "PlayerState_id")
     private List<PlayerState> playerStates;
 
@@ -60,7 +54,7 @@ public class Game {
         this.roundsPlayed = 0;
         this.deck = new Deck();
         this.playerStates = new ArrayList<PlayerState>();
-        // this.addPlayer(player);
+        this.addPlayer(player);
         this.initBoardState();
         this.uuid = UUID.randomUUID().toString();
         // this.startNewRound();

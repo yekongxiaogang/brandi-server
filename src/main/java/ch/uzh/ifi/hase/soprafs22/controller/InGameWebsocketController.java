@@ -1,6 +1,6 @@
 package ch.uzh.ifi.hase.soprafs22.controller;
 
-import ch.uzh.ifi.hase.soprafs22.constant.Color;
+import ch.uzh.ifi.hase.soprafs22.entity.Game;
 import ch.uzh.ifi.hase.soprafs22.entity.websocket.Move;
 import ch.uzh.ifi.hase.soprafs22.rest.dto.websocket.MoveGetDTO;
 import ch.uzh.ifi.hase.soprafs22.rest.dto.websocket.MovePostDTO;
@@ -8,11 +8,9 @@ import ch.uzh.ifi.hase.soprafs22.rest.mapper.DTOMapper;
 import ch.uzh.ifi.hase.soprafs22.service.GameService;
 import ch.uzh.ifi.hase.soprafs22.service.InGameWebsocketService;
 
-
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
-import org.springframework.messaging.simp.annotation.SubscribeMapping;
 import org.springframework.stereotype.Controller;
 
 import java.security.Principal;
@@ -20,13 +18,18 @@ import java.security.Principal;
 @Controller
 public class InGameWebsocketController {
 
-    private final InGameWebsocketService service;
 
-    InGameWebsocketController(InGameWebsocketService service) {
-        this.service = service;
+    private final InGameWebsocketService inGameWebsocketService;
+    private final GameService gameService;
+
+    InGameWebsocketController(InGameWebsocketService service, GameService gameService) {
+        this.inGameWebsocketService = service;
+        this.gameService = gameService;
     }
-    
-    @MessageMapping("/move")
+
+
+    // TODO: need to add {uuid} and notify all other players (refer to test function below)
+    @MessageMapping("/websocket/move")
     @SendTo("/client/move")
     public MoveGetDTO move(MovePostDTO MovePostDTO, Principal principal) throws Exception {
         // get move from the client
@@ -34,7 +37,7 @@ public class InGameWebsocketController {
 
         // verify move validity and add Player details
         String username = principal.getName();
-        move = service.verifyMove(move, username);
+        move = inGameWebsocketService.verifyMove(move, username);
 
         // notify subscribers with the move
         /* TODO: Should this return the whole gameState instead of only a move? 
@@ -44,20 +47,19 @@ public class InGameWebsocketController {
 
     /**
      * We can use a method of this form to send a board state update to all the players that are currently connected
+     * to the same game.
+     *
      * @param principal Authenticated user information
-     * @return state of the current game
      */
-    @MessageMapping("/connected")
-    @SendTo("/client/connected")
-    public String notifyConnected(Principal principal) throws Exception {
-        System.out.println(principal.getName() + " is connecting...");
-        return principal.getName() + " notifies subscribers that he's connected!";
+    @MessageMapping("/websocket/{uuid}/test")
+    public void test(@DestinationVariable String uuid, Principal principal) throws Exception {
+
+        // we still have to verify if the player is actually playing in the game with that uuid
+
+        Game game = gameService.getGameByUuid(uuid);
+
+        // the payload can be a anything you want to send to the clients
+        inGameWebsocketService.notifyAllGameMembers("/client/test", game, principal.getName() + " sent a test message!");
     }
 
-    @MessageMapping("/connected/{room}")
-    @SendTo("/client/connected/{room})")
-    public String greet(@DestinationVariable String room, Principal principal) throws Exception{
-        System.out.println(principal.getName() + " joined room " + room);
-        return principal.getName() + " joined room " + room;
-    }
 }

@@ -76,6 +76,10 @@ public class GameService {
         
     }
 
+    public Game getGameByUuid(String uuid) {
+        return gameRepository.findByUuid(uuid).orElse(null);
+    }
+
     public Boolean joinGame(String uuid, String username){
         Optional<Game> optGame = gameRepository.findByUuid(uuid);
         if(optGame.isPresent()){

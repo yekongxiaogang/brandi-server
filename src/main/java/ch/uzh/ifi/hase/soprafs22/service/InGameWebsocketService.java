@@ -9,17 +9,24 @@ import ch.uzh.ifi.hase.soprafs22.repository.LobbyRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.security.Principal;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 
 @Service
 @Transactional
 public class InGameWebsocketService {
-    
+
+    @Autowired
+    private SimpMessagingTemplate simpMessagingTemplate;
+
     private final GameRepository gameRepository;
     private final UserRepository userRepository;
     private final LobbyRepository lobbyRepository;
@@ -32,6 +39,21 @@ public class InGameWebsocketService {
         this.gameRepository = gameRepository;
         this.userRepository = userRepository;
         this.lobbyRepository = lobbyRepository;
+    }
+
+    public void notifyAllGameMembers(String route, Game game, /*Principal principal,*/ Object payload) {
+        List<String> sentTo = new ArrayList<>();
+        game.getPlayerStates().forEach((playerState) -> {
+            sentTo.add(playerState.getPlayer().getUsername());
+        });
+//        System.out.println("created sendTo list");
+//        System.out.println(sentTo);
+
+        sentTo.forEach((send) -> {
+//            String msg = send + " is getting a notification from " + principal.getName();
+//            System.out.println(msg);
+            simpMessagingTemplate.convertAndSendToUser(send, route, payload);
+        });
     }
 
     public Move verifyMove(Move move, String username){
