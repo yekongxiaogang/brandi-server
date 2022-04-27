@@ -79,6 +79,20 @@ public class User implements Serializable {
         return Optional.empty();
     }
 
+
+    /*
+     * Returns game in list of games that is currently active, if more than one is active(shouldnt be possible), just returns first one
+     * TODO: Make sure User is only in one active game at a time
+    */
+    public Optional<Long> getCurrentGameId(){
+        for(Game game : this.games){
+            if(game.getGameOn()){
+                return Optional.of(game.getId());
+            }
+        }
+        return Optional.empty();
+    }
+
     public Long getId() {
         return id;
     }

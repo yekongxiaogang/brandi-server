@@ -1,11 +1,13 @@
 package ch.uzh.ifi.hase.soprafs22.controller;
 
 import ch.uzh.ifi.hase.soprafs22.constant.Color;
-import ch.uzh.ifi.hase.soprafs22.entity.Player;
-import ch.uzh.ifi.hase.soprafs22.entity.websocket.ExampleMove;
-import ch.uzh.ifi.hase.soprafs22.rest.dto.websocket.ExampleMoveGetDTO;
-import ch.uzh.ifi.hase.soprafs22.rest.dto.websocket.ExampleMovePostDTO;
+import ch.uzh.ifi.hase.soprafs22.entity.websocket.Move;
+import ch.uzh.ifi.hase.soprafs22.rest.dto.websocket.MoveGetDTO;
+import ch.uzh.ifi.hase.soprafs22.rest.dto.websocket.MovePostDTO;
 import ch.uzh.ifi.hase.soprafs22.rest.mapper.DTOMapper;
+import ch.uzh.ifi.hase.soprafs22.service.GameService;
+import ch.uzh.ifi.hase.soprafs22.service.InGameWebsocketService;
+
 
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -18,18 +20,26 @@ import java.security.Principal;
 @Controller
 public class InGameWebsocketController {
 
+    private final InGameWebsocketService service;
+
+    InGameWebsocketController(InGameWebsocketService service) {
+        this.service = service;
+    }
+    
     @MessageMapping("/move")
     @SendTo("/client/move")
-    public ExampleMoveGetDTO exampleMove(ExampleMovePostDTO exampleMovePostDTO, Principal principal) throws Exception {
+    public MoveGetDTO move(MovePostDTO MovePostDTO, Principal principal) throws Exception {
         // get move from the client
-        ExampleMove move = DTOMapper.INSTANCE.convertExampleMovePostDTOtoEntity(exampleMovePostDTO);
+        Move move = DTOMapper.INSTANCE.convertMovePostDTOtoEntity(MovePostDTO);
 
         // verify move validity and add Player details
         String username = principal.getName();
-        move.setPlayer(new Player(username, 2, "randomUUID", "fake password", Color.BLUE));
+        move = service.verifyMove(move, username);
 
         // notify subscribers with the move
-        return DTOMapper.INSTANCE.convertEntityToExampleMoveGetDTO(move);
+        /* TODO: Should this return the whole gameState instead of only a move? 
+        Otherwise the client needs to get GameState manually */
+        return DTOMapper.INSTANCE.convertEntityToMoveGetDTO(move);
     }
 
     /**

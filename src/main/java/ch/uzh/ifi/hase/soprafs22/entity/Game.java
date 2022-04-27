@@ -6,6 +6,7 @@ import java.util.List;
 
 import javax.persistence.*;
 import ch.uzh.ifi.hase.soprafs22.constant.Color;
+import ch.uzh.ifi.hase.soprafs22.entity.websocket.Move;
 
 
 @Entity
@@ -126,6 +127,11 @@ public class Game {
         }
     }
 
+    public Boolean makeMove(Move move){
+        //TODO: Check validity and execute move
+        Boolean moveExecuted = false;
+        return moveExecuted;        
+    }
     public Boolean checkPlayersOnline(){
         // TODO: Implement checkPlayersOnline
         return false;

@@ -97,9 +97,9 @@ public class LobbyService {
             }
             Lobby lobby = optionalLobby.get();
             return lobby.isFull();
-          } catch (Exception e) {
+        } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Something went wrong while getting your lobby");
-          }
+        }
     }
 
     public List<Lobby> getLobbies(){

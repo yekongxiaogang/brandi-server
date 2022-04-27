@@ -2,7 +2,7 @@ package ch.uzh.ifi.hase.soprafs22.rest.dto.websocket;
 
 import ch.uzh.ifi.hase.soprafs22.entity.Card;
 
-public class ExampleMovePostDTO {
+public class MovePostDTO {
 
     private Long ballId;
     private int destinationTile;
