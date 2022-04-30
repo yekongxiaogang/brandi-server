@@ -54,6 +54,10 @@ public class UserService {
         return user.get();
     }
 
+    public User getUser(String userName) {
+        return userRepository.findByUsername(userName);
+    }
+
     public User createUser(User newUser) {
         newUser.setToken(UUID.randomUUID().toString());
         newUser.setStatus(UserStatus.OFFLINE);

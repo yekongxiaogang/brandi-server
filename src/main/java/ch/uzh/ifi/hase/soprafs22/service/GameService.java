@@ -1,6 +1,7 @@
 package ch.uzh.ifi.hase.soprafs22.service;
 
 import ch.uzh.ifi.hase.soprafs22.entity.Game;
+import ch.uzh.ifi.hase.soprafs22.entity.PlayerState;
 import ch.uzh.ifi.hase.soprafs22.entity.User;
 import ch.uzh.ifi.hase.soprafs22.repository.GameRepository;
 import ch.uzh.ifi.hase.soprafs22.repository.UserRepository;
@@ -103,18 +104,24 @@ public class GameService {
      /* Throws error if user in not in game to be retrieved */
     public Game getGameByUuid(String uuid, String username) {
         Optional<Game> optGame = gameRepository.findByUuid(uuid);
-        if(optGame.isPresent()){
-            Game game = optGame.get();
-            User user = userRepository.findByUsername(username);
-            if(user.getGameById(game.getId()).isPresent()){
-                return game;
-            }
+        if(optGame.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Couldn't find game");
         }
-        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Couldn't find game");
+
+        Game game = optGame.get();
+        User user = userRepository.findByUsername(username);
+        if(user == null){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User " + username + " not found");
+        }
+        if(user.getCurrentGameId().equals(game.getId())){ // check whether user is in the game
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not in this game");
+        }
+
+        return game;
     }
 
     public List<Game> getGames() {
         return gameRepository.findAll();
     }
-    
+
 }

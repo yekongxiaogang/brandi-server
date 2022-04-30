@@ -17,6 +17,7 @@ import org.springframework.web.server.ResponseStatusException;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 
@@ -81,6 +82,32 @@ public class InGameWebsocketService {
             simpMessagingTemplate.convertAndSendToUser(send, route, payload);
         });
     }
+
+    /**
+     * Send a notification to all game members except 'userName'
+     * @param route
+     * @param game
+     * @param userName
+     * @param payload
+     */
+    public void notifyAllOtherGameMembers(String route, Game game, String userName, Object payload) {
+        List<String> sentTo = new ArrayList<>();
+        game.getPlayerStates().forEach((playerState) -> {
+            sentTo.add(playerState.getPlayer().getUsername());
+        });
+
+        sentTo.forEach((send) -> {
+            if(!send.equals(userName)) {
+                simpMessagingTemplate.convertAndSendToUser(send, route, payload);
+            }
+        });
+    }
+
+    public void notifySpecificUser(String route, String userName, Object payload) {
+        simpMessagingTemplate.convertAndSendToUser(userName, route, payload);
+    }
+
+
 
    /* Assign user to move, make move in Game, return move */
     public Move verifyMove(Game game, Move move, String username){

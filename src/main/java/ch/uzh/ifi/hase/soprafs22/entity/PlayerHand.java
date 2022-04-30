@@ -1,7 +1,9 @@
 package ch.uzh.ifi.hase.soprafs22.entity;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.*;
 
@@ -13,12 +15,12 @@ public class PlayerHand {
     @GeneratedValue
     private Long id;
     
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	@JoinColumn(name = "Card_id")
-    private List<Card> activeCards = new ArrayList<>();
+    private Set<Card> activeCards = new HashSet<>();
 
     public PlayerHand(){
-        this.activeCards = new ArrayList<Card>();
+        this.activeCards = new HashSet<>();
     }
     
     /* Delete a card from playerHand, used when card is played */
@@ -32,7 +34,7 @@ public class PlayerHand {
     }
 
     /* Draw new cards, used at beginning of new round */
-    public void drawCards(ArrayList<Card> cards){
+    public void drawCards(HashSet<Card> cards){
         if(!(cards == null)){
             try {
                 this.activeCards = cards;
@@ -45,11 +47,11 @@ public class PlayerHand {
     }
 
 
-    public List<Card> getActiveCards() {
+    public Set<Card> getActiveCards() {
         return this.activeCards;
     }
 
-    public void setActiveCards(ArrayList<Card> activeCards) {
+    public void setActiveCards(HashSet<Card> activeCards) {
         this.activeCards = activeCards;
     }
 

@@ -2,10 +2,12 @@ package ch.uzh.ifi.hase.soprafs22.entity;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.UUID;
 import java.util.Optional;
+import java.util.Set;
 
 import javax.persistence.*;
 import ch.uzh.ifi.hase.soprafs22.constant.Color;
@@ -61,7 +63,7 @@ public class Game {
 
     /* Create balls for each player, store in boardstate */
     private void initBoardState(){
-        ArrayList<Ball> balls = new ArrayList<>();
+        Set<Ball> balls = new HashSet<Ball> ();
 
         // Information for initializing the balls with correct positions
         Hashtable<Color, List<Integer>> positionDict = new Hashtable<>();
@@ -82,7 +84,7 @@ public class Game {
     /* Create PlayerState for every player with 6 cards in playerHand */
     private void initPlayerState(User player){
         PlayerHand playerHand = new PlayerHand();
-        ArrayList<Card> cards = new ArrayList<>();
+        HashSet<Card> cards = new HashSet<>();
 
         for(int i = 0; i < 6; i++){
             cards.add(this.deck.drawCard());
@@ -137,7 +139,7 @@ public class Game {
 
         // Draw new cards for each player
         for(PlayerState playerState : this.playerStates){
-            ArrayList<Card> cards = new ArrayList<>();
+            HashSet<Card> cards = new HashSet<>();
 
             for(int i = 0; i < amounts.get(numCardsToPlay); i++){
                 cards.add(this.deck.drawCard());
@@ -240,6 +242,16 @@ public class Game {
 
     public void setDeck(Deck deck) {
         this.deck = deck;
+    }
+
+    public PlayerState getPlayerState(String playerName) {
+        PlayerState state = null;
+        for (PlayerState player : this.playerStates){
+            if(player.getPlayer().getUsername().equals(playerName)) {
+                return player;
+            }
+        }
+        return null;
     }
 
 }
