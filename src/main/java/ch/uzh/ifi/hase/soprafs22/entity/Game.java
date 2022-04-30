@@ -2,6 +2,7 @@ package ch.uzh.ifi.hase.soprafs22.entity;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Hashtable;
 import java.util.List;
 import java.util.UUID;
 import java.util.Optional;
@@ -61,10 +62,18 @@ public class Game {
     /* Create balls for each player, store in boardstate */
     private void initBoardState(){
         ArrayList<Ball> balls = new ArrayList<>();
+
+        // Information for initializing the balls with correct positions
+        Hashtable<Color, List<Integer>> positionDict = new Hashtable<>();
+        positionDict.put(Color.GREEN, new ArrayList<>(Arrays.asList(80, 81, 82, 83)));
+        positionDict.put(Color.RED, new ArrayList<>(Arrays.asList(84, 85, 86, 87)));
+        positionDict.put(Color.YELLOW, new ArrayList<>(Arrays.asList(88, 89, 90, 91)));
+        positionDict.put(Color.BLUE, new ArrayList<>(Arrays.asList(92, 93, 94, 95)));
+
         // Add 4 balls for each playerColor
         for(Color color: Color.values()){
             for(int i = 0; i < 4; i++){
-                balls.add(new Ball(color));
+                balls.add(new Ball(color, positionDict.get(color).get(i)));
             }
         }
         this.boardstate = new BoardState(balls);

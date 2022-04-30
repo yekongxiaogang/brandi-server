@@ -2,7 +2,6 @@ package ch.uzh.ifi.hase.soprafs22.entity;
 
 import javax.persistence.*;
 
-import ch.uzh.ifi.hase.soprafs22.constant.BallState;
 import ch.uzh.ifi.hase.soprafs22.constant.Color;
 
 @Entity
@@ -16,17 +15,13 @@ public class Ball {
     
     @Column(nullable = false)
     private Integer position;
-    
-    @Column(nullable = false)
-    private BallState state;
 
     public Ball() {}
 
     // EDIT: When initializing a ball we want it to be in base and have pos = -1
-    public Ball(Color color) {
+    public Ball(Color color, Integer position) {
         this.color = color;
-        this.position = -1;
-        this.state = BallState.BASE;
+        this.position = position;
     }
 
     // position = -1 means ball still in base, not played yet
@@ -36,14 +31,6 @@ public class Ball {
 
     public void setPosition(Integer position) {
         this.position = position;
-    }
-
-    public BallState getState() {
-        return this.state;
-    }
-
-    public void setState(BallState state) {
-        this.state = state;
     }
 
     public Long getId() {
