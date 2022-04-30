@@ -1,5 +1,6 @@
 package ch.uzh.ifi.hase.soprafs22.controller;
 
+import ch.uzh.ifi.hase.soprafs22.constant.Color;
 import ch.uzh.ifi.hase.soprafs22.entity.Game;
 import ch.uzh.ifi.hase.soprafs22.rest.dto.GameGetDTO;
 import ch.uzh.ifi.hase.soprafs22.rest.dto.IdDTO;
@@ -12,9 +13,7 @@ import org.springframework.web.server.ResponseStatusException;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
 
 /**
@@ -77,5 +76,13 @@ public class GameController {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "game not found by uuid");
         }
         return DTOMapper.INSTANCE.convertEntityToGameGetDTO(game);
+    }
+
+    @GetMapping("/game/{uuid}/color")
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    public Color getColorOfUserInGame(@PathVariable(name = "uuid") String uuid, @RequestBody IdDTO id){
+        return gameService.getColorOfUserInGame(uuid, id.getId());
+
     }
 }

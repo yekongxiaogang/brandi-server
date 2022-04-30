@@ -1,7 +1,7 @@
 package ch.uzh.ifi.hase.soprafs22.entity;
 
-import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Optional;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -12,10 +12,11 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import ch.uzh.ifi.hase.soprafs22.constant.Color;
 import ch.uzh.ifi.hase.soprafs22.rest.dto.UserGetDTO;
 import ch.uzh.ifi.hase.soprafs22.rest.mapper.DTOMapper;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 public class PlayerState {
@@ -37,6 +38,7 @@ public class PlayerState {
     @Column(nullable = false)
     private Color color;
     
+    //TODO: Is this the same as isPlaying?
     @Column(nullable=false)
     private Boolean playerStatus;
     
@@ -46,7 +48,6 @@ public class PlayerState {
     public PlayerState(){}
 
     public PlayerState(User player, Integer team, Color color, Boolean playerStatus, PlayerHand playerHand) {
-        //FIXME: player probably doesnt need to be the whole user because this includes pwd and token
         this.player = player;
         this.isPlaying = true;
         this.team = team;
@@ -99,5 +100,10 @@ public class PlayerState {
     // Returns PlayerGetDTO 
     public UserGetDTO getPlayer() {
         return DTOMapper.INSTANCE.convertEntityToUserGetDTO(this.player);
+    }
+
+    @JsonIgnore
+    public Optional<Long> getCurrentGameId(){
+        return this.player.getCurrentGameId();
     }
 }

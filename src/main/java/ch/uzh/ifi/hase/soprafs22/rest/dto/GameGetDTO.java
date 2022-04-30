@@ -7,6 +7,7 @@ import ch.uzh.ifi.hase.soprafs22.entity.BoardState;
 import ch.uzh.ifi.hase.soprafs22.entity.PlayerState;
 
 public class GameGetDTO {
+    private String uuid;
     private Long id;
     private Boolean gameOver;
     private Boolean gameOn;
@@ -14,6 +15,14 @@ public class GameGetDTO {
     private ArrayList<PlayerState> playerStates;
     private BoardState boardstate;
 
+
+    public String getUuid() {
+        return this.uuid;
+    }
+
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
+    }
 
     public Long getId() {
         return this.id;

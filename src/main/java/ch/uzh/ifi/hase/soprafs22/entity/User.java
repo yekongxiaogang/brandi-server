@@ -1,6 +1,5 @@
 package ch.uzh.ifi.hase.soprafs22.entity;
 
-import ch.uzh.ifi.hase.soprafs22.constant.Color;
 import ch.uzh.ifi.hase.soprafs22.constant.UserStatus;
 
 import org.hibernate.annotations.Fetch;
@@ -8,6 +7,8 @@ import org.hibernate.annotations.FetchMode;
 import org.springframework.data.annotation.CreatedDate;
 
 import javax.persistence.*;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import java.io.Serializable;
 import java.time.Instant;
@@ -75,8 +76,18 @@ public class User implements Serializable {
     public User() {
     }
 
-    public void addGame(Game game){
-        this.games.add(game);
+    /* Logic seems flawed, need to rework */
+    public Boolean addGame(Game addGame){
+        if(!addGame.isGameOn()){
+            this.games.add(addGame);
+            return true;
+        } else {
+            for(Game game: this.games){
+                if(game.isGameOn()) return false;
+            }
+            return true;
+        }
+        
     }
 
     public void removeGame(Game game){
@@ -97,8 +108,8 @@ public class User implements Serializable {
 
     /*
      * Returns game in list of games that is currently active, if more than one is active(shouldnt be possible), just returns first one
-     * TODO: Make sure User is only in one active game at a time
     */
+    @JsonIgnore
     public Optional<Long> getCurrentGameId(){
         for(Game game : this.games){
             if(game.getGameOn()){

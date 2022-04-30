@@ -10,6 +10,9 @@ import java.util.Optional;
 import java.util.Set;
 
 import javax.persistence.*;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import ch.uzh.ifi.hase.soprafs22.constant.Color;
 import ch.uzh.ifi.hase.soprafs22.entity.websocket.Move;
 
@@ -48,6 +51,10 @@ public class Game {
 	@JoinColumn(name = "Deck_id")
     private Deck deck;
 
+    @ElementCollection(targetClass = Color.class)
+    @Column
+    private List<Color> unusedColors;
+
     public Game() {}
 
     public Game(User player) {    
@@ -55,6 +62,7 @@ public class Game {
         this.gameOn = false;
         this.roundsPlayed = 0;
         this.deck = new Deck();
+        this.unusedColors = new ArrayList<Color>(Arrays.asList(Color.values()));
         this.playerStates = new ArrayList<PlayerState>();
         this.addPlayer(player);
         this.initBoardState();
@@ -81,7 +89,7 @@ public class Game {
         this.boardstate = new BoardState(balls);
     }
 
-    /* Create PlayerState for every player with 6 cards in playerHand */
+    /* Create PlayerState for every player with 6 cards in playerHand, assign team and color randomly */
     private void initPlayerState(User player){
         PlayerHand playerHand = new PlayerHand();
         HashSet<Card> cards = new HashSet<>();
@@ -91,9 +99,13 @@ public class Game {
         }
 
         playerHand.drawCards(cards);
-        // TODO: do we assign color once the game starts? Replace default color yellow
-        // Pls dont just create playerstate with color null, crashes the whole process of creating a game
-        this.playerStates.add(new PlayerState(player, 0, Color.YELLOW, true, playerHand));
+
+        // Team assigned to user by order of joining, users join teams alternatingly
+        Integer team = this.playerStates.size() % 2;
+        // Pop one color from unused colors, fallback color is yellow (seems like a bad thing to do)
+        Color userColor = unusedColors.isEmpty() ? Color.YELLOW : unusedColors.remove(0);
+
+        this.playerStates.add(new PlayerState(player, team, userColor, true, playerHand));
     }
 
     /*  
@@ -109,6 +121,18 @@ public class Game {
                 return false;
             }
 
+            // Check that user is in no other active game
+            // If currentGameId is not present then user is in no game -> proceed normally
+            Optional<Long> optGameId = player.getCurrentGameId();
+            if (optGameId.isPresent()) {
+                if(!optGameId.get().equals(this.id)){
+                    throw new Error("User is already in a different game");
+                } else{
+                    // User is already in this game
+                    return true;
+                }
+            }
+            
             this.initPlayerState(player);
 
             // If game is full, automatically start game
@@ -118,7 +142,7 @@ public class Game {
             return true;
         } else{
             // TODO: Should this throw error?
-            System.out.println("Can't add new player with id " + player.getId());
+            System.out.println("Game has started / is full, Can't add new player with id " + player.getId());
             return false;
         }
     }
@@ -128,6 +152,13 @@ public class Game {
     }
 
     public void startGame(){
+        //Check if all Users are in no other active game, should also be checked when adding a player
+        for(PlayerState playerState: this.playerStates){
+            Optional<Long> optGame = playerState.getCurrentGameId();
+            optGame.ifPresent((game) -> {
+                throw new Error("A user is already in an active game, can't start this game");
+            });
+        }
         this.gameOn = true;
     }
 
@@ -150,13 +181,33 @@ public class Game {
     }
 
     public Boolean makeMove(Move move){
-        //TODO: Check validity and execute move
         Boolean moveExecuted = false;
         return moveExecuted;        
     }
-    public Boolean checkPlayersOnline(){
-        // TODO: Implement checkPlayersOnline
-        return false;
+
+    // Check if all players in game are active in this game, only works if game is started already
+    public Boolean checkAllPlayersInGame(){
+        for(PlayerState playerState: this.playerStates){
+            Optional<Long> optGameId = playerState.getCurrentGameId();
+            if(optGameId.isPresent()){
+                Long gameId = optGameId.get();
+                if(gameId.equals(this.id)){
+                    continue;
+                } else {
+                    System.out.println("User is active in a different game");
+                    return false;
+                }
+            } else{
+                System.out.println("Couldnt find an active game for user");
+            }
+        }
+        return true;
+
+        // Previous approach, only checks if all players are in a game, not if all are in this game
+        /* for(PlayerState playerState: this.playerStates){
+            if(!playerState.getIsPlaying()){return false;}
+        }
+        return true; */
     }
 
     public void pauseGame(){
@@ -170,7 +221,6 @@ public class Game {
     public void endGame(){
         this.gameOver = true;
     }
-
 
     public Long getId() {
         return this.id;
@@ -254,4 +304,14 @@ public class Game {
         return null;
     }
 
+
+    @JsonIgnore
+    public Optional<Color> getUserColorById(Long id){
+        for(PlayerState playerState: this.playerStates){
+            if(playerState.getPlayer().getId() == id){
+                return Optional.of(playerState.getColor());
+            }
+        }
+        return Optional.empty();
+    }
 }

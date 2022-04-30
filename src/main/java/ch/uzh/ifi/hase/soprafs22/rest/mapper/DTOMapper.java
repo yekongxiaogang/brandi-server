@@ -1,11 +1,9 @@
 package ch.uzh.ifi.hase.soprafs22.rest.mapper;
 
 import ch.uzh.ifi.hase.soprafs22.entity.Game;
-import ch.uzh.ifi.hase.soprafs22.entity.Lobby;
 import ch.uzh.ifi.hase.soprafs22.entity.User;
 import ch.uzh.ifi.hase.soprafs22.entity.websocket.Move;
 import ch.uzh.ifi.hase.soprafs22.rest.dto.GameGetDTO;
-import ch.uzh.ifi.hase.soprafs22.rest.dto.LobbyGetDTO;
 import ch.uzh.ifi.hase.soprafs22.rest.dto.UserAndGamesGetDTO;
 import ch.uzh.ifi.hase.soprafs22.rest.dto.UserGetDTO;
 import ch.uzh.ifi.hase.soprafs22.rest.dto.UserPostDTO;
@@ -46,6 +44,7 @@ public interface DTOMapper {
     UserAndGamesGetDTO convertEntityToUserAndGamesGetDTO(User user);
 
     @Mapping(source = "id", target = "id")
+    @Mapping(source = "uuid", target = "uuid")
     @Mapping(source = "gameOver", target = "gameOver")
     @Mapping(source = "gameOn", target = "gameOn")
     @Mapping(source = "roundsPlayed", target = "roundsPlayed")
@@ -53,11 +52,6 @@ public interface DTOMapper {
     @Mapping(source = "boardstate", target = "boardstate")
     GameGetDTO convertEntityToGameGetDTO(Game createdGame);
 
-    @Mapping(source = "lobbyId", target = "lobbyId")
-    @Mapping(source = "lobbyUuid", target = "lobbyUuid")
-    @Mapping(source = "isInGame", target = "isInGame")
-    @Mapping(source = "users", target = "users")
-    LobbyGetDTO convertEntityToLobbyGetDTO(Lobby createdLobby);
 
     @Mapping(source = "user", target = "user")
     @Mapping(source = "ballId", target = "ballId")
