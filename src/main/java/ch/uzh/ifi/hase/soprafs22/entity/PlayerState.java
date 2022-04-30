@@ -11,6 +11,7 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 
+import ch.uzh.ifi.hase.soprafs22.constant.Color;
 import ch.uzh.ifi.hase.soprafs22.rest.dto.UserGetDTO;
 import ch.uzh.ifi.hase.soprafs22.rest.mapper.DTOMapper;
 
@@ -30,6 +31,9 @@ public class PlayerState {
     
     @Column(nullable=false)
     private Integer team;
+
+    @Column(nullable = false)
+    private Color color;
     
     @Column(nullable=false)
     private Boolean playerStatus;
@@ -39,13 +43,14 @@ public class PlayerState {
 
     public PlayerState(){}
 
-    public PlayerState(User player, Integer team, Boolean playerStatus, PlayerHand playerHand) {
+    public PlayerState(User player, Integer team, Color color, Boolean playerStatus, PlayerHand playerHand) {
         //FIXME: player probably doesnt need to be the whole user because this includes pwd and token
         this.player = player;
         this.isPlaying = true;
         this.team = team;
         this.playerStatus = playerStatus;
         this.playerHand = playerHand;
+        this.color = color;
     }
 
     public Boolean getIsPlaying() {
@@ -70,6 +75,14 @@ public class PlayerState {
 
     public void setPlayerStatus(Boolean playerStatus) {
         this.playerStatus = playerStatus;
+    }
+
+    public Color getColor() {
+        return color;
+    }
+
+    public void setColor(Color color) {
+        this.color = color;
     }
 
     public PlayerHand getPlayerHand() {

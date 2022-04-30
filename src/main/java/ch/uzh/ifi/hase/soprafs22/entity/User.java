@@ -1,5 +1,6 @@
 package ch.uzh.ifi.hase.soprafs22.entity;
 
+import ch.uzh.ifi.hase.soprafs22.constant.Color;
 import ch.uzh.ifi.hase.soprafs22.constant.UserStatus;
 
 import org.hibernate.annotations.Fetch;
@@ -34,6 +35,9 @@ public class User implements Serializable {
     @GeneratedValue
     private Long id;
 
+    @GeneratedValue
+    private String uuid;
+
     @Column(nullable = false, unique = true)
     private String username;
 
@@ -54,6 +58,13 @@ public class User implements Serializable {
     @Fetch(FetchMode.JOIN)
 	@JoinColumn(name = "game_id", referencedColumnName = "id")
     private List<Game> games;
+
+    public User(String username, Long id, String uuid, String password) {
+        this.username = username;
+        this.id = id;
+        this.uuid = uuid;
+        this.password = password;
+    }
 
     public User(String username, String password) {
         this.username = username;

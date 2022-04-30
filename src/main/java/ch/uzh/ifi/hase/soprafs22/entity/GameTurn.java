@@ -1,14 +1,14 @@
 package ch.uzh.ifi.hase.soprafs22.entity;
 
 import ch.uzh.ifi.hase.soprafs22.constant.Rank;
-import ch.uzh.ifi.hase.soprafs22.entity.Player;
+import ch.uzh.ifi.hase.soprafs22.entity.User;
 
 public class GameTurn {
 
     //TODO: Change to user
-    private Player activePlayer;
+    private User activePlayer;
 
-    public GameTurn(Player activePlayer) {
+    public GameTurn(User activePlayer) {
         this.activePlayer = activePlayer;
     }
 

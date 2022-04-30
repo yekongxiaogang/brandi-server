@@ -7,11 +7,9 @@ import java.util.UUID;
 import java.util.Optional;
 
 import javax.persistence.*;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import ch.uzh.ifi.hase.soprafs22.constant.Color;
 import ch.uzh.ifi.hase.soprafs22.entity.websocket.Move;
+
 import org.springframework.transaction.annotation.Transactional;
 
 @Entity
@@ -82,7 +80,9 @@ public class Game {
         }
 
         playerHand.drawCards(cards);
-        this.playerStates.add(new PlayerState(player, 0, true, playerHand));
+        // TODO: do we assign color once the game starts? Replace default color yellow
+        // Pls dont just create playerstate with color null, crashes the whole process of creating a game
+        this.playerStates.add(new PlayerState(player, 0, Color.YELLOW, true, playerHand));
     }
 
     /*  
