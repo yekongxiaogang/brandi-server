@@ -7,6 +7,7 @@ import ch.uzh.ifi.hase.soprafs22.rest.mapper.DTOMapper;
 import ch.uzh.ifi.hase.soprafs22.service.GameService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.security.Principal;
 import java.util.ArrayList;
@@ -61,5 +62,16 @@ public class GameController {
         }
         
         return allGamesDTO;
+    }
+
+    @GetMapping("/game/{uuid}")
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    public GameGetDTO getGameByUuid(@PathVariable(name = "uuid") String uuid) {
+        Game game = gameService.getGameByUuid(uuid);
+        if(game == null){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "game not found by uuid");
+        }
+        return DTOMapper.INSTANCE.convertEntityToGameGetDTO(game);
     }
 }
