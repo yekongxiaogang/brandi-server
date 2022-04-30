@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
@@ -33,7 +34,7 @@ public class PlayerState {
     @Column(nullable=false)
     private Boolean playerStatus;
     
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private PlayerHand playerHand;
 
     public PlayerState(){}
@@ -83,11 +84,4 @@ public class PlayerState {
     public UserGetDTO getPlayer() {
         return DTOMapper.INSTANCE.convertEntityToUserGetDTO(this.player);
     }
-
-
-
-    /* public void setPlayerHand(PlayerHand playerHand) {
-        this.playerHand = playerHand;
-    } */
-
 }

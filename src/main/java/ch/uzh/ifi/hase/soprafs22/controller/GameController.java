@@ -13,6 +13,9 @@ import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
 
 /**
  * Game Controller
@@ -34,8 +37,9 @@ public class GameController {
     @PostMapping("/game")
     @ResponseStatus(HttpStatus.CREATED)
     @ResponseBody
+    // Create game and add first user to it
     public String createGame(@RequestBody IdDTO lobbyLeaderId) {
-        
+
         System.out.println("/game called");
 
         return gameService.createGame(lobbyLeaderId.getId());
@@ -50,7 +54,7 @@ public class GameController {
         return success;
     }
 
-    //For testing purposes, state should be taken from Websocket by clients
+    //For testing purposes, state should probably be taken from Websocket by clients
     @GetMapping("/game")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
@@ -67,8 +71,8 @@ public class GameController {
     @GetMapping("/game/{uuid}")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public GameGetDTO getGameByUuid(@PathVariable(name = "uuid") String uuid) {
-        Game game = gameService.getGameByUuid(uuid);
+    public GameGetDTO getGameByUuid(@PathVariable(name = "uuid") String uuid, Principal principal) {
+        Game game = gameService.getGameByUuid(uuid, principal.getName());
         if(game == null){
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "game not found by uuid");
         }

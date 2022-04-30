@@ -8,6 +8,7 @@ import java.util.Optional;
 
 import javax.persistence.*;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import ch.uzh.ifi.hase.soprafs22.constant.Color;
 import ch.uzh.ifi.hase.soprafs22.entity.websocket.Move;
@@ -38,11 +39,11 @@ public class Game {
 	@JoinColumn(name = "PlayerState_id")
     private List<PlayerState> playerStates;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	@JoinColumn(name = "BoardState_id")
     private BoardState boardstate;
     
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@JoinColumn(name = "Deck_id")
     private Deck deck;
 
@@ -57,7 +58,6 @@ public class Game {
         this.addPlayer(player);
         this.initBoardState();
         this.uuid = UUID.randomUUID().toString();
-        // this.startNewRound();
     }
 
     /* Create balls for each player, store in boardstate */
@@ -85,19 +85,20 @@ public class Game {
         this.playerStates.add(new PlayerState(player, 0, true, playerHand));
     }
 
+    /*  
+     * If player is not in game yet: Add player, return true
+     * If player was already in game: Do nothing, return false
+     */
     public Boolean addPlayer(User player){
         if(!this.isFull() && !this.gameOn){
             // Check if user is already in this game, if so dont let user join
             Optional<Game> optGame= player.getGameById(this.id);
             if(!optGame.isEmpty()){
-                System.out.println("Player is already in this game");
-                return true;
+                System.out.println("Player is already in this game, no action required. Returned true");
+                return false;
             }
 
             this.initPlayerState(player);
-
-            // Add game to users list of games
-            // player.addGame(this);
 
             // If game is full, automatically start game
             if(this.isFull()){

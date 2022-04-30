@@ -14,10 +14,11 @@ import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.stereotype.Controller;
 
 import java.security.Principal;
+import java.util.List;
+
 
 @Controller
 public class InGameWebsocketController {
-
 
     private final InGameWebsocketService inGameWebsocketService;
     private final GameService gameService;
@@ -28,21 +29,18 @@ public class InGameWebsocketController {
     }
 
 
-    // TODO: need to add {uuid} and notify all other players (refer to test function below)
-    @MessageMapping("/websocket/move")
-    @SendTo("/client/move")
-    public MoveGetDTO move(MovePostDTO MovePostDTO, Principal principal) throws Exception {
-        // get move from the client
+    @MessageMapping("/websocket/{uuid}/move")
+    public void move(@DestinationVariable String uuid, MovePostDTO MovePostDTO, Principal principal) throws Exception {
+        // Get move, username, game
         Move move = DTOMapper.INSTANCE.convertMovePostDTOtoEntity(MovePostDTO);
-
-        // verify move validity and add Player details
         String username = principal.getName();
-        move = inGameWebsocketService.verifyMove(move, username);
+        Game userGame = gameService.getGameByUuid(uuid, username);
 
-        // notify subscribers with the move
-        /* TODO: Should this return the whole gameState instead of only a move? 
-        Otherwise the client needs to get GameState manually */
-        return DTOMapper.INSTANCE.convertEntityToMoveGetDTO(move);
+        // verify move validity and add Player details to move for returning
+        move = inGameWebsocketService.verifyMove(userGame, move, username);
+        MoveGetDTO moveDTO = DTOMapper.INSTANCE.convertEntityToMoveGetDTO(move);
+        
+        inGameWebsocketService.notifyAllGameMembers("/client/move", userGame, moveDTO); 
     }
 
     /**
@@ -56,7 +54,7 @@ public class InGameWebsocketController {
 
         // we still have to verify if the player is actually playing in the game with that uuid
 
-        Game game = gameService.getGameByUuid(uuid);
+        Game game = gameService.getGameByUuid(uuid, principal.getName());
 
         // the payload can be a anything you want to send to the clients
         inGameWebsocketService.notifyAllGameMembers("/client/test", game, principal.getName() + " sent a test message!");

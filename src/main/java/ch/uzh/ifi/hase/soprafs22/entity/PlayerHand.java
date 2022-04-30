@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.persistence.*;
 
+
 @Entity
 public class PlayerHand {
 
@@ -12,7 +13,7 @@ public class PlayerHand {
     @GeneratedValue
     private Long id;
     
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@JoinColumn(name = "Card_id")
     private List<Card> activeCards = new ArrayList<>();
 

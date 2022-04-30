@@ -1,7 +1,6 @@
 package ch.uzh.ifi.hase.soprafs22.controller;
 
 import ch.uzh.ifi.hase.soprafs22.entity.User;
-import ch.uzh.ifi.hase.soprafs22.rest.dto.UserAndGamesGetDTO;
 import ch.uzh.ifi.hase.soprafs22.rest.dto.UserGetDTO;
 import ch.uzh.ifi.hase.soprafs22.rest.dto.UserPostDTO;
 import ch.uzh.ifi.hase.soprafs22.rest.dto.UserUpdateDTO;
@@ -34,14 +33,14 @@ public class UserController {
     @GetMapping("/users")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public List<UserAndGamesGetDTO> getAllUsers() {
+    public List<UserGetDTO> getAllUsers() {
         // fetch all users in the internal representation
         List<User> users = userService.getUsers();
-        List<UserAndGamesGetDTO> userGetDTOs = new ArrayList<>();
+        List<UserGetDTO> userGetDTOs = new ArrayList<>();
 
         // convert each user to the API representation
         for (User user : users) {
-            userGetDTOs.add(DTOMapper.INSTANCE.convertEntityToUserAndGamesGetDTO(user));
+            userGetDTOs.add(DTOMapper.INSTANCE.convertEntityToUserGetDTO(user));
         }
         return userGetDTOs;
     }
@@ -49,11 +48,11 @@ public class UserController {
     @GetMapping("/users/{id}")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public UserAndGamesGetDTO getUser(@PathVariable(name = "id") String id) {
+    public UserGetDTO getUser(@PathVariable(name = "id") String id) {
         // fetch user with corresponding id
         User user = userService.getUser(Long.parseLong(id));
 
-        return DTOMapper.INSTANCE.convertEntityToUserAndGamesGetDTO(user);
+        return DTOMapper.INSTANCE.convertEntityToUserGetDTO(user);
     }
 
     @PostMapping("/users/{id}")
@@ -97,4 +96,11 @@ public class UserController {
         return DTOMapper.INSTANCE.convertEntityToUserGetDTO(user);
     }
 
+    @GetMapping("/users/{id}/games")
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    public List<String> getGameUuidsOfUser(@PathVariable Long id){
+        List<String> gameUuids = userService.getGameUuidsOfUser(id);
+        return gameUuids;
+    }
 }

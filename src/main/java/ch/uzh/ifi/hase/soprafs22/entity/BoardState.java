@@ -12,7 +12,7 @@ public class BoardState {
     @GeneratedValue
     private Long id;
 
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Ball> balls;
 
     public BoardState() {}

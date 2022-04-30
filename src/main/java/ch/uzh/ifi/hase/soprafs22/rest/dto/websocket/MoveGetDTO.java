@@ -1,6 +1,8 @@
 package ch.uzh.ifi.hase.soprafs22.rest.dto.websocket;
 
 import ch.uzh.ifi.hase.soprafs22.entity.User;
+import ch.uzh.ifi.hase.soprafs22.rest.dto.UserGetDTO;
+import ch.uzh.ifi.hase.soprafs22.rest.mapper.DTOMapper;
 
 public class MoveGetDTO {
 
@@ -8,8 +10,8 @@ public class MoveGetDTO {
     private Long ballId;
     private int destinationTile;
 
-    public User getUser() {
-        return user;
+    public UserGetDTO getUser() {
+        return DTOMapper.INSTANCE.convertEntityToUserGetDTO(user);
     }
 
     public void setUser(User user) {
