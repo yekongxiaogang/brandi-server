@@ -41,6 +41,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                     cors.setAllowCredentials(true);
                     return cors;
                 }).and()
+                .headers().frameOptions().disable().and()
                 .csrf().disable()
                 .httpBasic().and()
                 .authorizeRequests()
