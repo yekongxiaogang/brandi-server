@@ -18,13 +18,11 @@ public class Ball {
 
     public Ball() {}
 
-    // EDIT: When initializing a ball we want it to be in base and have pos = -1
     public Ball(Color color, Integer position) {
         this.color = color;
         this.position = position;
     }
 
-    // position = -1 means ball still in base, not played yet
     public Integer getPosition() {
         return this.position;
     }

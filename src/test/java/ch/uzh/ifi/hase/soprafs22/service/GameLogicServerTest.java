@@ -3,23 +3,14 @@ package ch.uzh.ifi.hase.soprafs22.service;
 import ch.uzh.ifi.hase.soprafs22.constant.Color;
 import ch.uzh.ifi.hase.soprafs22.constant.Rank;
 import ch.uzh.ifi.hase.soprafs22.entity.Ball;
-import ch.uzh.ifi.hase.soprafs22.entity.User;
-import ch.uzh.ifi.hase.soprafs22.repository.UserRepository;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
-import org.springframework.web.server.ResponseStatusException;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class GameLogicServerTest {
     @Mock
@@ -36,17 +27,6 @@ public class GameLogicServerTest {
     private Ball ball8 = new Ball(Color.RED, 84);
     private Ball ball9 = new Ball(Color.YELLOW, 88);
     private Ball ball10 = new Ball(Color.BLUE, 95);
-
-
-    @BeforeEach
-    public void setup() {
-//        MockitoAnnotations.openMocks(this);
-
-//        Ball ball1 = new Ball(Color.GREEN, -1);
-//        Ball ball2 = new Ball(Color.GREEN, 0);
-//        Ball ball3 = new Ball(Color.GREEN, 64);
-
-    }
 
     @Test
     public void cardChosen_validBalls() {
