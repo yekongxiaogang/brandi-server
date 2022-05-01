@@ -72,23 +72,18 @@ public class GameLogicService {
             // MOVE BY 13 OR INVOKE A BALL FROM HOME
             possibleMoves.add(13);
 
-            // FIXME: 100 as invoke
-            possibleMoves.add(100);
-            //setInvokeTrue();
+            if (checkCanGoOutOfHome(ball, balls)) {
+                possibleMoves.add(100);
+            }
         }
         else if (cardRank.equals(Rank.ACE)) {
             possibleMoves.add(1);
             possibleMoves.add(11);
 
-            possibleMoves.add(100);
-            //setInvokeTrue();
+            if (checkCanGoOutOfHome(ball, balls)) {
+                possibleMoves.add(100);
+            }
         }
-
-        // Remove duplicates from possible moves
-        Set<Integer> set = new LinkedHashSet<>();
-        set.addAll(possibleMoves);
-        possibleMoves.clear();
-        possibleMoves.addAll(set);
 
         return possibleMoves;
     }
@@ -99,6 +94,7 @@ public class GameLogicService {
 
         for (int possibleMove : possibleMoves) {
             if (possibleMove == 100) {
+
                 if (ball.getColor().equals(Color.GREEN)) {
                     possibleDestinations = Set.of(0);
                 }
@@ -115,53 +111,46 @@ public class GameLogicService {
                 break;
             }
             // modulo div as board's last pos is 63
-            possibleDestinations.add((ball.getPosition() + possibleMove) % 64);
-        }
+            if (!((ball.getPosition() + possibleMove) < 0)) {
+                possibleDestinations.add((ball.getPosition() + possibleMove) % 64);
+            }
+            else {
+                possibleDestinations.add((ball.getPosition() + possibleMove) + 64);
+            }
 
-        // TODO: PLAYERSTATE COULD MAYBE HAVE ITS BALLS?
-//        for (Ball b: playerBalls) {
-//            if (b.getColor().equals(playerColor)) {
-//                for (int possibleMove : possibleMoves) {
-//                    // modulo div as board's last pos is 63
-//                    possibleDestinations.add((b.getPosition() + possibleMove) % 63);
-//                }
-//            }
-//        }
-//
-//        // Remove duplicates from possible destinations
-//        Set<Integer> set = new LinkedHashSet<>();
-//        set.addAll(possibleDestinations);
-//        possibleDestinations.clear();
-//        possibleDestinations.addAll(set);
+        }
 
         return possibleDestinations;
     }
 
-    public List<Integer> checkBallOnStarting (Ball ball, List<Ball> balls, List<Integer> possibleMoves) {
+    public Set<Integer> checkBallOnStarting (Ball ball, Set<Ball> balls, Set<Integer> possibleMoves) {
 
         int startPos = ball.getPosition();
 
         // for every possible move, we check if any ball on the way is on the starting point
-        List <Integer> toBeRemoved = new ArrayList<Integer>();
+        Set <Integer> toBeRemoved = new HashSet<>();
         for (Ball b : balls) {
             if (BoardState.startingPoints.contains(b.getPosition())) {
                 for (int possibleMove : possibleMoves) {
                     for (int i = startPos + 1; i <= startPos + possibleMove; i++) {
-                        toBeRemoved.add(possibleMove);
+                        if (b.getPosition().equals(i)) {
+                            toBeRemoved.add(possibleMove);
+                        }
+//                        System.out.println(toBeRemoved + "" + i);
                     }
                 }
             }
         }
 
         for (int i : toBeRemoved) {
-            possibleMoves.remove(Integer.valueOf(i));
+            possibleMoves.remove(i);
         }
 
         return possibleMoves;
     }
 
     // Compensate for the offset in the hole number by adding specific value
-    public Boolean checkCanGoBase (Color color, int position, List<Integer> possibleMoves) {
+    public Boolean checkCanGoBase (Color color, int position, Set<Integer> possibleMoves) {
         if (color.equals(Color.GREEN)) {
             for (int possibleMove : possibleMoves) {
                 if (position + possibleMove <= 67) {
@@ -191,6 +180,38 @@ public class GameLogicService {
             }
         }
         return false;
+    }
+
+    public Boolean checkCanGoOutOfHome (Ball ball, Set<Ball> balls) {
+
+        Color color = ball.getColor();
+
+        for (Ball b : balls) {
+            if (color == b.getColor()) {
+                if (color == Color.GREEN) {
+                    if (b.getPosition().equals(0)) {
+                        return false;
+                    }
+                }
+                else if (color == Color.RED) {
+                    if (b.getPosition().equals(16)) {
+                        return false;
+                    }
+                }
+                else if (color == Color.YELLOW) {
+                    if (b.getPosition().equals(32)) {
+                        return false;
+                    }
+                }
+                else if (color == Color.BLUE) {
+                    if (b.getPosition().equals(48)) {
+                        return false;
+                    }
+                }
+            }
+        }
+        return true;
+
     }
 
     // Account for the case when move is made with 7 => player gets access to teammate's balls
