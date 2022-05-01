@@ -129,7 +129,8 @@ public class Game {
             Optional<Long> optGameId = player.getCurrentGameId();
             if (optGameId.isPresent()) {
                 if(!optGameId.get().equals(this.id)){
-                    throw new Error("User is already in a different game");
+                    // TODO: make sure that a user can't play in multiple game simultaneously
+                    //  throw new Error("User is already in a different game");
                 } else{
                     // User is already in this game
                     return true;
@@ -156,12 +157,12 @@ public class Game {
 
     public void startGame(){
         //Check if all Users are in no other active game, should also be checked when adding a player
-        for(PlayerState playerState: this.playerStates){
-            Optional<Long> optGame = playerState.getCurrentGameId();
-            optGame.ifPresent((game) -> {
-                throw new Error("A user is already in an active game, can't start this game");
-            });
-        }
+//        for(PlayerState playerState: this.playerStates){
+//            Optional<Long> optGame = playerState.getCurrentGameId();
+//            optGame.ifPresent((game) -> {
+//                throw new Error("A user is already in an active game, can't start this game");
+//            });
+//        }
         this.gameOn = true;
     }
 
@@ -210,8 +211,10 @@ public class Game {
     private void nextPlayer(){
         // Increase as long as activeplayer has no cards
         for(int i = 0; i < 4; i++){
-            this.activePlayer++;
+            this.playerStates.get(this.activePlayer).setIsPlaying(false);
+            this.activePlayer = (this.activePlayer + 1) % 4;
             if(!this.getNextTurn().getPlayerHand().isEmpty()){
+                this.getNextTurn().setIsPlaying(true);
                 return;
             }
         }

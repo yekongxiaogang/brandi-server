@@ -56,6 +56,7 @@ public class GameService {
             // Create Game and set passed user as player in that game, return game
             User user = optUser.get();
             Game newGame = new Game(user);
+            newGame.getPlayerStates().get(0).setIsPlaying(true);
             newGame = gameRepository.saveAndFlush(newGame);
             
             // Add game to list of games in user, persist in DB
