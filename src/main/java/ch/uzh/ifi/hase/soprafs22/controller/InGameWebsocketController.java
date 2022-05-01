@@ -64,10 +64,13 @@ public class InGameWebsocketController {
         PlayerState nextUser = userGame.getNextTurn();
         if(nextUser == null){
             // Send new Cards to all users
-            gameService.startNewRound(uuid);
-            for(PlayerState playerState: userGame.getPlayerStates()){
+            Game updatedGame = gameService.startNewRound(uuid);
+            nextUser = updatedGame.getNextTurn();
+            for(PlayerState playerState: updatedGame.getPlayerStates()){
                 // TODO: Return a DTO
                 inGameWebsocketService.notifySpecificUser("/client/cards", playerState.getPlayer().getUsername(), playerState.getPlayerHand());
+                // Send next user to all users
+                inGameWebsocketService.notifyAllGameMembers("/client/nextPlayer", userGame, nextUser.getPlayer());
             }
         } else{
             // Send next user to all users
@@ -158,9 +161,11 @@ public class InGameWebsocketController {
             PlayerState nextUser = game.getNextTurn();
             if(nextUser == null){
                 // Send new Cards to all users
-                gameService.startNewRound(uuid);
-                for(PlayerState state: game.getPlayerStates()){
+                Game updatedGame = gameService.startNewRound(uuid);
+                nextUser = updatedGame.getNextTurn();
+                for(PlayerState state: updatedGame.getPlayerStates()){
                     inGameWebsocketService.notifySpecificUser("/client/cards", state.getPlayer().getUsername(), state.getPlayerHand());
+                    inGameWebsocketService.notifyAllGameMembers("/client/nextPlayer", game, nextUser.getPlayer());
                 }
             } else{
                 // Send next user to all users

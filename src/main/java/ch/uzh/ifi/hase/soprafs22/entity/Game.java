@@ -182,6 +182,7 @@ public class Game {
 
             playerState.drawCards(cards);
         }
+        this.activePlayer = 0;
     }
 
     public Boolean makeMove(Move move){
@@ -367,5 +368,6 @@ public class Game {
     public void surrenderCards(String username){
         PlayerState playerState = this.getPlayerState(username);
         playerState.getPlayerHand().setActiveCards(new HashSet<>());
+        this.nextPlayer();
     }
 }
