@@ -75,6 +75,7 @@ public class GameLogicService {
             if (checkCanGoOutOfHome(ball, balls)) {
                 possibleMoves.add(100);
             }
+            else {possibleMoves = Set.of();}
         }
         else if (cardRank.equals(Rank.ACE)) {
             possibleMoves.add(1);
@@ -83,6 +84,7 @@ public class GameLogicService {
             if (checkCanGoOutOfHome(ball, balls)) {
                 possibleMoves.add(100);
             }
+            else {possibleMoves = Set.of();}
         }
 
         return possibleMoves;

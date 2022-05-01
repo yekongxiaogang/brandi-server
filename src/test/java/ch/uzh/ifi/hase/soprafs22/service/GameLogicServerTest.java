@@ -3,14 +3,23 @@ package ch.uzh.ifi.hase.soprafs22.service;
 import ch.uzh.ifi.hase.soprafs22.constant.Color;
 import ch.uzh.ifi.hase.soprafs22.constant.Rank;
 import ch.uzh.ifi.hase.soprafs22.entity.Ball;
+import ch.uzh.ifi.hase.soprafs22.entity.User;
+import ch.uzh.ifi.hase.soprafs22.repository.UserRepository;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
+import org.springframework.web.server.ResponseStatusException;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class GameLogicServerTest {
     @Mock
@@ -27,6 +36,17 @@ public class GameLogicServerTest {
     private Ball ball8 = new Ball(Color.RED, 84);
     private Ball ball9 = new Ball(Color.YELLOW, 88);
     private Ball ball10 = new Ball(Color.BLUE, 95);
+
+
+    @BeforeEach
+    public void setup() {
+//        MockitoAnnotations.openMocks(this);
+
+//        Ball ball1 = new Ball(Color.GREEN, -1);
+//        Ball ball2 = new Ball(Color.GREEN, 0);
+//        Ball ball3 = new Ball(Color.GREEN, 64);
+
+    }
 
     @Test
     public void cardChosen_validBalls() {
@@ -49,7 +69,7 @@ public class GameLogicServerTest {
 
         Set<Ball> balls = new HashSet<>(Set.of(ball1, ball2, ball3, ball4, ball5, ball6));
 
-        Set<Integer> testPossibleMoves1 = new HashSet<>(Set.of(1,11));
+        Set<Integer> testPossibleMoves1 = new HashSet<>(Set.of());
         Set<Integer> testPossibleMoves2 = new HashSet<>(Set.of(4,-4));
 
         Set<Integer> possibleMoves1 = gameLogicService.getPossibleMoves(cardRank1, balls, ball2);
@@ -81,11 +101,15 @@ public class GameLogicServerTest {
     public void ballChosen_validPossibleDestinations() {
 
     Set<Integer> possibleMoves = new HashSet<>(Set.of(1, 11));
-
     Set<Integer> possibleMoves1 = new HashSet<>(Set.of(-4, 4));
+    Set<Integer> possibleMoves2 = new HashSet<>(Set.of(1, 11, 100));
 
     Set<Integer> testPossibleDestinations1 = new HashSet<>(Set.of(1, 11));
     Set<Integer> testPossibleDestinations2 = new HashSet<>(Set.of(0, 64, 10));
+    Set<Integer> testPossibleDestinationsGREEN = new HashSet<>(Set.of(0));
+    Set<Integer> testPossibleDestinationsRED = new HashSet<>(Set.of(16));
+    Set<Integer> testPossibleDestinationsYELLOW = new HashSet<>(Set.of(32));
+    Set<Integer> testPossibleDestinationsBLUE = new HashSet<>(Set.of(48));
 
     Set<Integer> testPossibleDestinations3 = new HashSet<>(Set.of(4, 60));
 
@@ -93,12 +117,21 @@ public class GameLogicServerTest {
     Set<Integer> possibleDestinations1 = gameLogicService.getPossibleDestinations(possibleMoves, ball2);
     Set<Integer> possibleDestinations2 = gameLogicService.getPossibleDestinations(possibleMoves, ball6);
 
-    Set<Integer> possibleDestinations3 = gameLogicService.getPossibleDestinations(possibleMoves1, ball2);
+    Set<Integer> possibleDestinationsGREEN = gameLogicService.getPossibleDestinations(possibleMoves2, ball7);
+    Set<Integer> possibleDestinationsRED = gameLogicService.getPossibleDestinations(possibleMoves2, ball8);
+    Set<Integer> possibleDestinationsYELLOW = gameLogicService.getPossibleDestinations(possibleMoves2, ball9);
+    Set<Integer> possibleDestinationsBLUE = gameLogicService.getPossibleDestinations(possibleMoves2, ball10);
 
+    Set<Integer> possibleDestinations3 = gameLogicService.getPossibleDestinations(possibleMoves1, ball2);
 
     assertEquals(testPossibleDestinations1, possibleDestinations1);
     assertEquals(testPossibleDestinations2, possibleDestinations2);
     assertEquals(testPossibleDestinations3, possibleDestinations3);
+
+    assertEquals(testPossibleDestinationsGREEN, possibleDestinationsGREEN);
+    assertEquals(testPossibleDestinationsRED, possibleDestinationsRED);
+    assertEquals(testPossibleDestinationsYELLOW, possibleDestinationsYELLOW);
+    assertEquals(testPossibleDestinationsBLUE, possibleDestinationsBLUE);
     }
 
     @Test
