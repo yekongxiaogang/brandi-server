@@ -28,4 +28,7 @@ public class Card {
 
     public Suit getSuit() { return suit; }
 
+    public Long getId() {
+        return id;
+    }
 }

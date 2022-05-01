@@ -6,17 +6,9 @@ import ch.uzh.ifi.hase.soprafs22.rest.mapper.DTOMapper;
 
 public class MoveGetDTO {
 
-    private User user;
     private Long ballId;
     private int destinationTile;
-
-    public UserGetDTO getUser() {
-        return DTOMapper.INSTANCE.convertEntityToUserGetDTO(user);
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
+    private Long cardId;
 
     public Long getBallId() {
         return ballId;
@@ -32,5 +24,13 @@ public class MoveGetDTO {
 
     public void setDestinationTile(int destinationTile) {
         this.destinationTile = destinationTile;
+    }
+
+    public Long getCardId() {
+        return cardId;
+    }
+
+    public void setCardId(Long cardId) {
+        this.cardId = cardId;
     }
 }

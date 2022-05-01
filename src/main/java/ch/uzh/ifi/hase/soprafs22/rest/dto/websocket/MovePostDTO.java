@@ -31,4 +31,5 @@ public class MovePostDTO {
     public void setBallId(Long ballId) {
         this.ballId = ballId;
     }
+
 }

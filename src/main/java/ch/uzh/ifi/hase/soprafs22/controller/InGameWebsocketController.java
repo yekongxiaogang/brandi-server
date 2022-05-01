@@ -5,10 +5,10 @@ import ch.uzh.ifi.hase.soprafs22.entity.Ball;
 import ch.uzh.ifi.hase.soprafs22.entity.Game;
 import ch.uzh.ifi.hase.soprafs22.entity.PlayerState;
 import ch.uzh.ifi.hase.soprafs22.entity.websocket.Move;
-import ch.uzh.ifi.hase.soprafs22.rest.dto.GameGetDTO;
-import ch.uzh.ifi.hase.soprafs22.rest.dto.UserGetDTO;
+import ch.uzh.ifi.hase.soprafs22.rest.dto.*;
 import ch.uzh.ifi.hase.soprafs22.rest.dto.websocket.MoveGetDTO;
 import ch.uzh.ifi.hase.soprafs22.rest.dto.websocket.MovePostDTO;
+import ch.uzh.ifi.hase.soprafs22.rest.dto.websocket.SelectMarbleResponseDTO;
 import ch.uzh.ifi.hase.soprafs22.rest.mapper.DTOMapper;
 import ch.uzh.ifi.hase.soprafs22.service.GameService;
 import ch.uzh.ifi.hase.soprafs22.service.InGameWebsocketService;
@@ -26,6 +26,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.security.Principal;
 import java.util.List;
+import java.util.Random;
 import java.util.Set;
 
 
@@ -51,15 +52,19 @@ public class InGameWebsocketController {
         Game userGame = gameService.getGameByUuid(uuid, username);
 
         // verify move validity and add Player details to move for returning
-        move = inGameWebsocketService.verifyMove(userGame, move, username);
-        MoveGetDTO moveDTO = DTOMapper.INSTANCE.convertEntityToMoveGetDTO(move);
-        
+//        move = inGameWebsocketService.verifyMove(userGame, move, username);
+//        MoveGetDTO moveDTO = DTOMapper.INSTANCE.convertEntityToMoveGetDTO(move);
+        MoveGetDTO moveDTO = new MoveGetDTO();
+        moveDTO.setBallId(MovePostDTO.getBallId());
+        moveDTO.setCardId(MovePostDTO.getPlayedCard().getId());
+        moveDTO.setDestinationTile(MovePostDTO.getDestinationTile());
+
         inGameWebsocketService.notifyAllGameMembers("/client/move", userGame, moveDTO); 
     }
 
     @MessageMapping("/websocket/{uuid}/join")
     public void joinGameByUuid(@DestinationVariable String uuid, Principal principal) throws Exception {
-        System.out.println(principal.getName() + " called join");
+        System.out.println(principal.getName() + " just joined a game");
         Game game = gameService.getGameByUuid(uuid, principal.getName());
         if(game == null){
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "game not found by uuid");
@@ -78,6 +83,66 @@ public class InGameWebsocketController {
         inGameWebsocketService.notifyAllOtherGameMembers("/client/player/joined", game, principal.getName(), playerState);
     }
 
+    @MessageMapping("/websocket/{uuid}/select/card")
+    public void selectCard(@DestinationVariable String uuid, CardDTO card, Principal principal) throws Exception {
+        System.out.println(principal.getName() + " selected a card");
+
+        Game game = gameService.getGameByUuid(uuid, principal.getName());
+        if(game == null){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "game not found by uuid");
+        }
+
+        PlayerState playerState = game.getPlayerState(principal.getName());
+
+        // chose random marbles from the players color
+        Random rand = new Random();
+        int howMany = rand.nextInt(4) + 1;
+        int[] marbles = new int[howMany];
+        int index = 0;
+        for (Ball ball : game.getBoardstate().getBalls()) {
+            if(index == howMany) break;
+
+            if(ball.getColor() != playerState.getColor()) continue;
+
+            marbles[index++] = ball.getPosition();
+        }
+
+        HighlightMarblesDTO highlightMarblesDTO = new HighlightMarblesDTO();
+        highlightMarblesDTO.setIndex(card.getIndex());
+        highlightMarblesDTO.setMarbles(marbles);
+
+        // provide the user with a list of marbles he could move
+        inGameWebsocketService.notifySpecificUser("/client/highlight/marbles", principal.getName(), highlightMarblesDTO);
+    }
+
+
+    @MessageMapping("/websocket/{uuid}/select/marble")
+    public void selectMarble(@DestinationVariable String uuid, SelectMarbleDTO selectMarbleDTO, Principal principal) throws Exception {
+        System.out.println(principal.getName() + " selected a marble");
+
+        Game game = gameService.getGameByUuid(uuid, principal.getName());
+        if(game == null){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "game not found by uuid");
+        }
+
+        PlayerState playerState = game.getPlayerState(principal.getName());
+
+        // chose random tiles on the board
+        Random rand = new Random();
+        int howMany = rand.nextInt(3) + 1;
+        int[] highlightedHoles = new int[howMany];
+        int index = 0;
+        for (int i = 0; i < howMany; i++) {
+            highlightedHoles[i] = rand.nextInt(64);
+        }
+
+        SelectMarbleResponseDTO selectMarbleResponseDTO = new SelectMarbleResponseDTO();
+        selectMarbleResponseDTO.setMarbleId(selectMarbleDTO.getMarbleId());
+        selectMarbleResponseDTO.setHighlightHoles(highlightedHoles);
+
+        // provide the user with a list of marbles he could move
+        inGameWebsocketService.notifySpecificUser("/client/highlight/holes", principal.getName(), selectMarbleResponseDTO);
+    }
 
 
     /**
