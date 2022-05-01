@@ -31,8 +31,8 @@ public class GameLogicService {
         return highlightedBalls;
     }
 
-    public List<Integer> getPossibleMoves(Rank cardRank, List<Ball> balls, Ball ball) {
-        List<Integer> possibleMoves = new ArrayList<Integer>();
+    public Set<Integer> getPossibleMoves(Rank cardRank, Set<Ball> balls, Ball ball) {
+        Set<Integer> possibleMoves = new HashSet<Integer>();
 
         if (BoardState.normalCards.get(cardRank) != null) {
             possibleMoves.add(BoardState.normalCards.get(cardRank));
@@ -93,11 +93,27 @@ public class GameLogicService {
         return possibleMoves;
     }
 
-    public List<Integer> getPossibleDestinations (List<Integer> possibleMoves, Ball ball) {
+    public Set<Integer> getPossibleDestinations (Set<Integer> possibleMoves, Ball ball) {
 
-        List<Integer> possibleDestinations = new ArrayList<Integer>();
+        Set<Integer> possibleDestinations = new HashSet<Integer>();
 
         for (int possibleMove : possibleMoves) {
+            if (possibleMove == 100) {
+                if (ball.getColor().equals(Color.GREEN)) {
+                    possibleDestinations = Set.of(0);
+                }
+                else if (ball.getColor().equals(Color.RED)) {
+                    possibleDestinations = Set.of(16);
+                }
+                else if (ball.getColor().equals(Color.YELLOW)) {
+                    possibleDestinations = Set.of(32);
+                }
+                else {
+                    possibleDestinations = Set.of(48);
+                }
+
+                break;
+            }
             // modulo div as board's last pos is 63
             possibleDestinations.add((ball.getPosition() + possibleMove) % 64);
         }
@@ -111,12 +127,12 @@ public class GameLogicService {
 //                }
 //            }
 //        }
-
-        // Remove duplicates from possible destinations
-        Set<Integer> set = new LinkedHashSet<>();
-        set.addAll(possibleDestinations);
-        possibleDestinations.clear();
-        possibleDestinations.addAll(set);
+//
+//        // Remove duplicates from possible destinations
+//        Set<Integer> set = new LinkedHashSet<>();
+//        set.addAll(possibleDestinations);
+//        possibleDestinations.clear();
+//        possibleDestinations.addAll(set);
 
         return possibleDestinations;
     }
