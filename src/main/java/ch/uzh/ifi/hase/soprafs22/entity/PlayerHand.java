@@ -28,6 +28,7 @@ public class PlayerHand {
         for(Card card : this.activeCards){
             if(card.getRank().equals(cardToDelete.getRank()) && card.getSuit().equals(cardToDelete.getSuit())){
                 this.activeCards.remove(card);
+                return;
             }
         }
     }

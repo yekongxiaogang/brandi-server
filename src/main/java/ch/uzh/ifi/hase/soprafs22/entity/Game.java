@@ -195,6 +195,11 @@ public class Game {
         }
         if(ball == null) return false;
 
+        // Remove played card from hand
+        PlayerHand hand = this.getNextTurn().getPlayerHand();
+        hand.deleteCard(move.getPlayedCard());
+
+        //FIXME: Verify that move is a valid move
         ball.setPosition(move.getDestinationTile());
         // Change activePlayer to next user
         //TODO: No idea if this works

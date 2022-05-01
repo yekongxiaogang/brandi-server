@@ -71,6 +71,8 @@ public class InGameWebsocketController {
         } else{
             // Send next user to all users
             inGameWebsocketService.notifyAllGameMembers("/client/nextPlayer", userGame, nextUser.getPlayer());
+            PlayerState state = userGame.getPlayerState(username);
+            inGameWebsocketService.notifySpecificUser("/client/cards", username, state.getPlayerHand());
         }
     }
 
