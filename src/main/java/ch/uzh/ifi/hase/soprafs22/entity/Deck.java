@@ -6,6 +6,7 @@ import java.util.List;
 
 import javax.persistence.*;
 
+import ch.uzh.ifi.hase.soprafs22.constant.GenerateRank;
 import ch.uzh.ifi.hase.soprafs22.constant.Rank;
 import ch.uzh.ifi.hase.soprafs22.constant.Suit;
 
@@ -25,9 +26,9 @@ public class Deck {
 
     private void newDeck(){
         this.cards.clear();
-        for (Rank aRank : Rank.values()) {
+        for (GenerateRank aRank : GenerateRank.values()) {
             for (Suit aSuit : Suit.values()) {
-                this.cards.add(new Card(aRank, aSuit));
+                this.cards.add(new Card(Rank.valueOf(aRank.toString()), aSuit));
             }
         }
         Collections.shuffle(this.cards);
