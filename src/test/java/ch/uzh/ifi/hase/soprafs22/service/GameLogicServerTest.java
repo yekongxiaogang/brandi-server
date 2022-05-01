@@ -105,7 +105,7 @@ public class GameLogicServerTest {
     Set<Integer> possibleMoves1 = new HashSet<>(Set.of(-4, 4));
 
     Set<Integer> testPossibleDestinations1 = new HashSet<>(Set.of(1, 11));
-    Set<Integer> testPossibleDestinations2 = new HashSet<>(Set.of(0, 10));
+    Set<Integer> testPossibleDestinations2 = new HashSet<>(Set.of(0, 64, 10));
 
     Set<Integer> testPossibleDestinations3 = new HashSet<>(Set.of(4, 60));
 

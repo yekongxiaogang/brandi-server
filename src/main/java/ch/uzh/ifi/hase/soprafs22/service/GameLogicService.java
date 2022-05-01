@@ -118,6 +118,34 @@ public class GameLogicService {
                 possibleDestinations.add((ball.getPosition() + possibleMove) + 64);
             }
 
+            Color color;
+            Integer ballPos;
+            if (checkCanGoBase(color = ball.getColor(), ballPos = ball.getPosition(), possibleMoves)) {
+
+                possibleMove = ballPos + possibleMove;
+
+                if (color.equals(Color.GREEN)) {
+                    if (possibleMove <= 67 && possibleMove > 0) {
+                        possibleDestinations.add(possibleMove);
+                    }
+                }
+                else if (color.equals(Color.RED)) {
+                    if (possibleMove <= 71 && possibleMove > 16) {
+                        possibleDestinations.add(possibleMove);
+                    }
+                }
+                else if (color.equals(Color.YELLOW)) {
+                    if (possibleMove <= 75 && possibleMove > 32) {
+                        possibleDestinations.add(possibleMove);
+                    }
+                }
+                else {
+                    if (possibleMove <= 79 && possibleMove > 48) {
+                        possibleDestinations.add(possibleMove);
+                    }
+                }
+            }
+
         }
 
         return possibleDestinations;
