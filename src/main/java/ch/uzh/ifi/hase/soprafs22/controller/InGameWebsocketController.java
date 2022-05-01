@@ -93,7 +93,7 @@ public class InGameWebsocketController {
 
         // provide the user's updated information to all other members in the lobby
         UserGetDTO user = DTOMapper.INSTANCE.convertEntityToUserGetDTO(userService.getUser(principal.getName()));
-        inGameWebsocketService.notifyAllOtherGameMembers("/client/player/joined", game, principal.getName(), playerState);
+        inGameWebsocketService.notifyAllOtherGameMembers("/client/player/left", game, principal.getName(), playerState);
     }
 
     @MessageMapping("/websocket/{uuid}/select/card")
