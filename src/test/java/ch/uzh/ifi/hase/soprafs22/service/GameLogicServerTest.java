@@ -100,8 +100,6 @@ public class GameLogicServerTest {
     @Test
     public void ballChosen_validPossibleDestinations() {
 
-    Set<Ball> balls = new HashSet<>(Set.of(ball1, ball2, ball3, ball4, ball5, ball6));
-
     Set<Integer> possibleMoves = new HashSet<>(Set.of(1, 11));
 
     Set<Integer> possibleMoves1 = new HashSet<>(Set.of(-4, 4));
