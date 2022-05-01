@@ -4,6 +4,7 @@ import ch.uzh.ifi.hase.soprafs22.entity.Ball;
 import ch.uzh.ifi.hase.soprafs22.entity.BoardState;
 import ch.uzh.ifi.hase.soprafs22.entity.Game;
 import ch.uzh.ifi.hase.soprafs22.entity.PlayerState;
+import ch.uzh.ifi.hase.soprafs22.entity.User;
 import ch.uzh.ifi.hase.soprafs22.entity.websocket.Move;
 import ch.uzh.ifi.hase.soprafs22.rest.dto.*;
 import ch.uzh.ifi.hase.soprafs22.rest.dto.websocket.MoveGetDTO;
@@ -49,14 +50,34 @@ public class InGameWebsocketController {
         Game userGame = gameService.getGameByUuid(uuid, username);
 
         // verify move validity and add Player details to move for returning
-//        move = inGameWebsocketService.verifyMove(userGame, move, username);
-//        MoveGetDTO moveDTO = DTOMapper.INSTANCE.convertEntityToMoveGetDTO(move);
-        MoveGetDTO moveDTO = new MoveGetDTO();
-        moveDTO.setBallId(MovePostDTO.getBallId());
-        moveDTO.setCardId(MovePostDTO.getPlayedCard().getId());
-        moveDTO.setDestinationTile(MovePostDTO.getDestinationTile());
+        move = inGameWebsocketService.verifyMove(userGame, move, username);
 
-        inGameWebsocketService.notifyAllGameMembers("/client/move", userGame, moveDTO);
+        // move == null means it wasnt users turn, simply ignore 
+        if(move == null) return;
+        MoveGetDTO moveDTO = DTOMapper.INSTANCE.convertEntityToMoveGetDTO(move);
+        
+        inGameWebsocketService.notifyAllGameMembers("/client/move", userGame, moveDTO); 
+
+        userGame = gameService.getGameByUuid(uuid, username);
+
+        PlayerState nextUser = userGame.getNextTurn();
+        if(nextUser == null){
+            // Send new Cards to all users
+            gameService.startNewRound(uuid);
+            for(PlayerState playerState: userGame.getPlayerStates()){
+                // TODO: Return a DTO
+                inGameWebsocketService.notifySpecificUser("/client/cards", playerState.getPlayer().getUsername(), playerState.getPlayerHand());
+            }
+        } else{
+            // Send next user to all users
+            inGameWebsocketService.notifyAllGameMembers("/client/nextPlayer", userGame, nextUser.getPlayer());
+        }
+    }
+
+    @MessageMapping("/websocket/{uuid}/surrenderCards")
+    public void surrenderCards(@DestinationVariable String uuid, Principal principal) throws Exception {
+        String username = principal.getName();
+        gameService.surrenderCards(uuid, username);
     }
 
     @MessageMapping("/websocket/{uuid}/join")
@@ -68,6 +89,8 @@ public class InGameWebsocketController {
         }
 
         PlayerState playerState = gameService.playerJoined(game, principal.getName());
+
+        // if(playerState == null) return;
 
         // provide the new user with the current Game State
         inGameWebsocketService.notifySpecificUser("/client/state", principal.getName(), DTOMapper.INSTANCE.convertEntityToGameGetDTO(game));

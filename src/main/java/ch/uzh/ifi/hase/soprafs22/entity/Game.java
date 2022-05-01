@@ -55,6 +55,8 @@ public class Game {
     @Column
     private List<Color> unusedColors;
 
+    private Integer activePlayer;
+
     public Game() {}
 
     public Game(User player) {    
@@ -67,6 +69,7 @@ public class Game {
         this.addPlayer(player);
         this.initBoardState();
         this.uuid = UUID.randomUUID().toString();
+        this.activePlayer = 0;
     }
 
     /* Create balls for each player, store in boardstate */
@@ -182,7 +185,45 @@ public class Game {
 
     public Boolean makeMove(Move move){
         Boolean moveExecuted = false;
+
+        Ball ball = null;
+        for(Ball b: this.boardstate.getBalls()){
+            if(b.getId().equals(move.getBallId())){
+                ball = b;
+                break;
+            }
+        }
+        if(ball == null) return false;
+
+        ball.setPosition(move.getDestinationTile());
+        // Change activePlayer to next user
+        //TODO: No idea if this works
+        this.nextPlayer();
         return moveExecuted;        
+    }
+
+    private void nextPlayer(){
+        // Increase as long as activeplayer has no cards
+        for(int i = 0; i < 4; i++){
+            this.activePlayer++;
+            if(!this.getNextTurn().getPlayerHand().isEmpty()){
+                return;
+            }
+        }
+        this.activePlayer = null;
+    }
+
+    public PlayerState getNextTurn(){
+        if(this.activePlayer == null) return null;
+        return this.playerStates.get(this.activePlayer);
+    }
+
+    // return true if all players have no more cards
+    public Boolean allPlayersFinished(){
+        for(PlayerState playerstate: this.playerStates){
+            if(!playerstate.getPlayerHand().getActiveCards().isEmpty()) return false;
+        }
+        return true;
     }
 
     // Check if all players in game are active in this game, only works if game is started already
@@ -313,5 +354,10 @@ public class Game {
             }
         }
         return Optional.empty();
+    }
+
+    public void surrenderCards(String username){
+        PlayerState playerState = this.getPlayerState(username);
+        playerState.getPlayerHand().setActiveCards(null);
     }
 }

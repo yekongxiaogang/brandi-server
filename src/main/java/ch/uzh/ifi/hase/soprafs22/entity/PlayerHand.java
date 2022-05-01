@@ -54,4 +54,7 @@ public class PlayerHand {
         this.activeCards = activeCards;
     }
 
+    public Boolean isEmpty(){
+        return this.activeCards.isEmpty();
+    }
 }

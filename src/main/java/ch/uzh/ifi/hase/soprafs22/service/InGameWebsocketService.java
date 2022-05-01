@@ -1,20 +1,27 @@
 package ch.uzh.ifi.hase.soprafs22.service;
 
+import ch.uzh.ifi.hase.soprafs22.entity.Card;
 import ch.uzh.ifi.hase.soprafs22.entity.Game;
 import ch.uzh.ifi.hase.soprafs22.entity.User;
 import ch.uzh.ifi.hase.soprafs22.entity.websocket.Move;
 import ch.uzh.ifi.hase.soprafs22.repository.GameRepository;
 import ch.uzh.ifi.hase.soprafs22.repository.UserRepository;
+import ch.uzh.ifi.hase.soprafs22.rest.dto.GameGetDTO;
+import ch.uzh.ifi.hase.soprafs22.rest.mapper.DTOMapper;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.HttpStatus;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 
 
 @Service
@@ -79,12 +86,28 @@ public class InGameWebsocketService {
     public Move verifyMove(Game game, Move move, String username){
         // Add user details to move so that everybody knows who made the move
         User user = userRepository.findByUsername(username);
+        if(this.checkHasNoCardsLeft(game, username)){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User " + username + " has no cards left to make a move");
+        }
+
+        // User is not nextUser to play
+        String nextPlayer = game.getNextTurn().getPlayer().getUsername();
+        if(!nextPlayer.equals(username)){
+            return null;
+        }
+
         move.setUser(user);
         // Actually make the move and persist it
         game.makeMove(move);
+
         gameRepository.saveAndFlush(game);
     
         // If everything went well, return the move that was made
         return move;
+    }
+
+    public Boolean checkHasNoCardsLeft(Game game, String username){
+        Set<Card> cards = game.getPlayerState(username).getPlayerHand().getActiveCards();
+        return cards.isEmpty();
     }
 }
