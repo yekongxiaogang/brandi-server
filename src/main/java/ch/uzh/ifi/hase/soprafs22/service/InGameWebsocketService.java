@@ -1,7 +1,9 @@
 package ch.uzh.ifi.hase.soprafs22.service;
 
+import ch.uzh.ifi.hase.soprafs22.entity.Ball;
 import ch.uzh.ifi.hase.soprafs22.entity.Card;
 import ch.uzh.ifi.hase.soprafs22.entity.Game;
+import ch.uzh.ifi.hase.soprafs22.entity.PlayerState;
 import ch.uzh.ifi.hase.soprafs22.entity.User;
 import ch.uzh.ifi.hase.soprafs22.entity.websocket.Move;
 import ch.uzh.ifi.hase.soprafs22.repository.GameRepository;
@@ -105,6 +107,30 @@ public class InGameWebsocketService {
         // If everything went well, return the move that was made
         return move;
     }
+
+    public Boolean checkIsNext(Game game, String username){
+        // User is not nextUser to play
+        String nextPlayer = game.getNextTurn().getPlayer().getUsername();
+        if(nextPlayer.equals(username)){
+            return true;
+        }
+        return false;
+    }
+
+    /* public void checkForSurrender(String username, Game game){
+        PlayerState state = game.getPlayerState(username);
+        Set<Ball> balls = game.getBoardstate().getBalls();
+        // If user can choose other card and play with that, return nothing. If no playable card, delete cards and move to next player
+        for(Card cardInHand: state.getPlayerHand().getActiveCards()){
+            Set<Integer> possibleMarbles = gameLogicService.highlightBalls(cardInHand.getRank(), balls, state.getColor());
+            if(!possibleMarbles.isEmpty()){
+                return;
+            }
+        }
+        // delete cards and move to next player
+        game.surrenderCards(username);
+        gameRepository.saveAndFlush(game);
+    } */
 
     public Boolean checkHasNoCardsLeft(Game game, String username){
         Set<Card> cards = game.getPlayerState(username).getPlayerHand().getActiveCards();

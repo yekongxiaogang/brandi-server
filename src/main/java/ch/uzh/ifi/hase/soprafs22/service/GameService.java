@@ -111,7 +111,10 @@ public class GameService {
         if(user == null){
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User " + username + " not found");
         }
-        if(user.getCurrentGameId().equals(game.getId())){ // check whether user is in the game
+        Optional<Long> currGameId = user.getCurrentGameId();
+        if(currGameId.isEmpty()){
+            System.out.println("user has no current game");
+        } else if(currGameId.get().equals(game.getId())){ // check whether user is in the game
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not in this game");
         }
 
@@ -144,10 +147,11 @@ public class GameService {
         }
     }
 
-    public void surrenderCards(String uuid, String username) {   
+    public Game surrenderCards(String uuid, String username) {   
         Game game = this.getGameByUuid(uuid, username); 
         game.surrenderCards(username);
         gameRepository.saveAndFlush(game);
+        return game;
     }
     
         /**
