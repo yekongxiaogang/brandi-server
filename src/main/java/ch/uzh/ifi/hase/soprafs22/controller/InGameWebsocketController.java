@@ -10,6 +10,7 @@ import ch.uzh.ifi.hase.soprafs22.rest.dto.websocket.MoveGetDTO;
 import ch.uzh.ifi.hase.soprafs22.rest.dto.websocket.MovePostDTO;
 import ch.uzh.ifi.hase.soprafs22.rest.dto.websocket.SelectMarbleResponseDTO;
 import ch.uzh.ifi.hase.soprafs22.rest.mapper.DTOMapper;
+import ch.uzh.ifi.hase.soprafs22.service.GameLogicService;
 import ch.uzh.ifi.hase.soprafs22.service.GameService;
 import ch.uzh.ifi.hase.soprafs22.service.InGameWebsocketService;
 
@@ -34,11 +35,13 @@ import java.util.Set;
 public class InGameWebsocketController {
 
     private final InGameWebsocketService inGameWebsocketService;
+    private final GameLogicService gameLogicService;
     private final GameService gameService;
     private UserService userService;
 
-    InGameWebsocketController(InGameWebsocketService service, GameService gameService, UserService userService) {
+    InGameWebsocketController(InGameWebsocketService service, GameService gameService, GameLogicService gameLogicService, UserService userService) {
         this.inGameWebsocketService = service;
+        this.gameLogicService = gameLogicService;
         this.gameService = gameService;
         this.userService = userService;
     }
@@ -94,18 +97,13 @@ public class InGameWebsocketController {
 
         PlayerState playerState = game.getPlayerState(principal.getName());
 
-        // chose random marbles from the players color
-        Random rand = new Random();
-        int howMany = rand.nextInt(4) + 1;
-        int[] marbles = new int[howMany];
-        int index = 0;
-        for (Ball ball : game.getBoardstate().getBalls()) {
-            if(index == howMany) break;
+        // choose marbles adequately to chosen card
 
-            if(ball.getColor() != playerState.getColor()) continue;
+        Set<Ball> balls = game.getBoardstate().getBalls();
 
-            marbles[index++] = ball.getPosition();
-        }
+        Set<Integer> marblesSet = gameLogicService.highlightBalls(card.getRank(), balls, playerState.getColor());
+
+        int[] marbles = marblesSet.stream().mapToInt(Integer::intValue).toArray();
 
         HighlightMarblesDTO highlightMarblesDTO = new HighlightMarblesDTO();
         highlightMarblesDTO.setIndex(card.getIndex());
