@@ -14,6 +14,7 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -43,29 +44,29 @@ public class GameLogicServerTest {
 
     }
 
-//    @Test
-//    public void cardChosen_validBalls() {
-//        Rank cardRank = Rank.ACE;
-//        Color playerColor = Color.GREEN;
-//
-//        Set<Ball> balls = new ArrayList<>(Set.of(ball1, ball2, ball3, ball4, ball5, ball6));
-//
-//        List<Integer> testHighlightedBalls = new ArrayList<>(List.of(-1, 0, 64, 14, 16, 63));
-//
-//        List<Integer> highlightedBalls = gameLogicService.highlightBalls(cardRank, balls, playerColor);
-//
-//        assertEquals(testHighlightedBalls, highlightedBalls);
-//    }
+    @Test
+    public void cardChosen_validBalls() {
+        Rank cardRank = Rank.ACE;
+        Color playerColor = Color.GREEN;
+
+        Set<Ball> balls = new HashSet<>(Set.of(ball1, ball2, ball3, ball4, ball5, ball6));
+
+        Set<Integer> testHighlightedBalls = new HashSet<>(Set.of(-1, 0, 64, 14, 16, 63));
+
+        Set<Integer> highlightedBalls = gameLogicService.highlightBalls(cardRank, balls, playerColor);
+
+        assertEquals(testHighlightedBalls, highlightedBalls);
+    }
 
     @Test
     public void ballChosen_validPossibleMoves() {
         Rank cardRank = Rank.ACE;
 
-        List<Ball> balls = new ArrayList<>(List.of(ball1, ball2, ball3, ball4, ball5, ball6));
+        Set<Ball> balls = new HashSet<>(Set.of(ball1, ball2, ball3, ball4, ball5, ball6));
 
-        List<Integer> testPossibleMoves = new ArrayList<>(List.of(1,11,100));
+        Set<Integer> testPossibleMoves = new HashSet<>(Set.of(1,11,100));
 
-        List<Integer> possibleMoves = gameLogicService.getPossibleMoves(cardRank, balls, ball2);
+        Set<Integer> possibleMoves = gameLogicService.getPossibleMoves(cardRank, balls, ball2);
 
         assertEquals(testPossibleMoves, possibleMoves);
 
@@ -91,16 +92,16 @@ public class GameLogicServerTest {
     public void ballChosen_validPossibleDestinations() {
     Rank cardRank = Rank.ACE;
 
-    List<Ball> balls = new ArrayList<>(List.of(ball1, ball2, ball3, ball4, ball5, ball6));
+    Set<Ball> balls = new HashSet<>(Set.of(ball1, ball2, ball3, ball4, ball5, ball6));
 
-    List<Integer> possibleMoves = new ArrayList<>(List.of(1, 11));
+    Set<Integer> possibleMoves = new HashSet<>(Set.of(1, 11));
 
-    List<Integer> testPossibleDestinations1 = new ArrayList<>(List.of(1, 11));
-    List<Integer> testPossibleDestinations2 = new ArrayList<>(List.of(0, 10));
+    Set<Integer> testPossibleDestinations1 = new HashSet<>(Set.of(1, 11));
+    Set<Integer> testPossibleDestinations2 = new HashSet<>(Set.of(0, 10));
 //    List<Integer> testPossibleMoves3 = new ArrayList<>(List.of(1, 11, 100));
 
-    List<Integer> possibleDestinations1 = gameLogicService.getPossibleDestinations(possibleMoves, ball2);
-    List<Integer> possibleDestinations2 = gameLogicService.getPossibleDestinations(possibleMoves, ball6);
+    Set<Integer> possibleDestinations1 = gameLogicService.getPossibleDestinations(possibleMoves, ball2);
+    Set<Integer> possibleDestinations2 = gameLogicService.getPossibleDestinations(possibleMoves, ball6);
 //    List<Integer> possibleMoves3 = gameLogicService.getPossibleMoves(cardRank, balls, ball3);
 
     assertEquals(testPossibleDestinations1, possibleDestinations1);

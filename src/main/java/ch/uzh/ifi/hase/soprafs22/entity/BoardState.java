@@ -47,9 +47,15 @@ public class BoardState {
         this.balls = balls;
     }
 
-
     public Set<Ball> getBalls() {
         return this.balls;
+    }
+
+    public Ball getBallById (Long ballId) {
+        for (Ball ball : balls) {
+            if (ball.getId().equals(ballId)) {return ball;}
+        }
+        return null;
     }
 
 }

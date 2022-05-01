@@ -2,6 +2,7 @@ package ch.uzh.ifi.hase.soprafs22.controller;
 
 import ch.uzh.ifi.hase.soprafs22.constant.Color;
 import ch.uzh.ifi.hase.soprafs22.entity.Ball;
+import ch.uzh.ifi.hase.soprafs22.entity.BoardState;
 import ch.uzh.ifi.hase.soprafs22.entity.Game;
 import ch.uzh.ifi.hase.soprafs22.entity.PlayerState;
 import ch.uzh.ifi.hase.soprafs22.entity.websocket.Move;
@@ -115,7 +116,7 @@ public class InGameWebsocketController {
 
 
     @MessageMapping("/websocket/{uuid}/select/marble")
-    public void selectMarble(@DestinationVariable String uuid, SelectMarbleDTO selectMarbleDTO, Principal principal) throws Exception {
+    public void selectMarble(@DestinationVariable String uuid, CardDTO card, SelectMarbleDTO selectMarbleDTO, Principal principal) throws Exception {
         System.out.println(principal.getName() + " selected a marble");
 
         Game game = gameService.getGameByUuid(uuid, principal.getName());
@@ -125,14 +126,21 @@ public class InGameWebsocketController {
 
         PlayerState playerState = game.getPlayerState(principal.getName());
 
-        // chose random tiles on the board
-        Random rand = new Random();
-        int howMany = rand.nextInt(3) + 1;
-        int[] highlightedHoles = new int[howMany];
-        int index = 0;
-        for (int i = 0; i < howMany; i++) {
-            highlightedHoles[i] = rand.nextInt(64);
-        }
+        // highlight possible moves
+
+        BoardState boardState = game.getBoardstate();
+
+        Set<Ball> balls = boardState.getBalls();
+
+        Long ballId = Long.valueOf(selectMarbleDTO.getMarbleId());
+
+        Ball ball = boardState.getBallById(ballId);
+
+        Set<Integer> possibleMoves = gameLogicService.getPossibleMoves(card.getRank(), balls, ball);
+
+        Set<Integer> highlightedHolesSet = gameLogicService.getPossibleDestinations(possibleMoves, ball);
+
+        int[] highlightedHoles = highlightedHolesSet.stream().mapToInt(Integer::intValue).toArray();
 
         SelectMarbleResponseDTO selectMarbleResponseDTO = new SelectMarbleResponseDTO();
         selectMarbleResponseDTO.setMarbleId(selectMarbleDTO.getMarbleId());
