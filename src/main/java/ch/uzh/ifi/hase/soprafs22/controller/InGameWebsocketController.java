@@ -116,7 +116,7 @@ public class InGameWebsocketController {
 
 
     @MessageMapping("/websocket/{uuid}/select/marble")
-    public void selectMarble(@DestinationVariable String uuid, CardDTO card, SelectMarbleDTO selectMarbleDTO, Principal principal) throws Exception {
+    public void selectMarble(@DestinationVariable String uuid, SelectMarbleDTO selectMarbleDTO, Principal principal) throws Exception {
         System.out.println(principal.getName() + " selected a marble");
 
         Game game = gameService.getGameByUuid(uuid, principal.getName());
@@ -136,7 +136,7 @@ public class InGameWebsocketController {
 
         Ball ball = boardState.getBallById(ballId);
 
-        Set<Integer> possibleMoves = gameLogicService.getPossibleMoves(card.getRank(), balls, ball);
+        Set<Integer> possibleMoves = gameLogicService.getPossibleMoves(selectMarbleDTO.getRank(), balls, ball);
 
         Set<Integer> highlightedHolesSet = gameLogicService.getPossibleDestinations(possibleMoves, ball);
 
