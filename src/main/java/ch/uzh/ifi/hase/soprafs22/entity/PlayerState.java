@@ -28,7 +28,8 @@ public class PlayerState {
     //FIXME: Does this mean that User gets deleted when one of his games is deleted?
     @ManyToOne(cascade = CascadeType.ALL)
     private User player;
-    
+
+    // it is the players turn
     @Column(nullable=false)
     private Boolean isPlaying;
     
@@ -38,7 +39,7 @@ public class PlayerState {
     @Column(nullable = false)
     private Color color;
     
-    //TODO: Is this the same as isPlaying?
+    // is he online / connected to the game
     @Column(nullable=false)
     private Boolean playerStatus;
     
@@ -49,7 +50,7 @@ public class PlayerState {
 
     public PlayerState(User player, Integer team, Color color, Boolean playerStatus, PlayerHand playerHand) {
         this.player = player;
-        this.isPlaying = true;
+        this.isPlaying = false;
         this.team = team;
         this.playerStatus = playerStatus;
         this.playerHand = playerHand;
@@ -76,6 +77,10 @@ public class PlayerState {
         return this.playerStatus;
     }
 
+    /**
+     * set whether the player is connected / online in the game
+     * @param playerStatus
+     */
     public void setPlayerStatus(Boolean playerStatus) {
         this.playerStatus = playerStatus;
     }
