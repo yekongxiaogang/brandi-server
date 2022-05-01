@@ -4,27 +4,26 @@ import ch.uzh.ifi.hase.soprafs22.constant.Color;
 import ch.uzh.ifi.hase.soprafs22.constant.Rank;
 import ch.uzh.ifi.hase.soprafs22.entity.Ball;
 import ch.uzh.ifi.hase.soprafs22.entity.BoardState;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
+@Service
+@Transactional
 public class GameLogicService {
 
-    public List<Integer> highlightBalls (Rank cardRank, List<Ball> balls, Color playerColor) {
-        List<Integer> highlightedBalls = new ArrayList<Integer>();
+    public Set<Integer> highlightBalls (Rank cardRank, Set<Ball> balls, Color playerColor) {
+        Set<Integer> highlightedBalls = new HashSet<>();
 
         for (Ball ball : balls) {
             int ballPos = ball.getPosition();
             if (ball.getColor().equals(playerColor)) {
-                if (!ball.getPosition().equals(-1)) {
+                if (!(BoardState.homePoints.contains(ball.getPosition()))) {
                     highlightedBalls.add(ballPos);
                 }
-                else {
-                    if (cardRank.equals(Rank.ACE) || (cardRank.equals(Rank.KING))) {
-                        highlightedBalls.add(ballPos);
-                    }
+                else if (cardRank.equals(Rank.ACE) || (cardRank.equals(Rank.KING))){
+                    highlightedBalls.add(ballPos);
                 }
             }
         }
