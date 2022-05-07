@@ -213,7 +213,7 @@ public class Game {
         // Increase as long as activeplayer has no cards
         for(int i = 0; i < 4; i++){
             this.playerStates.get(this.activePlayer).setIsPlaying(false);
-            this.activePlayer = (this.activePlayer + 1) % 4;
+            this.activePlayer = (this.activePlayer + 1) % this.playerStates.size();
             if(!this.getNextTurn().getPlayerHand().isEmpty()){
                 this.getNextTurn().setIsPlaying(true);
                 return;

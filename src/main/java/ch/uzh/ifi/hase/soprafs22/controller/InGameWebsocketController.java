@@ -48,42 +48,15 @@ public class InGameWebsocketController {
         // Get move, username, game
         Move move = DTOMapper.INSTANCE.convertMovePostDTOtoEntity(MovePostDTO);
         String username = principal.getName();
-        Game userGame = gameService.getGameByUuid(uuid, username);
+        Game game = gameService.getGameByUuid(uuid, username);
 
-        // verify move validity and add Player details to move for returning
-        move = inGameWebsocketService.verifyMove(userGame, move, username);
+        // verify move validity, make move in game, add Player details to move for returning
+        move = inGameWebsocketService.verifyMove(game, move, username);
 
-        // move == null means it wasnt users turn, simply ignore 
+        // move == null means it wasnt users turn or no cards left, simply ignore 
         if(move == null) return;
-        MoveGetDTO moveDTO = DTOMapper.INSTANCE.convertEntityToMoveGetDTO(move);
-        
-        inGameWebsocketService.notifyAllGameMembers("/client/move", userGame, moveDTO); 
 
-        userGame = gameService.getGameByUuid(uuid, username);
-
-        PlayerState nextUser = userGame.getNextTurn();
-        if(nextUser == null){
-            // Send new Cards to all users
-            Game updatedGame = gameService.startNewRound(uuid);
-            nextUser = updatedGame.getNextTurn();
-            for(PlayerState playerState: updatedGame.getPlayerStates()){
-                // TODO: Return a DTO
-                inGameWebsocketService.notifySpecificUser("/client/cards", playerState.getPlayer().getUsername(), playerState.getPlayerHand());
-                // Send next user to all users
-                inGameWebsocketService.notifyAllGameMembers("/client/nextPlayer", userGame, nextUser.getPlayer());
-            }
-        } else{
-            // Send next user to all users
-            inGameWebsocketService.notifyAllGameMembers("/client/nextPlayer", userGame, nextUser.getPlayer());
-            PlayerState state = userGame.getPlayerState(username);
-            inGameWebsocketService.notifySpecificUser("/client/cards", username, state.getPlayerHand());
-        }
-    }
-
-    @MessageMapping("/websocket/{uuid}/surrenderCards")
-    public void surrenderCards(@DestinationVariable String uuid, Principal principal) throws Exception {
-        String username = principal.getName();
-        gameService.surrenderCards(uuid, username);
+        inGameWebsocketService.notifyPlayersAfterMove(move, uuid);
     }
 
     @MessageMapping("/websocket/{uuid}/join")
@@ -91,7 +64,7 @@ public class InGameWebsocketController {
         System.out.println(principal.getName() + " just joined a game");
         Game game = gameService.getGameByUuid(uuid, principal.getName());
         if(game == null){
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "game not found by uuid");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Game to join not found by uuid");
         }
 
         PlayerState playerState = gameService.playerJoined(game, principal.getName());
@@ -135,56 +108,25 @@ public class InGameWebsocketController {
         }
         
         String username = principal.getName();
-        PlayerState playerState = game.getPlayerState(username);
-
-        // choose marbles adequately to chosen card
         Set<Ball> balls = game.getBoardstate().getBalls();
+        Set<Integer> marblesSet = gameLogicService.highlightBalls(card.getRank(), balls, game.getPlayerState(username).getColor());
 
-        Set<Integer> marblesSet = gameLogicService.highlightBalls(card.getRank(), balls, playerState.getColor());
-
-        // check if his turn
-        Boolean isNext = inGameWebsocketService.checkIsNext(game, username);
-        if(!isNext) return;
-        
-        if(marblesSet.isEmpty()){
-            // If user can choose other card and play with that, return nothing. If no playable card, delete cards and move to next player
-            for(Card cardInHand: playerState.getPlayerHand().getActiveCards()){
-                Set<Integer> possibleMarbles = gameLogicService.highlightBalls(cardInHand.getRank(), balls, playerState.getColor());
-                if(!possibleMarbles.isEmpty()){
-                    return;
-                }
-            }
-
-            // User can choose no other card and play with that: Delete cards
-            game = gameService.surrenderCards(uuid, username);
-            // Move to next user
-            PlayerState nextUser = game.getNextTurn();
-            if(nextUser == null){
-                // Send new Cards to all users
-                Game updatedGame = gameService.startNewRound(uuid);
-                nextUser = updatedGame.getNextTurn();
-                for(PlayerState state: updatedGame.getPlayerStates()){
-                    inGameWebsocketService.notifySpecificUser("/client/cards", state.getPlayer().getUsername(), state.getPlayerHand());
-                    inGameWebsocketService.notifyAllGameMembers("/client/nextPlayer", game, nextUser.getPlayer());
-                }
-            } else{
-                // Send next user to all users
-                inGameWebsocketService.notifyAllGameMembers("/client/nextPlayer", game, nextUser.getPlayer());
-                PlayerState state = game.getPlayerState(username);
-                inGameWebsocketService.notifySpecificUser("/client/cards", username, state.getPlayerHand());
+        Boolean movePossible = inGameWebsocketService.selectCard(game, card, username, marblesSet);
+        if(movePossible){
+            return;
+        }
+        // If user can choose other card and play with that, return nothing. 
+        // If no playable card, delete cards and move to next player
+        PlayerState playerState = game.getPlayerState(username);
+        for(Card cardInHand: playerState.getPlayerHand().getActiveCards()){
+            Set<Integer> possibleMarbles = gameLogicService.highlightBalls(cardInHand.getRank(), balls, playerState.getColor());
+            //TODO: Could send list of playable cards to user here
+            if(!possibleMarbles.isEmpty()){
+                // User has other card to make a move, ignore 
+                return;
             }
         }
-        // check marblesset empty
-        //if so, then check all cards
-        // notify next
-        int[] marbles = marblesSet.stream().mapToInt(Integer::intValue).toArray();
-
-        HighlightMarblesDTO highlightMarblesDTO = new HighlightMarblesDTO();
-        highlightMarblesDTO.setIndex(card.getIndex());
-        highlightMarblesDTO.setMarbles(marbles);
-
-        // provide the user with a list of marbles he could move
-        inGameWebsocketService.notifySpecificUser("/client/highlight/marbles", principal.getName(), highlightMarblesDTO);
+        inGameWebsocketService.noMovePossible(game, username);
     }
 
 

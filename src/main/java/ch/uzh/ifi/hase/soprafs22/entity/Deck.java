@@ -2,7 +2,9 @@ package ch.uzh.ifi.hase.soprafs22.entity;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.*;
 
@@ -18,9 +20,10 @@ public class Deck {
     private Long id;
     
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    private List<Card> cards = new ArrayList<>();
+    private Set<Card> cards;
 
     public Deck(){
+        this.cards = new HashSet<>();
         newDeck();
     }
 
@@ -31,16 +34,20 @@ public class Deck {
                 this.cards.add(new Card(Rank.valueOf(aRank.toString()), aSuit));
             }
         }
-        Collections.shuffle(this.cards);
+        // Dont think we have to shuffle cards anymore since set is unordered
     }
 
     // Draw card, refill deck and draw if no cards in deck
     public Card drawCard(){
         try {
-            return this.cards.remove(0);
+            Card card = this.cards.iterator().next();
+            this.cards.remove(card);
+            return card;
         } catch (Exception e) {
             this.newDeck();
-            return this.cards.remove(0);
+            Card card = this.cards.iterator().next();
+            this.cards.remove(card);
+            return card;
         }
     }
 }

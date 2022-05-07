@@ -8,7 +8,10 @@ import ch.uzh.ifi.hase.soprafs22.entity.User;
 import ch.uzh.ifi.hase.soprafs22.entity.websocket.Move;
 import ch.uzh.ifi.hase.soprafs22.repository.GameRepository;
 import ch.uzh.ifi.hase.soprafs22.repository.UserRepository;
+import ch.uzh.ifi.hase.soprafs22.rest.dto.CardDTO;
 import ch.uzh.ifi.hase.soprafs22.rest.dto.GameGetDTO;
+import ch.uzh.ifi.hase.soprafs22.rest.dto.HighlightMarblesDTO;
+import ch.uzh.ifi.hase.soprafs22.rest.dto.websocket.MoveGetDTO;
 import ch.uzh.ifi.hase.soprafs22.rest.mapper.DTOMapper;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -89,7 +92,8 @@ public class InGameWebsocketService {
         // Add user details to move so that everybody knows who made the move
         User user = userRepository.findByUsername(username);
         if(this.checkHasNoCardsLeft(game, username)){
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User " + username + " has no cards left to make a move");
+            System.out.println(username + " has no cards left to make a move");
+            return null;
         }
 
         // User is not nextUser to play
@@ -106,6 +110,39 @@ public class InGameWebsocketService {
     
         // If everything went well, return the move that was made
         return move;
+    }
+    
+    public void notifyPlayersAfterMove(Move move, String uuid) {
+        // Need to fetch game here, not in controller because no proxy error otherwise
+        Optional<Game> optGame = gameRepository.findByUuid(uuid);
+        if(optGame.isEmpty()) return;
+        Game game = optGame.get();
+
+        MoveGetDTO moveDTO = DTOMapper.INSTANCE.convertEntityToMoveGetDTO(move);
+        String username = move.getUser().getUsername();
+
+        this.notifyAllGameMembers("/client/move", game, moveDTO); 
+
+        
+
+        PlayerState nextUser = game.getNextTurn();
+        if(nextUser == null){ // No user can play any cards anymore -> Start new round
+            game.startNewRound();;
+            nextUser = game.getNextTurn();
+            for(PlayerState playerState: game.getPlayerStates()){
+                // Send new Cards to all users
+                this.notifySpecificUser("/client/cards", playerState.getPlayer().getUsername(), playerState.getPlayerHand());
+                // Send next user to all users
+                this.notifyAllGameMembers("/client/nextPlayer", game, nextUser.getPlayer());
+            }
+        } else{
+            // Send next user to all users, send updated cards to user that moved
+            this.notifyAllGameMembers("/client/nextPlayer", game, nextUser.getPlayer());
+            PlayerState state = game.getPlayerState(username);
+            this.notifySpecificUser("/client/cards", username, state.getPlayerHand());
+        }
+
+        gameRepository.saveAndFlush(game);
     }
 
     public Boolean checkIsNext(Game game, String username){
@@ -135,5 +172,64 @@ public class InGameWebsocketService {
     public Boolean checkHasNoCardsLeft(Game game, String username){
         Set<Card> cards = game.getPlayerState(username).getPlayerHand().getActiveCards();
         return cards.isEmpty();
+    }
+
+    public Boolean selectCard(Game game, CardDTO card, String username, Set<Integer> marblesSet){
+        PlayerState playerState = game.getPlayerState(username);
+
+        // choose marbles adequately to chosen card
+        Set<Ball> balls = game.getBoardstate().getBalls();
+
+        // check if his turn
+        Boolean isNext = this.checkIsNext(game, username);
+        if(!isNext) return true;
+        
+        if(marblesSet.isEmpty()){
+            return false;
+        }
+        // check marblesset empty
+        //if so, then check all cards
+        // notify next
+        int[] marbles = marblesSet.stream().mapToInt(Integer::intValue).toArray();
+
+        HighlightMarblesDTO highlightMarblesDTO = new HighlightMarblesDTO();
+        highlightMarblesDTO.setIndex(card.getIndex());
+        highlightMarblesDTO.setMarbles(marbles);
+
+        // provide the user with a list of marbles he could move
+        this.notifySpecificUser("/client/highlight/marbles", username, highlightMarblesDTO);
+        return true;
+    }
+
+    public void noMovePossible(Game game, String username){
+        // Need to refetch game here because no proxy error otherwise
+        Optional<Game> optGame = gameRepository.findByUuid(game.getUuid());
+        if(optGame.isEmpty()) return;
+        game = optGame.get();
+
+        // User can choose no other card and play with that: Delete cards
+        game = this.surrenderCards(game, username);
+        // Move to next user
+        PlayerState nextUser = game.getNextTurn();
+        if(nextUser == null){
+            // Send new Cards to all users
+            game.startNewRound();
+            nextUser = game.getNextTurn();
+            for(PlayerState state: game.getPlayerStates()){
+                this.notifySpecificUser("/client/cards", state.getPlayer().getUsername(), state.getPlayerHand());
+                this.notifyAllGameMembers("/client/nextPlayer", game, nextUser.getPlayer());
+            }
+        } else{
+            // Send next user to all users
+            this.notifyAllGameMembers("/client/nextPlayer", game, nextUser.getPlayer());
+            PlayerState state = game.getPlayerState(username);
+            this.notifySpecificUser("/client/cards", username, state.getPlayerHand());
+        }
+    }
+
+    private Game surrenderCards(Game game, String username) {  
+        game.surrenderCards(username);
+        gameRepository.saveAndFlush(game);
+        return game;
     }
 }
