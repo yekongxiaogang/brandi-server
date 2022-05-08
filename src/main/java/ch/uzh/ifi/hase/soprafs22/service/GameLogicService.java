@@ -108,10 +108,19 @@ public class GameLogicService {
                 int baseMove = ballPos + possibleMove;
 
                 if (color.equals(Color.GREEN)) {
-                    int greenMove = baseMove - 1;
-                    if (greenMove <= 67 && greenMove >= 64) {
-                        possibleDestinations.add(greenMove);
+
+                    if (!BoardState.basePoints.contains(ballPos)) {
+                        int greenMove = baseMove - 1;
+                        if (greenMove <= 67 && greenMove >= 64) {
+                            possibleDestinations.add(greenMove);
+                        }
                     }
+                    else {
+                        if (baseMove <= 67 && baseMove >= 64) {
+                            possibleDestinations.add(baseMove);
+                        }
+                    }
+
                 }
                 else if (color.equals(Color.RED)) {
                     baseMove = ballPos + possibleMove + 51;
