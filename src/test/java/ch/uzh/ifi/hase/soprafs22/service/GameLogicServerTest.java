@@ -9,6 +9,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -158,6 +159,19 @@ public class GameLogicServerTest {
         assertEquals(2, gameLogicService.checkCanGoOutOfHome(red84, balls));
         assertEquals(2, gameLogicService.checkCanGoOutOfHome(yellow88, balls));
         assertEquals(2, gameLogicService.checkCanGoOutOfHome(blue95, balls));
+    }
+
+    @Test
+    public void getHolesTravelledTest() {
+
+        List<Integer> from0to6 = gameLogicService.getHolesTravelled(6,0);
+        List<Integer> from62to4 = gameLogicService.getHolesTravelled(4,62);
+        List<Integer> from4to0 = gameLogicService.getHolesTravelled(0,4);
+
+        assertEquals(List.of(1,2,3,4,5,6), from0to6);
+        assertEquals(List.of(63,0,1,2,3,4), from62to4);
+        assertEquals(List.of(3,2,1,0), from4to0);
+
     }
 
 }
