@@ -99,8 +99,15 @@ public class GameService {
     }
     
 
-     /* Throws error if user in not in game to be retrieved */
-    public Game getGameByUuid(String uuid, String username) {
+    
+    /**
+     * 
+     * Use when user needs to be in game of uuid
+     * @param uuid of game to get
+     * @param username of user that initiated request
+     * @return game iff. username is in that game
+     */
+    public Game getGameByUuidOfUser(String uuid, String username) {
         Optional<Game> optGame = gameRepository.findByUuid(uuid);
         if(optGame.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Couldn't find game");
@@ -111,14 +118,26 @@ public class GameService {
         if(user == null){
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User " + username + " not found");
         }
-        Optional<Long> currGameId = user.getCurrentGameId();
-        if(currGameId.isEmpty()){
-            System.out.println("user has no current game");
-        } else if(currGameId.get().equals(game.getId())){ // check whether user is in the game
-//            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not in this game");
+        
+        if(!user.isInGame(uuid)){ // check whether user is in the game
+           throw new ResponseStatusException(HttpStatus.NOT_FOUND, username + " is not in game " + uuid);
         }
 
         return game;
+    }
+
+    /**
+     * 
+     * @param uuid
+     * @return Game
+     * @throws Exception if  game with uuid does not exist
+     */
+    public Game getGameByUuid(String uuid) {
+        Optional<Game> optGame = gameRepository.findByUuid(uuid);
+        if(optGame.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Couldn't find game");
+        }
+        return optGame.get();
     }
 
     public List<Game> getGames() {
@@ -150,7 +169,7 @@ public class GameService {
     }
 
     public Game surrenderCards(String uuid, String username) {   
-        Game game = this.getGameByUuid(uuid, username); 
+        Game game = this.getGameByUuidOfUser(uuid, username); 
         game.surrenderCards(username);
         gameRepository.saveAndFlush(game);
         return game;

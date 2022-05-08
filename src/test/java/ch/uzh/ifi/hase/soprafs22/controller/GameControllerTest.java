@@ -100,7 +100,7 @@ public class GameControllerTest {
 
         game.addPlayer(testPlayer);
 
-        given(gameService.getGameByUuid(uuid, "testUsername")).willReturn(game);
+        given(gameService.getGameByUuidOfUser(uuid, "testUsername")).willReturn(game);
 
         // when
         MockHttpServletRequestBuilder getRequest = get("/game/\"123e4567-e89b-12d3-a456-426614174000\"").contentType(MediaType.APPLICATION_JSON);

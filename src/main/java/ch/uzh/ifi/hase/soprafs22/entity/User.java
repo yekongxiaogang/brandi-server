@@ -105,6 +105,13 @@ public class User implements Serializable {
         return Optional.empty();
     }
 
+    public Boolean isInGame(String uuid){
+        for(Game game : this.games){
+            if(game.getUuid().equals(uuid)) return true;
+        }
+        return false;
+    }
+
 
     /*
      * Returns game in list of games that is currently active, if more than one is active(shouldnt be possible), just returns first one

@@ -203,8 +203,7 @@ public class Game {
 
         //FIXME: Verify that move is a valid move
         ball.setPosition(move.getDestinationTile());
-        // Change activePlayer to next user
-        //TODO: No idea if this works
+
         this.nextPlayer();
         return moveExecuted;        
     }
@@ -252,12 +251,6 @@ public class Game {
             }
         }
         return true;
-
-        // Previous approach, only checks if all players are in a game, not if all are in this game
-        /* for(PlayerState playerState: this.playerStates){
-            if(!playerState.getIsPlaying()){return false;}
-        }
-        return true; */
     }
 
     public void pauseGame(){

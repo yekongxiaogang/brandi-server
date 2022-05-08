@@ -201,6 +201,11 @@ public class InGameWebsocketService {
         return true;
     }
 
+    /**
+     * surrender cards, move to next user
+     * @param game
+     * @param username
+     */
     public void noMovePossible(Game game, String username){
         // Need to refetch game here because no proxy error otherwise
         Optional<Game> optGame = gameRepository.findByUuid(game.getUuid());

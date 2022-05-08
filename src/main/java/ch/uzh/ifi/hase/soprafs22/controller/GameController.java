@@ -71,7 +71,7 @@ public class GameController {
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     public GameGetDTO getGameByUuid(@PathVariable(name = "uuid") String uuid, Principal principal) {
-        Game game = gameService.getGameByUuid(uuid, principal.getName());
+        Game game = gameService.getGameByUuidOfUser(uuid, principal.getName());
         if(game == null){
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "game not found by uuid");
         }
