@@ -108,8 +108,9 @@ public class GameLogicService {
                 int baseMove = ballPos + possibleMove;
 
                 if (color.equals(Color.GREEN)) {
-                    if (baseMove <= 67 && baseMove >= 64) {
-                        possibleDestinations.add(baseMove);
+                    int greenMove = baseMove - 1;
+                    if (greenMove <= 67 && greenMove >= 64) {
+                        possibleDestinations.add(greenMove);
                     }
                 }
                 else if (color.equals(Color.RED)) {
@@ -275,7 +276,7 @@ public class GameLogicService {
     public Boolean checkCanGoBase (Color color, int position, Set<Integer> possibleMoves) {
         if (color.equals(Color.GREEN)) {
             for (int possibleMove : possibleMoves) {
-                if (position + possibleMove <= 67) {
+                if (position + possibleMove <= 66) {
                     return true;
                 }
             }
