@@ -82,7 +82,58 @@ public class GameLogicService {
             else {possibleMoves = Set.of(1,11);}
         }
 
+        // CHECK WHETHER ANY BALL ON THE WAY ON ITS STARTING POSITION
+        possibleMoves = checkBallOnStarting(ball, balls, possibleMoves);
+
         return possibleMoves;
+    }
+
+    public void ballBackToHome(Ball ball, Set<Ball> balls) {
+
+        if (ball.getColor().equals(Color.GREEN)) {
+            ball.setPosition(getFreeHomeHoles(Color.GREEN, balls).stream().findAny().get());
+        }
+        else if (ball.getColor().equals(Color.RED)) {
+            ball.setPosition(getFreeHomeHoles(Color.RED, balls).stream().findAny().get());
+        }
+        else if (ball.getColor().equals(Color.YELLOW)) {
+            ball.setPosition(getFreeHomeHoles(Color.YELLOW, balls).stream().findAny().get());
+        }
+        else {
+            ball.setPosition(getFreeHomeHoles(Color.BLUE, balls).stream().findAny().get());
+        }
+    }
+
+    public Set<Integer> getFreeHomeHoles(Color color, Set<Ball> balls) {
+
+        if (color == Color.GREEN) {
+            Set<Integer> freeHomeHoles = new HashSet<>(Set.of(80,81,82,83));
+            for (Ball b : balls) {
+                freeHomeHoles.remove(b.getPosition());
+            }
+            return freeHomeHoles;
+        }
+        else if (color == Color.RED) {
+            Set<Integer> freeHomeHoles = new HashSet<>(Set.of(84,85,86,87));
+            for (Ball b : balls) {
+                freeHomeHoles.remove(b.getPosition());
+            }
+            return freeHomeHoles;
+        }
+        else if (color == Color.YELLOW) {
+            Set<Integer> freeHomeHoles = new HashSet<>(Set.of(88,89,90,91));
+            for (Ball b : balls) {
+                freeHomeHoles.remove(b.getPosition());
+            }
+            return freeHomeHoles;
+        }
+        else {
+            Set<Integer> freeHomeHoles = new HashSet<>(Set.of(92,93,94,95));
+            for (Ball b : balls) {
+                freeHomeHoles.remove(b.getPosition());
+            }
+            return freeHomeHoles;
+        }
     }
 
     public Set<Integer> getStartPosition(Ball ball) {
@@ -177,7 +228,6 @@ public class GameLogicService {
                         if (b.getPosition().equals(i)) {
                             toBeRemoved.add(possibleMove);
                         }
-//                        System.out.println(toBeRemoved + "" + i);
                     }
                 }
             }
@@ -223,7 +273,10 @@ public class GameLogicService {
         return false;
     }
 
-    // RETURNS 2 IF CAN GO OUT OF HOME, 1 IF START IS OCCUPIED, 0 IF BALL NOT IN HOME
+    // RETURNS:
+    // 2 IF CAN GO OUT OF HOME,
+    // 1 IF START IS OCCUPIED,
+    // 0 IF BALL NOT IN HOME
     public int checkCanGoOutOfHome (Ball ball, Set<Ball> balls) {
 
         Color color = ball.getColor();
