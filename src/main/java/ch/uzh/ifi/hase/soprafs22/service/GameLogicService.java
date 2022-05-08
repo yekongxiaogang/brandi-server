@@ -70,24 +70,35 @@ public class GameLogicService {
         }
         else if (cardRank.equals(Rank.KING)) {
             // MOVE BY 13 OR INVOKE A BALL FROM HOME
-            possibleMoves.add(13);
 
-            if (checkCanGoOutOfHome(ball, balls)) {
-                possibleMoves.add(100);
-            }
-            else {possibleMoves = Set.of();}
+            if (checkCanGoOutOfHome(ball, balls) == 2) {possibleMoves.add(100);}
+            else if (checkCanGoOutOfHome(ball, balls) == 1) {possibleMoves = Set.of();}
+            else {possibleMoves = Set.of(13);}
         }
         else if (cardRank.equals(Rank.ACE)) {
-            possibleMoves.add(1);
-            possibleMoves.add(11);
 
-            if (checkCanGoOutOfHome(ball, balls)) {
-                possibleMoves.add(100);
-            }
-            else {possibleMoves = Set.of();}
+            if (checkCanGoOutOfHome(ball, balls) == 2) {possibleMoves.add(100);}
+            else if (checkCanGoOutOfHome(ball, balls) == 1) {possibleMoves = Set.of();}
+            else {possibleMoves = Set.of(1,11);}
         }
 
         return possibleMoves;
+    }
+
+    public Set<Integer> getStartPosition(Ball ball) {
+
+        if (ball.getColor().equals(Color.GREEN)) {
+            return Set.of(0);
+        }
+        else if (ball.getColor().equals(Color.RED)) {
+            return Set.of(16);
+        }
+        else if (ball.getColor().equals(Color.YELLOW)) {
+            return Set.of(32);
+        }
+        else {
+            return Set.of(48);
+        }
     }
 
     public Set<Integer> getPossibleDestinations (Set<Integer> possibleMoves, Ball ball) {
@@ -95,57 +106,57 @@ public class GameLogicService {
         Set<Integer> possibleDestinations = new HashSet<Integer>();
 
         for (int possibleMove : possibleMoves) {
+
+            // CHECK IF BALL CAN GO OUT OF HOME
             if (possibleMove == 100) {
-
-                if (ball.getColor().equals(Color.GREEN)) {
-                    possibleDestinations = Set.of(0);
-                }
-                else if (ball.getColor().equals(Color.RED)) {
-                    possibleDestinations = Set.of(16);
-                }
-                else if (ball.getColor().equals(Color.YELLOW)) {
-                    possibleDestinations = Set.of(32);
-                }
-                else {
-                    possibleDestinations = Set.of(48);
-                }
-
+                possibleDestinations = getStartPosition(ball);
                 break;
             }
-            // modulo div as board's last pos is 63
-            if (!((ball.getPosition() + possibleMove) < 0)) {
-                possibleDestinations.add((ball.getPosition() + possibleMove) % 64);
-            }
-            else {
-                possibleDestinations.add((ball.getPosition() + possibleMove) + 64);
-            }
 
+            // CHECK IF BALL CAN GO BASE; IF SO ADD ADEQUATE DESTINATION
             Color color;
             Integer ballPos;
             if (checkCanGoBase(color = ball.getColor(), ballPos = ball.getPosition(), possibleMoves)) {
 
-                possibleMove = ballPos + possibleMove;
+                int baseMove = ballPos + possibleMove;
 
                 if (color.equals(Color.GREEN)) {
-                    if (possibleMove <= 67 && possibleMove > 0) {
-                        possibleDestinations.add(possibleMove);
+                    if (baseMove <= 67 && baseMove >= 64) {
+                        possibleDestinations.add(baseMove);
                     }
                 }
                 else if (color.equals(Color.RED)) {
-                    if (possibleMove <= 71 && possibleMove > 16) {
-                        possibleDestinations.add(possibleMove);
+                    baseMove = ballPos + possibleMove + 51;
+                    if (baseMove <= 71 && baseMove >= 68) {
+                        possibleDestinations.add(baseMove);
                     }
                 }
                 else if (color.equals(Color.YELLOW)) {
-                    if (possibleMove <= 75 && possibleMove > 32) {
-                        possibleDestinations.add(possibleMove);
+                    baseMove = ballPos + possibleMove + 39;
+                    if (baseMove <= 75 && baseMove >= 72) {
+                        possibleDestinations.add(baseMove);
                     }
                 }
                 else {
-                    if (possibleMove <= 79 && possibleMove > 48) {
-                        possibleDestinations.add(possibleMove);
+                    baseMove = ballPos + possibleMove + 27;
+                    if (baseMove <= 79 && baseMove >= 76) {
+                        possibleDestinations.add(baseMove);
                     }
                 }
+            }
+
+            // IF BALL ALREADY IN BASE DISABLE GOING BACK ONTO BOARD
+            if (!ball.checkBallInBase(ball)) {
+
+                // ADD POSSIBLE ON BOARD MOVES i.e. not into base/from home
+                // modulo div as board's last pos is 63
+                if (!((ball.getPosition() + possibleMove) < 0)) {
+                    possibleDestinations.add((ball.getPosition() + possibleMove) % 64);
+                }
+                else {
+                    possibleDestinations.add((ball.getPosition() + possibleMove) + 64);
+                }
+
             }
 
         }
@@ -188,23 +199,23 @@ public class GameLogicService {
                 }
             }
         }
-        else if (color.equals(Color.BLUE)) {
-            for (int possibleMove : possibleMoves) {
-                if (position + 28 + possibleMove <= 79) {
-                    return true;
-                }
-            }
-        }
         else if (color.equals(Color.RED)) {
             for (int possibleMove : possibleMoves) {
-                if (position + 52 + possibleMove <= 71) {
+                if (position + 51 + possibleMove <= 71) {
                     return true;
                 }
             }
         }
         else if (color.equals(Color.YELLOW)) {
             for (int possibleMove : possibleMoves) {
-                if (position + 40 + possibleMove <= 75) {
+                if (position + 39 + possibleMove <= 75) {
+                    return true;
+                }
+            }
+        }
+        else if (color.equals(Color.BLUE)) {
+            for (int possibleMove : possibleMoves) {
+                if (position + 27 + possibleMove <= 79) {
                     return true;
                 }
             }
@@ -212,39 +223,40 @@ public class GameLogicService {
         return false;
     }
 
-    public Boolean checkCanGoOutOfHome (Ball ball, Set<Ball> balls) {
+    // RETURNS 2 IF CAN GO OUT OF HOME, 1 IF START IS OCCUPIED, 0 IF BALL NOT IN HOME
+    public int checkCanGoOutOfHome (Ball ball, Set<Ball> balls) {
 
         Color color = ball.getColor();
 
         if (!BoardState.homePoints.contains(ball.getPosition())) {
-            return false;
+            return 0;
         }
 
         for (Ball b : balls) {
             if (color == b.getColor()) {
                 if (color == Color.GREEN) {
                     if (b.getPosition().equals(0)) {
-                        return false;
+                        return 1;
                     }
                 }
                 else if (color == Color.RED) {
                     if (b.getPosition().equals(16)) {
-                        return false;
+                        return 1;
                     }
                 }
                 else if (color == Color.YELLOW) {
                     if (b.getPosition().equals(32)) {
-                        return false;
+                        return 1;
                     }
                 }
                 else if (color == Color.BLUE) {
                     if (b.getPosition().equals(48)) {
-                        return false;
+                        return 1;
                     }
                 }
             }
         }
-        return true;
+        return 2;
 
     }
 
