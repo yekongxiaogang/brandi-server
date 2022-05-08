@@ -39,6 +39,9 @@ public class Ball {
         return this.color;
     }
 
-
+    public Boolean checkBallInBase(Ball ball) {
+        if (BoardState.basePoints.contains(ball.getPosition())) return true;
+        return false;
+    }
 
 }
