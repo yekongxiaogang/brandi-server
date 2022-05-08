@@ -58,8 +58,9 @@ public class EntitiesTest {
         Card card = new Card(Rank.ACE, Suit.CLUB);
 
         Deck deck = new Deck();
+        deck.initialize();
 
-        for (int i = 0; i <= 52; i++) {
+        for (int i = 0; i <= 2; i++) {
             if (deck.drawCard().equals(card)) {
                 assert(deck.drawCard() instanceof Card);
             }

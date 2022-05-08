@@ -2,6 +2,7 @@ package ch.uzh.ifi.hase.soprafs22.entity;
 
 import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -26,7 +27,7 @@ public class PlayerState {
     private Long id;
 
     //FIXME: Does this mean that User gets deleted when one of his games is deleted?
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     private User player;
 
     // it is the players turn
@@ -98,7 +99,7 @@ public class PlayerState {
         return this.playerHand;
     }
 
-    public void drawCards(HashSet<Card> cards){
+    public void drawCards(Set<Card> cards){
         this.playerHand.drawCards(cards);
     }
 

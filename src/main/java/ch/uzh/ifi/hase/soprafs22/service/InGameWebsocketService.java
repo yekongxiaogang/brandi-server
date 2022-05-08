@@ -112,12 +112,7 @@ public class InGameWebsocketService {
         return move;
     }
     
-    public void notifyPlayersAfterMove(Move move, String uuid) {
-        // Need to fetch game here, not in controller because no proxy error otherwise
-        Optional<Game> optGame = gameRepository.findByUuid(uuid);
-        if(optGame.isEmpty()) return;
-        Game game = optGame.get();
-
+    public void notifyPlayersAfterMove(Game game, Move move) {
         MoveGetDTO moveDTO = DTOMapper.INSTANCE.convertEntityToMoveGetDTO(move);
         String username = move.getUser().getUsername();
 
@@ -127,8 +122,9 @@ public class InGameWebsocketService {
 
         PlayerState nextUser = game.getNextTurn();
         if(nextUser == null){ // No user can play any cards anymore -> Start new round
-            game.startNewRound();;
+            game.startNewRound();
             nextUser = game.getNextTurn();
+            game = gameRepository.saveAndFlush(game);
             for(PlayerState playerState: game.getPlayerStates()){
                 // Send new Cards to all users
                 this.notifySpecificUser("/client/cards", playerState.getPlayer().getUsername(), playerState.getPlayerHand());
@@ -142,7 +138,6 @@ public class InGameWebsocketService {
             this.notifySpecificUser("/client/cards", username, state.getPlayerHand());
         }
 
-        gameRepository.saveAndFlush(game);
     }
 
     public Boolean checkIsNext(Game game, String username){
@@ -219,6 +214,7 @@ public class InGameWebsocketService {
         if(nextUser == null){
             // Send new Cards to all users
             game.startNewRound();
+            game = gameRepository.saveAndFlush(game);
             nextUser = game.getNextTurn();
             for(PlayerState state: game.getPlayerStates()){
                 this.notifySpecificUser("/client/cards", state.getPlayer().getUsername(), state.getPlayerHand());

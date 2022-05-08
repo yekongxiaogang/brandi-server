@@ -55,9 +55,7 @@ public class User implements Serializable {
     @Column(nullable = false)
     private Instant createdDate;
 
-    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @Fetch(FetchMode.JOIN)
-	@JoinColumn(name = "game_id", referencedColumnName = "id")
+    @ManyToMany
     private List<Game> games;
 
     public User(String username, Long id, String uuid, String password) {
@@ -73,8 +71,7 @@ public class User implements Serializable {
         this.games = new ArrayList<Game>() ;
     }
 
-    public User() {
-    }
+    public User() {}
 
     /* Logic seems flawed, need to rework */
     public Boolean addGame(Game addGame){

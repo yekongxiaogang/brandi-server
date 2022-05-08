@@ -34,7 +34,7 @@ public class PlayerHand {
     }
 
     /* Draw new cards, used at beginning of new round */
-    public void drawCards(HashSet<Card> cards){
+    public void drawCards(Set<Card> cards){
         if(!(cards == null)){
             try {
                 this.activeCards = cards;

@@ -56,7 +56,7 @@ public class InGameWebsocketController {
         // move == null means it wasnt users turn or no cards left, simply ignore 
         if(move == null) return;
 
-        inGameWebsocketService.notifyPlayersAfterMove(move, uuid);
+        inGameWebsocketService.notifyPlayersAfterMove(game, move);
     }
 
     @MessageMapping("/websocket/{uuid}/join")
