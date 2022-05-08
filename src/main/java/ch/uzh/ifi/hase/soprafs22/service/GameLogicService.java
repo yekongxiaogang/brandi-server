@@ -276,7 +276,7 @@ public class GameLogicService {
     public Boolean checkCanGoBase (Color color, int position, Set<Integer> possibleMoves) {
         if (color.equals(Color.GREEN)) {
             for (int possibleMove : possibleMoves) {
-                if (position + possibleMove <= 66) {
+                if (position + possibleMove <= 68) {
                     return true;
                 }
             }
