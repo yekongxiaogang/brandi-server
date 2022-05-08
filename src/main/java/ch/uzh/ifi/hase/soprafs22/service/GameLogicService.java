@@ -88,6 +88,100 @@ public class GameLogicService {
         return possibleMoves;
     }
 
+    public Set<Integer> getPossibleDestinations (Set<Integer> possibleMoves, Ball ball) {
+
+        Set<Integer> possibleDestinations = new HashSet<Integer>();
+
+        for (int possibleMove : possibleMoves) {
+
+            // CHECK IF BALL CAN GO OUT OF HOME
+            if (possibleMove == 100) {
+                possibleDestinations = getStartPosition(ball);
+                break;
+            }
+
+            // CHECK IF BALL CAN GO BASE; IF SO ADD ADEQUATE DESTINATION
+            Color color;
+            Integer ballPos;
+            if (checkCanGoBase(color = ball.getColor(), ballPos = ball.getPosition(), possibleMoves)) {
+
+                int baseMove = ballPos + possibleMove;
+
+                if (color.equals(Color.GREEN)) {
+                    if (baseMove <= 67 && baseMove >= 64) {
+                        possibleDestinations.add(baseMove);
+                    }
+                }
+                else if (color.equals(Color.RED)) {
+                    baseMove = ballPos + possibleMove + 51;
+                    if (baseMove <= 71 && baseMove >= 68) {
+                        possibleDestinations.add(baseMove);
+                    }
+                }
+                else if (color.equals(Color.YELLOW)) {
+                    baseMove = ballPos + possibleMove + 39;
+                    if (baseMove <= 75 && baseMove >= 72) {
+                        possibleDestinations.add(baseMove);
+                    }
+                }
+                else {
+                    baseMove = ballPos + possibleMove + 27;
+                    if (baseMove <= 79 && baseMove >= 76) {
+                        possibleDestinations.add(baseMove);
+                    }
+                }
+            }
+
+            // IF BALL ALREADY IN BASE DISABLE GOING BACK ONTO BOARD
+            if (!ball.checkBallInBase(ball)) {
+
+                // ADD POSSIBLE ON BOARD MOVES i.e. not into base/from home
+                // modulo div as board's last pos is 63
+                if (!((ball.getPosition() + possibleMove) < 0)) {
+                    possibleDestinations.add((ball.getPosition() + possibleMove) % 64);
+                }
+                else {
+                    possibleDestinations.add((ball.getPosition() + possibleMove) + 64);
+                }
+
+            }
+
+        }
+
+        return possibleDestinations;
+    }
+
+    public List<Integer> getHolesTravelled(int destination, int ballPosition) {
+
+        List<Integer> holesTraveled = new ArrayList<>();
+
+        int moveLength = destination - ballPosition;
+
+        // WHEN MOVING WITH 4
+        if (moveLength == -4) {
+            for (int i = ballPosition - 1; i >= destination; i--) {
+                holesTraveled.add(i);
+            }
+        }
+        // WHEN CROSSING "THE END" OF THE BOARD
+        else if (moveLength < 0) {
+            for (int i = ballPosition + 1; i <= destination + 64; i++) {
+                holesTraveled.add(i);
+                holesTraveled.replaceAll(e -> e%64);
+            }
+        }
+        // NORMAL CASE
+        else if (moveLength <= 13) {
+            for (int i = ballPosition + 1; i <= destination; i++) {
+                holesTraveled.add(i);
+            }
+        }
+
+        // TODO: WHEN GOING INTO BASE
+
+        return holesTraveled;
+    }
+
     public void ballBackToHome(Ball ball, Set<Ball> balls) {
 
         if (ball.getColor().equals(Color.GREEN)) {
@@ -150,69 +244,6 @@ public class GameLogicService {
         else {
             return Set.of(48);
         }
-    }
-
-    public Set<Integer> getPossibleDestinations (Set<Integer> possibleMoves, Ball ball) {
-
-        Set<Integer> possibleDestinations = new HashSet<Integer>();
-
-        for (int possibleMove : possibleMoves) {
-
-            // CHECK IF BALL CAN GO OUT OF HOME
-            if (possibleMove == 100) {
-                possibleDestinations = getStartPosition(ball);
-                break;
-            }
-
-            // CHECK IF BALL CAN GO BASE; IF SO ADD ADEQUATE DESTINATION
-            Color color;
-            Integer ballPos;
-            if (checkCanGoBase(color = ball.getColor(), ballPos = ball.getPosition(), possibleMoves)) {
-
-                int baseMove = ballPos + possibleMove;
-
-                if (color.equals(Color.GREEN)) {
-                    if (baseMove <= 67 && baseMove >= 64) {
-                        possibleDestinations.add(baseMove);
-                    }
-                }
-                else if (color.equals(Color.RED)) {
-                    baseMove = ballPos + possibleMove + 51;
-                    if (baseMove <= 71 && baseMove >= 68) {
-                        possibleDestinations.add(baseMove);
-                    }
-                }
-                else if (color.equals(Color.YELLOW)) {
-                    baseMove = ballPos + possibleMove + 39;
-                    if (baseMove <= 75 && baseMove >= 72) {
-                        possibleDestinations.add(baseMove);
-                    }
-                }
-                else {
-                    baseMove = ballPos + possibleMove + 27;
-                    if (baseMove <= 79 && baseMove >= 76) {
-                        possibleDestinations.add(baseMove);
-                    }
-                }
-            }
-
-            // IF BALL ALREADY IN BASE DISABLE GOING BACK ONTO BOARD
-            if (!ball.checkBallInBase(ball)) {
-
-                // ADD POSSIBLE ON BOARD MOVES i.e. not into base/from home
-                // modulo div as board's last pos is 63
-                if (!((ball.getPosition() + possibleMove) < 0)) {
-                    possibleDestinations.add((ball.getPosition() + possibleMove) % 64);
-                }
-                else {
-                    possibleDestinations.add((ball.getPosition() + possibleMove) + 64);
-                }
-
-            }
-
-        }
-
-        return possibleDestinations;
     }
 
     public Set<Integer> checkBallOnStarting (Ball ball, Set<Ball> balls, Set<Integer> possibleMoves) {
