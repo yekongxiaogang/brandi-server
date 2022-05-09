@@ -19,7 +19,7 @@ public class GameLogicService {
         for (Ball ball : balls) {
             int ballPos = ball.getPosition();
             if (ball.getColor().equals(playerColor)) {
-                if (!(BoardState.homePoints.contains(ball.getPosition()))) {
+                if (!(BoardState.homePoints.contains(ballPos)) && !checkIfOnLastBasePosition(ballPos)) {
                     highlightedBalls.add(ballPos);
                 }
                 else if (cardRank.equals(Rank.ACE) || (cardRank.equals(Rank.KING))){
@@ -254,6 +254,11 @@ public class GameLogicService {
         else {
             return Set.of(48);
         }
+    }
+
+    public Boolean checkIfOnLastBasePosition(int ballPosition) {
+        List<Integer> lastPositions = new ArrayList<Integer>(List.of(67,71,75,79));
+        return lastPositions.contains(ballPosition);
     }
 
     public Set<Integer> checkBallOnStarting (Ball ball, Set<Ball> balls, Set<Integer> possibleMoves) {

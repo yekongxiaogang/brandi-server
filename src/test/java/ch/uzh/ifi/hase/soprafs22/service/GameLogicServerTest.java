@@ -27,6 +27,7 @@ public class GameLogicServerTest {
     private Ball green16 = new Ball(Color.GREEN, 16);
     private Ball green80 = new Ball(Color.GREEN, 80);
     private Ball green63 = new Ball(Color.GREEN, 63);
+    private Ball green67 = new Ball(Color.GREEN, 67);
 
     private Ball red84 = new Ball(Color.RED, 84);
     private Ball red15 = new Ball(Color.RED, 15);
@@ -53,13 +54,11 @@ public class GameLogicServerTest {
         Rank cardRank = Rank.ACE;
         Color playerColor = Color.GREEN;
 
-        Set<Ball> balls = new HashSet<>(Set.of(green1, green0, green64, green14, green16, green63));
-
-        Set<Integer> testHighlightedBalls = new HashSet<>(Set.of(1, 0, 64, 14, 16, 63));
+        Set<Ball> balls = new HashSet<>(Set.of(green1, green0, green64, green14, green16, green63, green67));
 
         Set<Integer> highlightedBalls = gameLogicService.highlightBalls(cardRank, balls, playerColor);
 
-        assertEquals(testHighlightedBalls, highlightedBalls);
+        assertEquals(Set.of(1, 0, 64, 14, 16, 63, 67), highlightedBalls);
     }
 
     @Test
