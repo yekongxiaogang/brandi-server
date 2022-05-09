@@ -31,6 +31,7 @@ public class GameLogicServerTest {
 
     private Ball red84 = new Ball(Color.RED, 84);
     private Ball red15 = new Ball(Color.RED, 15);
+    private Ball red16 = new Ball(Color.RED, 16);
 
     private Ball yellow88 = new Ball(Color.YELLOW, 88);
     private Ball yellow31 = new Ball(Color.YELLOW, 31);
@@ -58,7 +59,7 @@ public class GameLogicServerTest {
 
         Set<Integer> highlightedBalls = gameLogicService.highlightBalls(cardRank, balls, playerColor);
 
-        assertEquals(Set.of(1, 0, 64, 14, 16, 63, 67), highlightedBalls);
+        assertEquals(Set.of(1, 0, 64, 14, 16, 63), highlightedBalls);
     }
 
     @Test
@@ -82,17 +83,16 @@ public class GameLogicServerTest {
     @Test
     public void ballChosen_checkBallOnStarting_validPossibleMoves() {
 
-        // BallPos 1, 0, 64, 14, 16
-        Set<Ball> balls = new HashSet<>(Set.of(green1, green0, green64, green14, green16));
+        Set<Ball> balls = new HashSet<>(Set.of(green1, green0, green63, green14, red16));
 
-        Set<Integer> providedPossibleMoves = new HashSet<>(Set.of(1,11));
+        Set<Integer> testPossibleMoves1 = new HashSet<>(Set.of(1,11));
 
-        // FIXME
-        Set<Integer> testPossibleMoves = new HashSet<>(Set.of(1));
+        Set<Integer> possibleMoves1 = gameLogicService.checkBallOnStarting(green14, balls, testPossibleMoves1);
+        Set<Integer> possibleMoves2 = gameLogicService.checkBallOnStarting(green63, balls, testPossibleMoves1);
 
-        Set<Integer> possibleMoves = gameLogicService.checkBallOnStarting(green64, balls, providedPossibleMoves);
-
-//        assertEquals(testPossibleMoves, possibleMoves);
+        //FIXME
+//        assertEquals(Set.of(1), possibleMoves1);
+        assertEquals(Set.of(), possibleMoves2);
 
     }
 
@@ -150,10 +150,12 @@ public class GameLogicServerTest {
         List<Integer> from0to6 = gameLogicService.getHolesTravelled(6,0);
         List<Integer> from62to4 = gameLogicService.getHolesTravelled(4,62);
         List<Integer> from4to0 = gameLogicService.getHolesTravelled(0,4);
+        List<Integer> from63to0 = gameLogicService.getHolesTravelled(0,63);
 
         assertEquals(List.of(1,2,3,4,5,6), from0to6);
         assertEquals(List.of(63,0,1,2,3,4), from62to4);
         assertEquals(List.of(3,2,1,0), from4to0);
+        assertEquals(List.of(0), from63to0);
 
     }
 

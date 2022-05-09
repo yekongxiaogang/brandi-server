@@ -22,7 +22,7 @@ public class GameLogicService {
                 if (!(BoardState.homePoints.contains(ballPos)) && !checkIfOnLastBasePosition(ballPos)) {
                     highlightedBalls.add(ballPos);
                 }
-                else if (cardRank.equals(Rank.ACE) || (cardRank.equals(Rank.KING))){
+                else if ((cardRank.equals(Rank.ACE) || (cardRank.equals(Rank.KING))) && checkCanGoOutOfHome(ball, balls) == 2){
                     highlightedBalls.add(ballPos);
                 }
             }
@@ -177,8 +177,8 @@ public class GameLogicService {
         else if (moveLength < 0) {
             for (int i = ballPosition + 1; i <= destination + 64; i++) {
                 holesTraveled.add(i);
-                holesTraveled.replaceAll(e -> e%64);
             }
+            holesTraveled.replaceAll(e -> e%64);
         }
         // NORMAL CASE
         else if (moveLength <= 13) {
@@ -256,28 +256,52 @@ public class GameLogicService {
         }
     }
 
+
+    public int getBaseEndPosition(Ball ball) {
+
+        if (ball.getColor().equals(Color.GREEN)) {
+            return 67;
+        }
+        else if (ball.getColor().equals(Color.RED)) {
+            return 71;
+        }
+        else if (ball.getColor().equals(Color.YELLOW)) {
+            return 75;
+        }
+        else {
+            return 79;
+        }
+    }
+
     public Boolean checkIfOnLastBasePosition(int ballPosition) {
         List<Integer> lastPositions = new ArrayList<Integer>(List.of(67,71,75,79));
         return lastPositions.contains(ballPosition);
+    }
+
+    public int possibleBallMovesInBase(Ball ball) {
+        return getBaseEndPosition(ball) - ball.getPosition();
     }
 
     public Set<Integer> checkBallOnStarting (Ball ball, Set<Ball> balls, Set<Integer> possibleMoves) {
 
         int startPos = ball.getPosition();
 
-        // for every possible move, we check if any ball on the way is on the starting point
-        Set <Integer> toBeRemoved = new HashSet<>();
+        // for every possible move, we check if any ball on the way is on its starting point
+        Set<Integer> toBeRemoved = new HashSet<>();
         for (Ball b : balls) {
-            if (BoardState.startingPoints.contains(b.getPosition())) {
+            int ballPos = b.getPosition();
+            // IF BALL ON ONE OF THE STARTING POSITIONS
+            if (getStartPosition(b).contains(ballPos)) {
+                // CHECK FOR EVERY POSSIBLE MOVE
                 for (int possibleMove : possibleMoves) {
-                    for (int i = startPos + 1; i <= startPos + possibleMove; i++) {
-                        if (b.getPosition().equals(i)) {
+                    // IF HOLES ON THE WAY CONTAIN THIS BALL
+                    if (getHolesTravelled((possibleMove+startPos)%64, startPos).contains(ballPos)) {
                             toBeRemoved.add(possibleMove);
                         }
                     }
                 }
-            }
         }
+
 
         for (int i : toBeRemoved) {
             possibleMoves.remove(i);
