@@ -16,7 +16,7 @@ public class Deck {
 
     private final static String baseUrl = "https://deckofcardsapi.com/api/";
     private final static String[] AVAILABLE_SUITS = new String[]{"S", "D", "C", "H"};
-    private final static String[] AVAILABLE_RANKS = new String[]{"2", "3", "4", "5", "6", "8", "9", "0", "Q", "K", "A"};
+    private final static String[] AVAILABLE_RANKS = new String[]{/* "2", "3", "4", "5", "6", */ "7", /* "8", "9", "0", */ "Q", "K", "A"};
 
     @Id
     @GeneratedValue

@@ -57,6 +57,9 @@ public class Game {
 
     private Integer activePlayer;
 
+    //TODO: Think about need for persistence
+    private Integer holesTravelled;
+
     public Game() {}
 
     public Game(User player) {
@@ -71,6 +74,7 @@ public class Game {
         this.initBoardState();
         this.uuid = UUID.randomUUID().toString();
         this.activePlayer = 0;
+        this.holesTravelled = 0;
     }
 
     /* Create balls for each player, store in boardstate */
@@ -177,6 +181,11 @@ public class Game {
         this.activePlayer = 0;
     }
 
+    /**
+     * Need to call setHolesTravelled after making move
+     * @param move
+     * @return Boolean moveExecuted
+     */
     public Boolean makeMove(Move move){
         Boolean moveExecuted = false;
 
@@ -189,18 +198,21 @@ public class Game {
         }
         if(ball == null) return false;
 
-        // Remove played card from hand
-        PlayerHand hand = this.getNextTurn().getPlayerHand();
-        hand.deleteCard(move.getPlayedCard());
+        if(this.holesTravelled.equals(0) | this.holesTravelled.equals(7)){
+            // Remove played card from hand
+            PlayerHand hand = this.getNextTurn().getPlayerHand();
+            hand.deleteCard(move.getPlayedCard());
+            this.nextPlayer();
+        }
 
         //FIXME: Verify that move is a valid move
         ball.setPosition(move.getDestinationTile());
 
-        this.nextPlayer();
         return moveExecuted;        
     }
 
     private void nextPlayer(){
+        this.holesTravelled = 0;
         // Increase as long as activeplayer has no cards
         for(int i = 0; i < 4; i++){
             this.playerStates.get(this.activePlayer).setIsPlaying(false);
@@ -329,8 +341,17 @@ public class Game {
         this.deck = deck;
     }
 
+    public Integer getHolesTravelled() {
+        return this.holesTravelled;
+    }
+
+    public void setHolesTravelled(Integer holesTravelled) {
+        this.holesTravelled = holesTravelled;
+    }
+
     public PlayerState getPlayerState(String playerName) {
         PlayerState state = null;
+
         for (PlayerState player : this.playerStates){
             if(player.getPlayer().getUsername().equals(playerName)) {
                 return player;

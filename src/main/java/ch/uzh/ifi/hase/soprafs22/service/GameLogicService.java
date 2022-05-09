@@ -4,6 +4,8 @@ import ch.uzh.ifi.hase.soprafs22.constant.Color;
 import ch.uzh.ifi.hase.soprafs22.constant.Rank;
 import ch.uzh.ifi.hase.soprafs22.entity.Ball;
 import ch.uzh.ifi.hase.soprafs22.entity.BoardState;
+import ch.uzh.ifi.hase.soprafs22.entity.Game;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,7 +33,7 @@ public class GameLogicService {
         return highlightedBalls;
     }
 
-    public Set<Integer> getPossibleMoves(Rank cardRank, Set<Ball> balls, Ball ball) {
+    public Set<Integer> getPossibleMoves(Game game, Rank cardRank, Set<Ball> balls, Ball ball) {
         Set<Integer> possibleMoves = new HashSet<Integer>();
 
         if (BoardState.normalCards.get(cardRank) != null) {
@@ -46,16 +48,13 @@ public class GameLogicService {
         // probably just a special number for the move
         // which then will be processed as for loop of 1 distance moves
         else if (cardRank.equals(Rank.SEVEN)) {
+            int holesTraveled = game.getHolesTravelled();
             // special move num
             possibleMoves.add(107);
 
-            possibleMoves.add(1);
-            possibleMoves.add(2);
-            possibleMoves.add(3);
-            possibleMoves.add(4);
-            possibleMoves.add(5);
-            possibleMoves.add(6);
-            possibleMoves.add(7);
+            for(int i = 1; i <= 7 - holesTraveled; i++){
+                possibleMoves.add(i);
+            }
         }
         else if (cardRank.equals(Rank.JACK)) {
             // EXCHANGE TWO BALLS

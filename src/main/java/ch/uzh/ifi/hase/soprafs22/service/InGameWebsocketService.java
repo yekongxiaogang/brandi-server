@@ -14,6 +14,7 @@ import ch.uzh.ifi.hase.soprafs22.rest.dto.HighlightMarblesDTO;
 import ch.uzh.ifi.hase.soprafs22.rest.dto.websocket.MoveGetDTO;
 import ch.uzh.ifi.hase.soprafs22.rest.mapper.DTOMapper;
 
+import org.ietf.jgss.GSSName;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
@@ -231,6 +232,12 @@ public class InGameWebsocketService {
     private Game surrenderCards(Game game, String username) {  
         game.surrenderCards(username);
         gameRepository.saveAndFlush(game);
+        return game;
+    }
+
+    public Game addHolesTravelled(Game game, int holesTravelled) {
+        game.setHolesTravelled(game.getHolesTravelled() + holesTravelled);
+        game = gameRepository.saveAndFlush(game);
         return game;
     }
 }
