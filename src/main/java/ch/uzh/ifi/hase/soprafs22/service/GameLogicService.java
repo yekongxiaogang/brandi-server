@@ -83,7 +83,7 @@ public class GameLogicService {
         }
 
         // CHECK WHETHER ANY BALL ON THE WAY ON ITS STARTING POSITION
-        possibleMoves = checkBallOnStarting(ball, balls, possibleMoves);
+//        possibleMoves = checkBallOnStarting(ball, balls, possibleMoves);
 
         return possibleMoves;
     }
