@@ -51,4 +51,8 @@ public class Move {
     public void setDestinationTile(int destinationTile) {
         this.destinationTile = destinationTile;
     }
+
+    public Long getCardId(){
+        return this.playedCard.getId();
+    }
 }
