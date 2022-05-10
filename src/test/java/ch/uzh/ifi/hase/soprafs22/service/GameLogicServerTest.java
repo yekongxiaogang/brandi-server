@@ -65,14 +65,14 @@ public class GameLogicServerTest {
     }
 
     @Test
-    public void ballChosen_checkBallOnStarting_validPossibleMoves() {
+    public void ballChosen_checkBallOnTheWayOnStarting_validPossibleMoves() {
 
         Set<Ball> balls = new HashSet<>(Set.of(green1, green0, green63, green14, red16));
 
         Set<Integer> testPossibleMoves1 = new HashSet<>(Set.of(1,11));
 
-        assertEquals(Set.of(1), gameLogicService.checkBallOnStarting(green14, balls, testPossibleMoves1));
-        assertEquals(Set.of(), gameLogicService.checkBallOnStarting(green63, balls, testPossibleMoves1));
+        assertEquals(Set.of(1), gameLogicService.checkBallOnTheWayOnStarting(green14, balls, testPossibleMoves1));
+        assertEquals(Set.of(), gameLogicService.checkBallOnTheWayOnStarting(green63, balls, testPossibleMoves1));
 
     }
 

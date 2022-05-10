@@ -34,7 +34,7 @@ public class GameLogicService {
     }
 
     public Set<Integer> getPossibleMoves(Rank cardRank, Set<Ball> balls, Ball ball) {
-        Set<Integer> possibleMoves = new HashSet<Integer>();
+        Set<Integer> possibleMoves = new HashSet<>();
 
         if (BoardState.normalCards.get(cardRank) != null) {
             possibleMoves.add(BoardState.normalCards.get(cardRank));
@@ -86,14 +86,17 @@ public class GameLogicService {
         }
 
         // CHECK WHETHER ANY BALL ON THE WAY ON ITS STARTING POSITION
-        possibleMoves = checkBallOnStarting(ball, balls, possibleMoves);
+        possibleMoves = checkBallOnTheWayOnStarting(ball, balls, possibleMoves);
+
+        // IF BALL IN BASE EXCLUDE TOO LONG MOVES
+        excludeTooLongMoves(ball, possibleMoves);
 
         return possibleMoves;
     }
 
     public Set<Integer> getPossibleDestinations (Set<Integer> possibleMoves, Ball ball) {
 
-        Set<Integer> possibleDestinations = new HashSet<Integer>();
+        Set<Integer> possibleDestinations = new HashSet<>();
 
         for (int possibleMove : possibleMoves) {
 
@@ -304,11 +307,27 @@ public class GameLogicService {
         return lastPositions.contains(ballPosition);
     }
 
-    public int possibleBallMovesInBase(Ball ball) {
+    public Set<Integer> excludeTooLongMoves (Ball ball, Set<Integer> possibleMoves) {
+
+        if (ball.checkBallInBase(ball)) {
+            Set<Integer> toBeRemoved = new HashSet<>();
+            int maxMove = maximumMoveInBase(ball);
+            for (int move : possibleMoves) {
+                if (move > maxMove) {toBeRemoved.add(move);}
+            }
+            for (int i : toBeRemoved) {
+                possibleMoves.remove(i);
+            }
+        }
+
+        return possibleMoves;
+    }
+
+    public int maximumMoveInBase(Ball ball) {
         return getBaseEndPosition(ball) - ball.getPosition();
     }
 
-    public Set<Integer> checkBallOnStarting (Ball ball, Set<Ball> balls, Set<Integer> possibleMoves) {
+    public Set<Integer> checkBallOnTheWayOnStarting(Ball ball, Set<Ball> balls, Set<Integer> possibleMoves) {
 
         int startPos = ball.getPosition();
 
