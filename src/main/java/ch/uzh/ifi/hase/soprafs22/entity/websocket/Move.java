@@ -9,6 +9,16 @@ public class Move {
     private Card playedCard;
     private Long ballId;
     private int destinationTile;
+    private int index;
+
+
+    public int getIndex() {
+        return this.index;
+    }
+
+    public void setIndex(int index) {
+        this.index = index;
+    }
 
     public User getUser() {
         return user;

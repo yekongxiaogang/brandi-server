@@ -63,8 +63,14 @@ public class InGameWebsocketController {
         // move == null means it wasnt users turn or no cards left, simply ignore 
         if(move == null) return;
 
+        //TODO: Make sure that user cant choose other card to make move when not finished with 7
+        // Need to pass marblesset if card played was a seven
+        Set<Ball> balls = game.getBoardstate().getBalls();
+        Set<Integer> marblesSet = gameLogicService.highlightBalls(game, move.getPlayedCard().getRank(), balls, game.getPlayerState(username).getColor());
 
-        inGameWebsocketService.notifyPlayersAfterMove(game, move);
+        //Not great to fetch again
+        game = gameService.getGameByUuidOfUser(uuid, username);
+        inGameWebsocketService.notifyPlayersAfterMove(game, move, marblesSet);
     }
 
     @MessageMapping("/websocket/{uuid}/join")
@@ -117,7 +123,7 @@ public class InGameWebsocketController {
         
         String username = principal.getName();
         Set<Ball> balls = game.getBoardstate().getBalls();
-        Set<Integer> marblesSet = gameLogicService.highlightBalls(card.getRank(), balls, game.getPlayerState(username).getColor());
+        Set<Integer> marblesSet = gameLogicService.highlightBalls(game, card.getRank(), balls, game.getPlayerState(username).getColor());
 
         Boolean movePossible = inGameWebsocketService.selectCard(game, card, username, marblesSet);
         if(movePossible){
@@ -127,7 +133,7 @@ public class InGameWebsocketController {
         // If no playable card, delete cards and move to next player
         PlayerState playerState = game.getPlayerState(username);
         for(Card cardInHand: playerState.getPlayerHand().getActiveCards()){
-            Set<Integer> possibleMarbles = gameLogicService.highlightBalls(cardInHand.getRank(), balls, playerState.getColor());
+            Set<Integer> possibleMarbles = gameLogicService.highlightBalls(game, cardInHand.getRank(), balls, playerState.getColor());
             //TODO: Could send list of playable cards to user here
             if(!possibleMarbles.isEmpty()){
                 // User has other card to make a move, ignore 

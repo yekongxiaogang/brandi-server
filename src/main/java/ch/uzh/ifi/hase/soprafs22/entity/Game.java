@@ -14,6 +14,7 @@ import javax.persistence.*;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import ch.uzh.ifi.hase.soprafs22.constant.Color;
+import ch.uzh.ifi.hase.soprafs22.constant.Rank;
 import ch.uzh.ifi.hase.soprafs22.entity.websocket.Move;
 
 import org.springframework.transaction.annotation.Transactional;
@@ -57,8 +58,9 @@ public class Game {
 
     private Integer activePlayer;
 
-    //TODO: Think about need for persistence
+    // Needed for SEVEN
     private Integer holesTravelled;
+    private Rank lastCardPlayed;
 
     public Game() {}
 
@@ -75,6 +77,7 @@ public class Game {
         this.uuid = UUID.randomUUID().toString();
         this.activePlayer = 0;
         this.holesTravelled = 0;
+        this.lastCardPlayed = null;
     }
 
     /* Create balls for each player, store in boardstate */
@@ -179,10 +182,12 @@ public class Game {
             playerState.drawCards(this.deck.drawCards(numCardsToPlay));
         }
         this.activePlayer = 0;
+        this.holesTravelled = 0;
+        this.lastCardPlayed = null;
     }
 
     /**
-     * Need to call setHolesTravelled after making move
+     * Need to call setHolesTravelled before making move
      * @param move
      * @return Boolean moveExecuted
      */
@@ -203,11 +208,12 @@ public class Game {
             PlayerHand hand = this.getNextTurn().getPlayerHand();
             hand.deleteCard(move.getPlayedCard());
             this.nextPlayer();
+        } else {
+            this.lastCardPlayed = move.getPlayedCard().getRank();
         }
 
         //FIXME: Verify that move is a valid move
         ball.setPosition(move.getDestinationTile());
-
         return moveExecuted;        
     }
 
@@ -223,6 +229,9 @@ public class Game {
             }
         }
         this.activePlayer = null;
+
+        this.holesTravelled = 0;
+        this.lastCardPlayed = null;
     }
 
     public PlayerState getNextTurn(){
@@ -360,6 +369,13 @@ public class Game {
         return null;
     }
 
+    public Rank getLastCardPlayed() {
+        return this.lastCardPlayed;
+    }
+
+    public void setLastCardPlayed(Rank lastCardPlayed) {
+        this.lastCardPlayed = lastCardPlayed;
+    }
 
     @JsonIgnore
     public Optional<Color> getUserColorById(Long id){
@@ -375,5 +391,25 @@ public class Game {
         PlayerState playerState = this.getPlayerState(username);
         playerState.getPlayerHand().setActiveCards(new HashSet<>());
         this.nextPlayer();
+    }
+
+    @JsonIgnore
+    public Color getColorOfTeammate(Color userColor){
+        PlayerState user = null;
+        for(PlayerState state: this.playerStates){
+            if(state.getColor().equals(userColor)){
+                user = state;
+                break;
+            }
+        }
+
+        if(user == null) return userColor;
+        Integer userTeam = user.getTeam();
+        for(PlayerState state: this.playerStates){
+            if(state.getTeam().equals(userTeam) && !state.equals(user)){
+                return state.getColor();
+            }
+        }
+        return userColor;
     }
 }

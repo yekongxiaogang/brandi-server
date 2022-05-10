@@ -15,12 +15,14 @@ import java.util.*;
 @Transactional
 public class GameLogicService {
 
-    public Set<Integer> highlightBalls (Rank cardRank, Set<Ball> balls, Color playerColor) {
+    public Set<Integer> highlightBalls (Game game, Rank cardRank, Set<Ball> balls, Color playerColor) {
         Set<Integer> highlightedBalls = new HashSet<>();
 
         for (Ball ball : balls) {
             int ballPos = ball.getPosition();
-            if (ball.getColor().equals(playerColor)) {
+            Color ballColor = ball.getColor();
+            // TODO: Also allow balls of teammate
+            if (ballColor.equals(playerColor)  || (cardRank.equals(Rank.SEVEN) && ballColor.equals(game.getColorOfTeammate(ballColor)))) {
                 if (!(BoardState.homePoints.contains(ball.getPosition()))) {
                     highlightedBalls.add(ballPos);
                 }
