@@ -3,7 +3,6 @@ package ch.uzh.ifi.hase.soprafs22.service;
 import ch.uzh.ifi.hase.soprafs22.constant.Color;
 import ch.uzh.ifi.hase.soprafs22.constant.Rank;
 import ch.uzh.ifi.hase.soprafs22.entity.Ball;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -12,45 +11,33 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class GameLogicServerTest {
     @Mock
     private GameLogicService gameLogicService = new GameLogicService();
 
     @InjectMocks
-    private Ball green1 = new Ball(Color.GREEN, 1);
-    private Ball green0 = new Ball(Color.GREEN, 0);
-    private Ball green64 = new Ball(Color.GREEN, 64);
-    private Ball green14 = new Ball(Color.GREEN, 14);
-    private Ball green16 = new Ball(Color.GREEN, 16);
-    private Ball green80 = new Ball(Color.GREEN, 80);
-    private Ball green63 = new Ball(Color.GREEN, 63);
-    private Ball green67 = new Ball(Color.GREEN, 67);
+    private final Ball green1 = new Ball(Color.GREEN, 1);
+    private final Ball green0 = new Ball(Color.GREEN, 0);
+    private final Ball green64 = new Ball(Color.GREEN, 64);
+    private final Ball green14 = new Ball(Color.GREEN, 14);
+    private final Ball green16 = new Ball(Color.GREEN, 16);
+    private final Ball green80 = new Ball(Color.GREEN, 80);
+    private final Ball green63 = new Ball(Color.GREEN, 63);
+    private final Ball green67 = new Ball(Color.GREEN, 67);
 
-    private Ball red84 = new Ball(Color.RED, 84);
-    private Ball red15 = new Ball(Color.RED, 15);
-    private Ball red16 = new Ball(Color.RED, 16);
+    private final Ball red84 = new Ball(Color.RED, 84);
+    private final Ball red15 = new Ball(Color.RED, 15);
+    private final Ball red16 = new Ball(Color.RED, 16);
 
-    private Ball yellow88 = new Ball(Color.YELLOW, 88);
-    private Ball yellow31 = new Ball(Color.YELLOW, 31);
-    private Ball yellow32 = new Ball(Color.YELLOW, 32);
+    private final Ball yellow88 = new Ball(Color.YELLOW, 88);
+    private final Ball yellow31 = new Ball(Color.YELLOW, 31);
+    private final Ball yellow32 = new Ball(Color.YELLOW, 32);
 
-    private Ball blue48 = new Ball(Color.BLUE, 48);
-    private Ball blue47 = new Ball(Color.BLUE, 47);
-    private Ball blue95 = new Ball(Color.BLUE, 95);
-
-
-    @BeforeEach
-    public void setup() {
-//        MockitoAnnotations.openMocks(this);
-
-//        Ball ball1 = new Ball(Color.GREEN, -1);
-//        Ball ball2 = new Ball(Color.GREEN, 0);
-//        Ball ball3 = new Ball(Color.GREEN, 64);
-
-    }
+    private final Ball blue48 = new Ball(Color.BLUE, 48);
+    private final Ball blue47 = new Ball(Color.BLUE, 47);
+    private final Ball blue95 = new Ball(Color.BLUE, 95);
 
     @Test
     public void cardChosen_validBalls() {
@@ -59,9 +46,7 @@ public class GameLogicServerTest {
 
         Set<Ball> balls = new HashSet<>(Set.of(green1, green0, green64, green14, green16, green63, green67));
 
-        Set<Integer> highlightedBalls = gameLogicService.highlightBalls(cardRank, balls, playerColor);
-
-        assertEquals(Set.of(1, 0, 64, 14, 16, 63), highlightedBalls);
+        assertEquals(Set.of(1, 0, 64, 14, 16, 63), gameLogicService.highlightBalls(cardRank, balls, playerColor));
     }
 
     @Test
@@ -71,14 +56,11 @@ public class GameLogicServerTest {
 
         Set<Ball> balls = new HashSet<>(Set.of(green1, green0, green64, green14, green16, green63));
 
-        Set<Integer> testPossibleMoves1 = new HashSet<>(Set.of(1,11));
-        Set<Integer> testPossibleMoves2 = new HashSet<>(Set.of(4,-4));
-
         Set<Integer> possibleMoves1 = gameLogicService.getPossibleMoves(cardRank1, balls, green0);
         Set<Integer> possibleMoves2 = gameLogicService.getPossibleMoves(cardRank2, balls, green0);
 
-        assertEquals(testPossibleMoves1, possibleMoves1);
-        assertEquals(testPossibleMoves2, possibleMoves2);
+        assertEquals(Set.of(1,11), possibleMoves1);
+        assertEquals(Set.of(4,-4), possibleMoves2);
 
     }
 
@@ -89,12 +71,8 @@ public class GameLogicServerTest {
 
         Set<Integer> testPossibleMoves1 = new HashSet<>(Set.of(1,11));
 
-        Set<Integer> possibleMoves1 = gameLogicService.checkBallOnStarting(green14, balls, testPossibleMoves1);
-        Set<Integer> possibleMoves2 = gameLogicService.checkBallOnStarting(green63, balls, testPossibleMoves1);
-
-        //FIXME
-//        assertEquals(Set.of(1), possibleMoves1);
-        assertEquals(Set.of(), possibleMoves2);
+        assertEquals(Set.of(1), gameLogicService.checkBallOnStarting(green14, balls, testPossibleMoves1));
+        assertEquals(Set.of(), gameLogicService.checkBallOnStarting(green63, balls, testPossibleMoves1));
 
     }
 
@@ -131,7 +109,6 @@ public class GameLogicServerTest {
     assertEquals(Set.of(1,11), possibleDestinations1);
     assertEquals(Set.of(0,10), possibleDestinations2);
 
-    // FIXME
     assertEquals(Set.of(4,60), possibleDestinationsGREEN4);
     assertEquals(Set.of(20,12), possibleDestinationsRED4);
     assertEquals(Set.of(36,28), possibleDestinationsYELLOW4);
@@ -158,15 +135,19 @@ public class GameLogicServerTest {
     @Test
     public void getHolesTravelledTest() {
 
-        List<Integer> from0to6 = gameLogicService.getHolesTravelled(6,0);
-        List<Integer> from62to4 = gameLogicService.getHolesTravelled(4,62);
-        List<Integer> from4to0 = gameLogicService.getHolesTravelled(0,4);
-        List<Integer> from63to0 = gameLogicService.getHolesTravelled(0,63);
+        List<Integer> from0to6 = gameLogicService.getHolesTravelled(6,0,true);
+        List<Integer> from62to4 = gameLogicService.getHolesTravelled(4,62,true);
+        List<Integer> from4to0 = gameLogicService.getHolesTravelled(0,4,true);
+        List<Integer> from63to0 = gameLogicService.getHolesTravelled(0,63,true);
+        List<Integer> from14to15 = gameLogicService.getHolesTravelled(15,14,true);
+        List<Integer> from14to25 = gameLogicService.getHolesTravelled(25,14,true);
 
         assertEquals(List.of(1,2,3,4,5,6), from0to6);
         assertEquals(List.of(63,0,1,2,3,4), from62to4);
         assertEquals(List.of(3,2,1,0), from4to0);
         assertEquals(List.of(0), from63to0);
+        assertEquals(List.of(15), from14to15);
+        assertEquals(List.of(15,16,17,18,19,20,21,22,23,24,25), from14to25);
 
     }
 

@@ -19,10 +19,12 @@ public class GameLogicService {
         for (Ball ball : balls) {
             int ballPos = ball.getPosition();
             if (ball.getColor().equals(playerColor)) {
-                if (!(BoardState.homePoints.contains(ballPos)) && !checkIfOnLastBasePosition(ballPos)) {
+                if (!(BoardState.homePoints.contains(ballPos))
+                        && !checkIfOnLastBasePosition(ballPos)) {
                     highlightedBalls.add(ballPos);
                 }
-                else if ((cardRank.equals(Rank.ACE) || (cardRank.equals(Rank.KING))) && checkCanGoOutOfHome(ball, balls) == 2){
+                else if ((cardRank.equals(Rank.ACE) || (cardRank.equals(Rank.KING)))
+                        && checkCanGoOutOfHome(ball, balls) == 2){
                     highlightedBalls.add(ballPos);
                 }
             }
@@ -63,7 +65,8 @@ public class GameLogicService {
             // target area, may not be exchanged.
             for (Ball b : balls) {
                 int ballPos = ball.getPosition();
-                if (!BoardState.startingPoints.contains(ballPos) && ballPos >= 0 && ballPos <= 63 ) {
+                if (!BoardState.startingPoints.contains(ballPos)
+                        && ballPos >= 0 && ballPos <= 63 ) {
                     possibleMoves.add(ball.getPosition());
                 }
             }
@@ -83,7 +86,7 @@ public class GameLogicService {
         }
 
         // CHECK WHETHER ANY BALL ON THE WAY ON ITS STARTING POSITION
-//        possibleMoves = checkBallOnStarting(ball, balls, possibleMoves);
+        possibleMoves = checkBallOnStarting(ball, balls, possibleMoves);
 
         return possibleMoves;
     }
@@ -161,29 +164,52 @@ public class GameLogicService {
         return possibleDestinations;
     }
 
-    public List<Integer> getHolesTravelled(int destination, int ballPosition) {
+    public List<Integer> getHolesTravelled(int destination, int ballPosition, Boolean withDestination) {
 
         List<Integer> holesTraveled = new ArrayList<>();
 
         int moveLength = destination - ballPosition;
 
-        // WHEN MOVING WITH 4
-        if (moveLength == -4) {
-            for (int i = ballPosition - 1; i >= destination; i--) {
-                holesTraveled.add(i);
+        if (withDestination) {
+            // WHEN MOVING WITH 4
+            if (moveLength == -4) {
+                for (int i = ballPosition - 1; i >= destination; i--) {
+                    holesTraveled.add(i);
+                }
+            }
+            // WHEN CROSSING "THE END" OF THE BOARD
+            else if (moveLength < 0) {
+                for (int i = ballPosition + 1; i <= destination + 64; i++) {
+                    holesTraveled.add(i);
+                }
+                holesTraveled.replaceAll(e -> e % 64);
+            }
+            // NORMAL CASE
+            else if (moveLength <= 13) {
+                for (int i = ballPosition + 1; i <= destination; i++) {
+                    holesTraveled.add(i);
+                }
             }
         }
-        // WHEN CROSSING "THE END" OF THE BOARD
-        else if (moveLength < 0) {
-            for (int i = ballPosition + 1; i <= destination + 64; i++) {
-                holesTraveled.add(i);
+        else {
+            // WHEN MOVING WITH 4
+            if (moveLength == -4) {
+                for (int i = ballPosition - 1; i > destination; i--) {
+                    holesTraveled.add(i);
+                }
             }
-            holesTraveled.replaceAll(e -> e%64);
-        }
-        // NORMAL CASE
-        else if (moveLength <= 13) {
-            for (int i = ballPosition + 1; i <= destination; i++) {
-                holesTraveled.add(i);
+            // WHEN CROSSING "THE END" OF THE BOARD
+            else if (moveLength < 0) {
+                for (int i = ballPosition + 1; i < destination + 64; i++) {
+                    holesTraveled.add(i);
+                }
+                holesTraveled.replaceAll(e -> e % 64);
+            }
+            // NORMAL CASE
+            else if (moveLength <= 13) {
+                for (int i = ballPosition + 1; i < destination; i++) {
+                    holesTraveled.add(i);
+                }
             }
         }
 
@@ -294,14 +320,19 @@ public class GameLogicService {
             if (getStartPosition(b).contains(ballPos)) {
                 // CHECK FOR EVERY POSSIBLE MOVE
                 for (int possibleMove : possibleMoves) {
+                    if (possibleMove == 100) {break;}
                     // IF HOLES ON THE WAY CONTAIN THIS BALL
-                    if (getHolesTravelled((possibleMove+startPos)%64, startPos).contains(ballPos)) {
+                    int destination = possibleMove + startPos;
+                    if (ball.getColor() != Color.GREEN
+                            && getHolesTravelled(destination%64, startPos, false).contains(ballPos)) {
                             toBeRemoved.add(possibleMove);
-                        }
+                    }
+                    else if (getHolesTravelled(destination%63, startPos, false).contains(ballPos)) {
+                        toBeRemoved.add(possibleMove);
                     }
                 }
+            }
         }
-
 
         for (int i : toBeRemoved) {
             possibleMoves.remove(i);
