@@ -60,7 +60,10 @@ public class Game {
 
     // Needed for SEVEN
     private Integer holesTravelled;
-    private Rank lastCardPlayed;
+
+    @OneToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "Card_id")
+    private Card lastCardPlayed;
 
     public Game() {}
 
@@ -208,8 +211,10 @@ public class Game {
             PlayerHand hand = this.getNextTurn().getPlayerHand();
             hand.deleteCard(move.getPlayedCard());
             this.nextPlayer();
+        } else if(this.holesTravelled < 7) {
+            this.lastCardPlayed = move.getPlayedCard();
         } else {
-            this.lastCardPlayed = move.getPlayedCard().getRank();
+            System.out.println("game.holestravelled > 7, this should never happen");
         }
 
         //FIXME: Verify that move is a valid move
@@ -218,7 +223,10 @@ public class Game {
     }
 
     private void nextPlayer(){
+        // Reset data used for moving with a 7
         this.holesTravelled = 0;
+        this.lastCardPlayed = null;
+
         // Increase as long as activeplayer has no cards
         for(int i = 0; i < 4; i++){
             this.playerStates.get(this.activePlayer).setIsPlaying(false);
@@ -228,10 +236,9 @@ public class Game {
                 return;
             }
         }
-        this.activePlayer = null;
 
-        this.holesTravelled = 0;
-        this.lastCardPlayed = null;
+        // Means no user can play anymore
+        this.activePlayer = null;
     }
 
     public PlayerState getNextTurn(){
@@ -369,11 +376,11 @@ public class Game {
         return null;
     }
 
-    public Rank getLastCardPlayed() {
+    public Card getLastCardPlayed() {
         return this.lastCardPlayed;
     }
 
-    public void setLastCardPlayed(Rank lastCardPlayed) {
+    public void setLastCardPlayed(Card lastCardPlayed) {
         this.lastCardPlayed = lastCardPlayed;
     }
 

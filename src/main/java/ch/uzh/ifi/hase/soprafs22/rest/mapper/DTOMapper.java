@@ -4,7 +4,11 @@ import ch.uzh.ifi.hase.soprafs22.entity.Card;
 import ch.uzh.ifi.hase.soprafs22.entity.Game;
 import ch.uzh.ifi.hase.soprafs22.entity.User;
 import ch.uzh.ifi.hase.soprafs22.entity.websocket.Move;
-import ch.uzh.ifi.hase.soprafs22.rest.dto.*;
+import ch.uzh.ifi.hase.soprafs22.rest.dto.CardDTO;
+import ch.uzh.ifi.hase.soprafs22.rest.dto.GameGetDTO;
+import ch.uzh.ifi.hase.soprafs22.rest.dto.UserAndGamesGetDTO;
+import ch.uzh.ifi.hase.soprafs22.rest.dto.UserGetDTO;
+import ch.uzh.ifi.hase.soprafs22.rest.dto.UserPostDTO;
 import ch.uzh.ifi.hase.soprafs22.rest.dto.websocket.MoveGetDTO;
 import ch.uzh.ifi.hase.soprafs22.rest.dto.websocket.MovePostDTO;
 import org.mapstruct.*;
@@ -65,4 +69,8 @@ public interface DTOMapper {
     @Mapping(source = "rank", target = "rank")
     @Mapping(source = "suit", target = "suit")
     CardDTO convertEntityToCardDTO(Card Card);
+
+    @Mapping(source = "rank", target = "rank")
+    @Mapping(source = "suit", target = "suit")
+    Card convertCardDTOToEntity(CardDTO cardDTO);
 }

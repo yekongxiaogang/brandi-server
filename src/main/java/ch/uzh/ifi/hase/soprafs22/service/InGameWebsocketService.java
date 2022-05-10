@@ -104,7 +104,7 @@ public class InGameWebsocketService {
             return null;
         }
 
-        if(!this.checkCanUseCard(game, move.getPlayedCard().getRank())) return null;
+        if(!this.checkCanUseCard(game, move.getPlayedCard())) return null;
 
         move.setUser(user);
         // Actually make the move and persist it
@@ -137,7 +137,7 @@ public class InGameWebsocketService {
         // User can go again (SEVEN), send marbles to make a move with
         } else if(move.getUser().getId().equals(nextUser.getPlayer().getId())
                 && game.getLastCardPlayed() != null 
-                && game.getLastCardPlayed().equals(Rank.SEVEN)){
+                && game.getLastCardPlayed().getId().equals(move.getCardId())){
 
             System.out.println("move.getplayedcard = " + move.getPlayedCard().getRank());
             
@@ -187,8 +187,9 @@ public class InGameWebsocketService {
         return cards.isEmpty();
     }
 
-    public Boolean selectCard(Game game, CardDTO card, String username, Set<Integer> marblesSet){
-        if(!this.checkCanUseCard(game, card.getRank())) return true;
+    public Boolean selectCard(Game game, CardDTO cardDTO, String username, Set<Integer> marblesSet){
+        Card card = DTOMapper.INSTANCE.convertCardDTOToEntity(cardDTO);
+        if(!this.checkCanUseCard(game, card)) return true;
 
         PlayerState playerState = game.getPlayerState(username);
 
@@ -208,7 +209,7 @@ public class InGameWebsocketService {
         int[] marbles = marblesSet.stream().mapToInt(Integer::intValue).toArray();
 
         HighlightMarblesDTO highlightMarblesDTO = new HighlightMarblesDTO();
-        highlightMarblesDTO.setIndex(card.getIndex());
+        highlightMarblesDTO.setIndex(cardDTO.getIndex());
         highlightMarblesDTO.setMarbles(marbles);
 
         // provide the user with a list of marbles he could move
@@ -260,13 +261,19 @@ public class InGameWebsocketService {
         return game;
     }
 
-    private Boolean checkCanUseCard(Game game, Rank cardRank){
-        if(game.getLastCardPlayed() == null) return true;
-        if(!game.getLastCardPlayed().equals(cardRank)){
-            System.out.println("Cant use that card: LastCardPlayed =" + game.getLastCardPlayed());
+    private Boolean checkCanUseCard(Game game, Card card){
+        Card lastCard = game.getLastCardPlayed();
+
+        // Last move was by a different person, lastCardPlayed was reset after move
+        if(lastCard == null) return true;
+        // Trying to use different card from last move
+        if(!(card.getId() == null) && !lastCard.getId().equals(card.getId())){
+            System.out.println(String.format("Cant use that card: LastCardPlayed = %s of %s, your card = %s of %s",
+                                 lastCard.getRank(), lastCard.getSuit(), card.getRank(), card.getSuit()));
             return false;
         }
-        if(game.getLastCardPlayed().equals(Rank.SEVEN)){
+        // Card id not sent with request, need to check manually
+        if(lastCard.getRank().equals(Rank.SEVEN)){
             return true;
         }
         return true;
