@@ -103,7 +103,7 @@ public class GameLogicService {
             // CHECK IF BALL CAN GO BASE; IF SO ADD ADEQUATE DESTINATION
             Color color;
             Integer ballPos;
-            if (checkCanGoBase(color = ball.getColor(), ballPos = ball.getPosition(), possibleMoves) && possibleMove != -4) {
+            if (checkCanGoBase(color = ball.getColor(), ballPos = ball.getPosition(), possibleMoves)) {
 
                 int baseMove = ballPos + possibleMove;
 
@@ -312,6 +312,9 @@ public class GameLogicService {
 
     // Compensate for the offset in the hole number by adding specific value
     public Boolean checkCanGoBase (Color color, int position, Set<Integer> possibleMoves) {
+
+        if (BoardState.startingPoints.contains(position)) {return false;}
+
         if (color.equals(Color.GREEN)) {
             for (int possibleMove : possibleMoves) {
                 if (position + possibleMove <= 68) {
@@ -321,7 +324,7 @@ public class GameLogicService {
         }
         else if (color.equals(Color.RED)) {
             for (int possibleMove : possibleMoves) {
-                if (position + 51 + possibleMove <= 71) {
+                if ((position + 51 + possibleMove <= 71)) {
                     return true;
                 }
             }

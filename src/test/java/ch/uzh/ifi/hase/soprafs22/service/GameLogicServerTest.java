@@ -133,9 +133,9 @@ public class GameLogicServerTest {
 
     // FIXME
     assertEquals(Set.of(4,60), possibleDestinationsGREEN4);
-    assertEquals(Set.of(20,12,71), possibleDestinationsRED4);
-    assertEquals(Set.of(36,28,75), possibleDestinationsYELLOW4);
-    assertEquals(Set.of(52,44,79), possibleDestinationsBLUE4);
+    assertEquals(Set.of(20,12), possibleDestinationsRED4);
+    assertEquals(Set.of(36,28), possibleDestinationsYELLOW4);
+    assertEquals(Set.of(52,44), possibleDestinationsBLUE4);
 
     assertEquals(Set.of(0), possibleDestinationsGREEN);
     assertEquals(Set.of(16), possibleDestinationsRED);
