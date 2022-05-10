@@ -35,7 +35,9 @@ public class GameLogicServerTest {
 
     private Ball yellow88 = new Ball(Color.YELLOW, 88);
     private Ball yellow31 = new Ball(Color.YELLOW, 31);
+    private Ball yellow32 = new Ball(Color.YELLOW, 32);
 
+    private Ball blue48 = new Ball(Color.BLUE, 48);
     private Ball blue47 = new Ball(Color.BLUE, 47);
     private Ball blue95 = new Ball(Color.BLUE, 95);
 
@@ -120,11 +122,20 @@ public class GameLogicServerTest {
     Set<Integer> possibleDestinationsYELLOW = gameLogicService.getPossibleDestinations(Set.of(1, 11, 100), yellow88);
     Set<Integer> possibleDestinationsBLUE = gameLogicService.getPossibleDestinations(Set.of(1, 11, 100), blue95);
 
-    Set<Integer> possibleDestinations3 = gameLogicService.getPossibleDestinations(Set.of(-4, 4), green0);
+    Set<Integer> possibleDestinationsGREEN4 = gameLogicService.getPossibleDestinations(Set.of(-4, 4), green0);
+    Set<Integer> possibleDestinationsRED4 = gameLogicService.getPossibleDestinations(Set.of(-4, 4), red16);
+    Set<Integer> possibleDestinationsYELLOW4 = gameLogicService.getPossibleDestinations(Set.of(-4, 4), yellow32);
+    Set<Integer> possibleDestinationsBLUE4 = gameLogicService.getPossibleDestinations(Set.of(-4, 4), blue48);
 
-    assertEquals(Set.of(1, 11), possibleDestinations1);
-    assertEquals(Set.of(0, 10), possibleDestinations2);
-    assertEquals(Set.of(4, 60), possibleDestinations3);
+
+    assertEquals(Set.of(1,11), possibleDestinations1);
+    assertEquals(Set.of(0,10), possibleDestinations2);
+
+    // FIXME
+    assertEquals(Set.of(4,60), possibleDestinationsGREEN4);
+    assertEquals(Set.of(20,12,71), possibleDestinationsRED4);
+    assertEquals(Set.of(36,28,75), possibleDestinationsYELLOW4);
+    assertEquals(Set.of(52,44,79), possibleDestinationsBLUE4);
 
     assertEquals(Set.of(0), possibleDestinationsGREEN);
     assertEquals(Set.of(16), possibleDestinationsRED);

@@ -103,7 +103,7 @@ public class GameLogicService {
             // CHECK IF BALL CAN GO BASE; IF SO ADD ADEQUATE DESTINATION
             Color color;
             Integer ballPos;
-            if (checkCanGoBase(color = ball.getColor(), ballPos = ball.getPosition(), possibleMoves)) {
+            if (checkCanGoBase(color = ball.getColor(), ballPos = ball.getPosition(), possibleMoves) && possibleMove != -4) {
 
                 int baseMove = ballPos + possibleMove;
 
