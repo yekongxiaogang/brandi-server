@@ -57,7 +57,7 @@ public class GameLogicServerTest {
 
         Set<Integer> testHighlightedBalls = new HashSet<>(Set.of(1, 0, 64, 14, 16, 63));
 
-        Set<Integer> highlightedBalls = gameLogicService.highlightBalls(cardRank, balls, playerColor);
+        Set<Integer> highlightedBalls = gameLogicService.highlightBalls(cardRank, balls, playerColor, playerColor);
 
         assertEquals(testHighlightedBalls, highlightedBalls);
     }
@@ -72,8 +72,9 @@ public class GameLogicServerTest {
         Set<Integer> testPossibleMoves1 = new HashSet<>(Set.of(1,11));
         Set<Integer> testPossibleMoves2 = new HashSet<>(Set.of(4,-4));
 
-        Set<Integer> possibleMoves1 = gameLogicService.getPossibleMoves(cardRank1, balls, green0);
-        Set<Integer> possibleMoves2 = gameLogicService.getPossibleMoves(cardRank2, balls, green0);
+        // Can pass null as game here because game is only used for moves with a SEVEN
+        Set<Integer> possibleMoves1 = gameLogicService.getPossibleMoves(null, cardRank1, balls, green0);
+        Set<Integer> possibleMoves2 = gameLogicService.getPossibleMoves(null, cardRank2, balls, green0);
 
         assertEquals(testPossibleMoves1, possibleMoves1);
         assertEquals(testPossibleMoves2, possibleMoves2);

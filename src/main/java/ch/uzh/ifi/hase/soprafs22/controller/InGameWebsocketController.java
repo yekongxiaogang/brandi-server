@@ -1,5 +1,6 @@
 package ch.uzh.ifi.hase.soprafs22.controller;
 
+import ch.uzh.ifi.hase.soprafs22.constant.Color;
 import ch.uzh.ifi.hase.soprafs22.constant.Rank;
 import ch.uzh.ifi.hase.soprafs22.entity.Ball;
 import ch.uzh.ifi.hase.soprafs22.entity.BoardState;
@@ -66,7 +67,8 @@ public class InGameWebsocketController {
         //TODO: Make sure that user cant choose other card to make move when not finished with 7
         // Need to pass marblesset if card played was a seven
         Set<Ball> balls = game.getBoardstate().getBalls();
-        Set<Integer> marblesSet = gameLogicService.highlightBalls(game, move.getPlayedCard().getRank(), balls, game.getPlayerState(username).getColor());
+        Color userColor = game.getPlayerState(username).getColor();
+        Set<Integer> marblesSet = gameLogicService.highlightBalls(move.getPlayedCard().getRank(), balls, userColor, game.getColorOfTeammate(userColor));
 
         //Not great to fetch again
         game = gameService.getGameByUuidOfUser(uuid, username);
@@ -123,7 +125,9 @@ public class InGameWebsocketController {
         
         String username = principal.getName();
         Set<Ball> balls = game.getBoardstate().getBalls();
-        Set<Integer> marblesSet = gameLogicService.highlightBalls(game, card.getRank(), balls, game.getPlayerState(username).getColor());
+        Color userColor = game.getPlayerState(username).getColor();
+
+        Set<Integer> marblesSet = gameLogicService.highlightBalls(card.getRank(), balls, userColor, game.getColorOfTeammate(userColor));
 
         Boolean movePossible = inGameWebsocketService.selectCard(game, card, username, marblesSet);
         if(movePossible){
@@ -133,7 +137,7 @@ public class InGameWebsocketController {
         // If no playable card, delete cards and move to next player
         PlayerState playerState = game.getPlayerState(username);
         for(Card cardInHand: playerState.getPlayerHand().getActiveCards()){
-            Set<Integer> possibleMarbles = gameLogicService.highlightBalls(game, cardInHand.getRank(), balls, playerState.getColor());
+            Set<Integer> possibleMarbles = gameLogicService.highlightBalls(cardInHand.getRank(), balls, userColor, game.getColorOfTeammate(userColor));
             //TODO: Could send list of playable cards to user here
             if(!possibleMarbles.isEmpty()){
                 // User has other card to make a move, ignore 

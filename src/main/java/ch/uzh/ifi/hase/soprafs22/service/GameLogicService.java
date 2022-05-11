@@ -15,14 +15,14 @@ import java.util.*;
 @Transactional
 public class GameLogicService {
 
-    public Set<Integer> highlightBalls (Game game, Rank cardRank, Set<Ball> balls, Color playerColor) {
+    public Set<Integer> highlightBalls (Rank cardRank, Set<Ball> balls, Color playerColor, Color teamMateColor) {
         Set<Integer> highlightedBalls = new HashSet<>();
 
         for (Ball ball : balls) {
             int ballPos = ball.getPosition();
             Color ballColor = ball.getColor();
             // TODO: Also allow balls of teammate
-            if (ballColor.equals(playerColor)  || (cardRank.equals(Rank.SEVEN) && ballColor.equals(game.getColorOfTeammate(ballColor)))) {
+            if (ballColor.equals(playerColor)  || (cardRank.equals(Rank.SEVEN) && ballColor.equals(teamMateColor))) {
                 if (!(BoardState.homePoints.contains(ball.getPosition()))) {
                     highlightedBalls.add(ballPos);
                 }
@@ -35,6 +35,14 @@ public class GameLogicService {
         return highlightedBalls;
     }
 
+    /**
+     * 
+     * @param game Needed for moves with a SEVEN
+     * @param cardRank
+     * @param balls
+     * @param ball to move with
+     * @return Set<Integer> of possible moves with ball
+     */
     public Set<Integer> getPossibleMoves(Game game, Rank cardRank, Set<Ball> balls, Ball ball) {
         Set<Integer> possibleMoves = new HashSet<Integer>();
 
