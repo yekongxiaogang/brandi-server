@@ -212,7 +212,8 @@ public class GameLogicService {
 
         int moveLength = destination - ballPosition;
 
-        if (withDestination) {
+        if (!withDestination) {destination--;}
+
             // WHEN MOVING WITH 4
             if (moveLength == -4) {
                 for (int i = ballPosition - 1; i >= destination; i--) {
@@ -232,28 +233,6 @@ public class GameLogicService {
                     holesTraveled.add(i);
                 }
             }
-        }
-        else {
-            // WHEN MOVING WITH 4
-            if (moveLength == -4) {
-                for (int i = ballPosition - 1; i > destination; i--) {
-                    holesTraveled.add(i);
-                }
-            }
-            // WHEN CROSSING "THE END" OF THE BOARD
-            else if (moveLength < 0) {
-                for (int i = ballPosition + 1; i < destination + 64; i++) {
-                    holesTraveled.add(i);
-                }
-                holesTraveled.replaceAll(e -> e % 64);
-            }
-            // NORMAL CASE
-            else if (moveLength <= 13) {
-                for (int i = ballPosition + 1; i < destination; i++) {
-                    holesTraveled.add(i);
-                }
-            }
-        }
 
         // TODO: WHEN GOING INTO BASE
 
