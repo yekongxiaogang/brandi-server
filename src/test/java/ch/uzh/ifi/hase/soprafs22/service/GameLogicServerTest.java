@@ -49,7 +49,7 @@ public class GameLogicServerTest {
 
         Set<Ball> balls = new HashSet<>(Set.of(green1, green0, green64, green14, green16, green63, green67));
 
-        assertEquals(Set.of(1, 0, 64, 14, 16, 63), gameLogicService.highlightBalls(cardRank, balls, playerColor));
+        assertEquals(Set.of(1, 0, 64, 14, 16), gameLogicService.highlightBalls(cardRank, balls, playerColor));
     }
 
     @Test
