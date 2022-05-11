@@ -28,16 +28,19 @@ public class GameLogicServerTest {
     private final Ball green67 = new Ball(Color.GREEN, 67);
 
     private final Ball red84 = new Ball(Color.RED, 84);
+    private final Ball red68 = new Ball(Color.RED, 68);
     private final Ball red15 = new Ball(Color.RED, 15);
     private final Ball red16 = new Ball(Color.RED, 16);
 
     private final Ball yellow88 = new Ball(Color.YELLOW, 88);
+    private final Ball yellow72 = new Ball(Color.YELLOW, 72);
     private final Ball yellow31 = new Ball(Color.YELLOW, 31);
     private final Ball yellow32 = new Ball(Color.YELLOW, 32);
 
     private final Ball blue48 = new Ball(Color.BLUE, 48);
     private final Ball blue47 = new Ball(Color.BLUE, 47);
     private final Ball blue95 = new Ball(Color.BLUE, 95);
+    private final Ball blue76 = new Ball(Color.BLUE, 76);
 
     @Test
     public void cardChosen_validBalls() {
@@ -148,6 +151,18 @@ public class GameLogicServerTest {
         assertEquals(List.of(0), from63to0);
         assertEquals(List.of(15), from14to15);
         assertEquals(List.of(15,16,17,18,19,20,21,22,23,24,25), from14to25);
+
+    }
+
+    @Test
+    public void excludeTooLongMovesTest() {
+
+        Set <Integer> possibleMoves = new HashSet<>(Set.of(-4,1,2,3,4,5,6,7,8,9,10,11,12,13));
+
+        assertEquals(Set.of(1,2,3), gameLogicService.excludeTooLongMoves(green64, possibleMoves));
+        assertEquals(Set.of(1,2,3), gameLogicService.excludeTooLongMoves(red68, possibleMoves));
+        assertEquals(Set.of(1,2,3), gameLogicService.excludeTooLongMoves(yellow72, possibleMoves));
+        assertEquals(Set.of(1,2,3), gameLogicService.excludeTooLongMoves(blue76, possibleMoves));
 
     }
 

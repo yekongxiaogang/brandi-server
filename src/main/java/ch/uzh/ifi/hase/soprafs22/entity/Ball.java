@@ -44,4 +44,9 @@ public class Ball {
         return false;
     }
 
+    public Boolean checkBallInHome(Ball ball) {
+        if (BoardState.homePoints.contains(ball.getPosition())) return true;
+        return false;
+    }
+
 }

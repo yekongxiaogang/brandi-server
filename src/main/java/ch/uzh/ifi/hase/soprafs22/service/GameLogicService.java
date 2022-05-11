@@ -17,16 +17,13 @@ public class GameLogicService {
         Set<Integer> highlightedBalls = new HashSet<>();
 
         for (Ball ball : balls) {
+
+            Set<Integer> possibleMoves = getPossibleMoves(cardRank, balls, ball);
+            Set<Integer> possibleDestinations = getPossibleDestinations(possibleMoves, ball);
+
             int ballPos = ball.getPosition();
             if (ball.getColor().equals(playerColor)) {
-                if (!(BoardState.homePoints.contains(ballPos))
-                        && !checkIfOnLastBasePosition(ballPos)) {
-                    highlightedBalls.add(ballPos);
-                }
-                else if ((cardRank.equals(Rank.ACE) || (cardRank.equals(Rank.KING)))
-                        && checkCanGoOutOfHome(ball, balls) == 2){
-                    highlightedBalls.add(ballPos);
-                }
+                if (!possibleDestinations.isEmpty()) {highlightedBalls.add(ballPos);}
             }
         }
 
@@ -89,7 +86,7 @@ public class GameLogicService {
         possibleMoves = checkBallOnTheWayOnStarting(ball, balls, possibleMoves);
 
         // IF BALL IN BASE EXCLUDE TOO LONG MOVES
-        excludeTooLongMoves(ball, possibleMoves);
+//        possibleMoves = excludeTooLongMoves(ball, possibleMoves);
 
         return possibleMoves;
     }
@@ -98,73 +95,115 @@ public class GameLogicService {
 
         Set<Integer> possibleDestinations = new HashSet<>();
 
-        for (int possibleMove : possibleMoves) {
+        possibleMoves = excludeTooLongMoves(ball, possibleMoves);
 
-            // CHECK IF BALL CAN GO OUT OF HOME
-            if (possibleMove == 100) {
-                possibleDestinations = getStartPosition(ball);
-                break;
-            }
+        // IF BALL IN HOME
+        if (ball.checkBallInHome(ball)) {
+            System.out.println("BALL IN HOME");
 
-            // CHECK IF BALL CAN GO BASE; IF SO ADD ADEQUATE DESTINATION
-            Color color;
-            Integer ballPos;
-            if (checkCanGoBase(color = ball.getColor(), ballPos = ball.getPosition(), possibleMoves)) {
+            for (int possibleMove : possibleMoves) {
 
-                int baseMove = ballPos + possibleMove;
-
-                if (color.equals(Color.GREEN)) {
-
-                    if (!BoardState.basePoints.contains(ballPos)) {
-                        int greenMove = baseMove - 1;
-                        if (greenMove <= 67 && greenMove >= 64) {
-                            possibleDestinations.add(greenMove);
-                        }
-                    }
-                    else {
-                        if (baseMove <= 67 && baseMove >= 64) {
-                            possibleDestinations.add(baseMove);
-                        }
-                    }
-
-                }
-                else if (color.equals(Color.RED)) {
-                    baseMove = ballPos + possibleMove + 51;
-                    if (baseMove <= 71 && baseMove >= 68) {
-                        possibleDestinations.add(baseMove);
-                    }
-                }
-                else if (color.equals(Color.YELLOW)) {
-                    baseMove = ballPos + possibleMove + 39;
-                    if (baseMove <= 75 && baseMove >= 72) {
-                        possibleDestinations.add(baseMove);
-                    }
-                }
-                else {
-                    baseMove = ballPos + possibleMove + 27;
-                    if (baseMove <= 79 && baseMove >= 76) {
-                        possibleDestinations.add(baseMove);
-                    }
+                // CHECK IF BALL CAN GO OUT OF HOME
+                if (possibleMove == 100) {
+                    possibleDestinations = getStartPosition(ball);
+                    return possibleDestinations;
                 }
             }
+        }
 
-            // IF BALL ALREADY IN BASE DISABLE GOING BACK ONTO BOARD
-            if (!ball.checkBallInBase(ball)) {
+        // IF BALL IN BASE
+        else if (ball.checkBallInBase(ball)) {
+            System.out.println("BALL IN BASE");
 
-                // ADD POSSIBLE ON BOARD MOVES i.e. not into base/from home
-                // modulo div as board's last pos is 63
-                if (!((ball.getPosition() + possibleMove) < 0)) {
-                    possibleDestinations.add((ball.getPosition() + possibleMove) % 64);
-                }
-                else {
-                    possibleDestinations.add((ball.getPosition() + possibleMove) + 64);
-                }
+
+            for (int possibleMove : possibleMoves) {
+
+                addInBaseDestinations(ball, possibleDestinations, possibleMove);
 
             }
+        }
 
+        // IF BALL ON BOARD
+        else {
+            System.out.println("BALL ON BOARD");
+
+            for (int possibleMove : possibleMoves) {
+
+                // CHECK IF BALL CAN GO BASE; IF SO ADD ADEQUATE DESTINATION
+                addToBaseDestinations(possibleMoves, ball, possibleDestinations, possibleMove);
+
+                // IF BALL ALREADY IN BASE DISABLE GOING BACK ONTO BOARD
+                addOnBoardDestinations(ball, possibleDestinations, possibleMove);
+
+            }
         }
 
         return possibleDestinations;
+    }
+
+    private void addOnBoardDestinations(Ball ball, Set<Integer> possibleDestinations, int possibleMove) {
+        if (!ball.checkBallInBase(ball)) {
+
+            // ADD POSSIBLE ON BOARD MOVES i.e. not into base/from home
+            // modulo div as board's last pos is 63
+            if (!((ball.getPosition() + possibleMove) < 0)) {
+                possibleDestinations.add((ball.getPosition() + possibleMove) % 64);
+            }
+            else {
+                possibleDestinations.add((ball.getPosition() + possibleMove) + 64);
+            }
+
+        }
+    }
+
+    private void addToBaseDestinations(Set<Integer> possibleMoves, Ball ball, Set<Integer> possibleDestinations, int possibleMove) {
+        Color color;
+        Integer ballPos;
+        if (checkCanGoBase(color = ball.getColor(), ballPos = ball.getPosition(), possibleMoves)) {
+
+            int baseMove = ballPos + possibleMove;
+
+            if (color.equals(Color.GREEN)) {
+
+                if (!BoardState.basePoints.contains(ballPos)) {
+                    int greenMove = baseMove - 1;
+                    if (greenMove <= 67 && greenMove >= 64) {
+                        possibleDestinations.add(greenMove);
+                    }
+                }
+                else {
+                    if (baseMove <= 67 && baseMove >= 64) {
+                        possibleDestinations.add(baseMove);
+                    }
+                }
+
+            }
+            else if (color.equals(Color.RED)) {
+                baseMove = ballPos + possibleMove + 51;
+                if (baseMove <= 71 && baseMove >= 68) {
+                    possibleDestinations.add(baseMove);
+                }
+            }
+            else if (color.equals(Color.YELLOW)) {
+                baseMove = ballPos + possibleMove + 39;
+                if (baseMove <= 75 && baseMove >= 72) {
+                    possibleDestinations.add(baseMove);
+                }
+            }
+            else {
+                baseMove = ballPos + possibleMove + 27;
+                if (baseMove <= 79 && baseMove >= 76) {
+                    possibleDestinations.add(baseMove);
+                }
+            }
+        }
+    }
+
+    private void addInBaseDestinations(Ball ball, Set<Integer> possibleDestinations, int possibleMove) {
+
+        int inBaseMove = ball.getPosition() + possibleMove;
+
+        possibleDestinations.add(inBaseMove);
     }
 
     public List<Integer> getHolesTravelled(int destination, int ballPosition, Boolean withDestination) {
@@ -309,18 +348,24 @@ public class GameLogicService {
 
     public Set<Integer> excludeTooLongMoves (Ball ball, Set<Integer> possibleMoves) {
 
-        if (ball.checkBallInBase(ball)) {
+        Set<Integer> strippedMoves = new HashSet<>(possibleMoves);
+
+        if (ball.checkBallInBase(ball) && !possibleMoves.isEmpty()) {
+
             Set<Integer> toBeRemoved = new HashSet<>();
+
             int maxMove = maximumMoveInBase(ball);
-            for (int move : possibleMoves) {
-                if (move > maxMove) {toBeRemoved.add(move);}
+
+            for (Integer move : strippedMoves) {
+                if (move > maxMove || move == -4) {toBeRemoved.add(move);}
             }
+
             for (int i : toBeRemoved) {
-                possibleMoves.remove(i);
+                strippedMoves.remove(i);
             }
         }
 
-        return possibleMoves;
+        return strippedMoves;
     }
 
     public int maximumMoveInBase(Ball ball) {
@@ -332,14 +377,20 @@ public class GameLogicService {
         int startPos = ball.getPosition();
 
         // for every possible move, we check if any ball on the way is on its starting point
+        Set<Integer> tempMoves = new HashSet<>(possibleMoves);
         Set<Integer> toBeRemoved = new HashSet<>();
         for (Ball b : balls) {
+
             int ballPos = b.getPosition();
+
             // IF BALL ON ONE OF THE STARTING POSITIONS
             if (getStartPosition(b).contains(ballPos)) {
+
                 // CHECK FOR EVERY POSSIBLE MOVE
-                for (int possibleMove : possibleMoves) {
-                    if (possibleMove == 100) {break;}
+                for (int possibleMove : tempMoves) {
+
+                    if (possibleMove == 100) {return possibleMoves;}
+
                     // IF HOLES ON THE WAY CONTAIN THIS BALL
                     int destination = possibleMove + startPos;
                     if (ball.getColor() != Color.GREEN
@@ -354,10 +405,10 @@ public class GameLogicService {
         }
 
         for (int i : toBeRemoved) {
-            possibleMoves.remove(i);
+            tempMoves.remove(i);
         }
 
-        return possibleMoves;
+        return tempMoves;
     }
 
     // Compensate for the offset in the hole number by adding specific value
