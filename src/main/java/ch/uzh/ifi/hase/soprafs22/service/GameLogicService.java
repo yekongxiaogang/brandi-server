@@ -86,19 +86,52 @@ public class GameLogicService {
         possibleMoves = checkBallOnTheWayOnStarting(ball, balls, possibleMoves);
 
         // IF BALL IN BASE EXCLUDE TOO LONG MOVES
-//        possibleMoves = excludeTooLongMoves(ball, possibleMoves);
+        possibleMoves = excludeTooLongMoves(ball, possibleMoves);
+
+        // IF BALL ON THE WAY IN BASE DISABLE MOVES OVER IT
+        possibleMoves = checkBallOnTheWayInBase(ball, balls, possibleMoves);
 
         return possibleMoves;
+    }
+
+    public Set<Integer> checkBallOnTheWayInBase(Ball ball, Set<Ball> balls, Set<Integer> possibleMoves) {
+
+        if (ball.checkBallInBase()) {
+            int startPos = ball.getPosition();
+            Color color = ball.getColor();
+
+            Set<Integer> tempMoves = new HashSet<>(possibleMoves);
+            Set<Integer> toBeRemoved = new HashSet<>();
+
+            for (Ball b: balls) {
+                int pos = b.getPosition();
+                if (b.getColor() == color && b.checkBallInBase() && pos > startPos) {
+                    for (int possibleMove : tempMoves) {
+                        if (startPos + possibleMove >= pos) {
+                            toBeRemoved.add(possibleMove);
+                        }
+                    }
+                }
+
+            }
+
+            for (int i : toBeRemoved) {
+                tempMoves.remove(i);
+            }
+
+            return tempMoves;
+        }
+
+        return possibleMoves;
+
     }
 
     public Set<Integer> getPossibleDestinations (Set<Integer> possibleMoves, Ball ball) {
 
         Set<Integer> possibleDestinations = new HashSet<>();
 
-        possibleMoves = excludeTooLongMoves(ball, possibleMoves);
-
         // IF BALL IN HOME
-        if (ball.checkBallInHome(ball)) {
+        if (ball.checkBallInHome()) {
             System.out.println("BALL IN HOME");
 
             for (int possibleMove : possibleMoves) {
@@ -112,9 +145,8 @@ public class GameLogicService {
         }
 
         // IF BALL IN BASE
-        else if (ball.checkBallInBase(ball)) {
+        else if (ball.checkBallInBase()) {
             System.out.println("BALL IN BASE");
-
 
             for (int possibleMove : possibleMoves) {
 
@@ -142,7 +174,7 @@ public class GameLogicService {
     }
 
     private void addOnBoardDestinations(Ball ball, Set<Integer> possibleDestinations, int possibleMove) {
-        if (!ball.checkBallInBase(ball)) {
+        if (!ball.checkBallInBase()) {
 
             // ADD POSSIBLE ON BOARD MOVES i.e. not into base/from home
             // modulo div as board's last pos is 63
@@ -350,7 +382,7 @@ public class GameLogicService {
 
         Set<Integer> strippedMoves = new HashSet<>(possibleMoves);
 
-        if (ball.checkBallInBase(ball) && !possibleMoves.isEmpty()) {
+        if (ball.checkBallInBase() && !possibleMoves.isEmpty()) {
 
             Set<Integer> toBeRemoved = new HashSet<>();
 

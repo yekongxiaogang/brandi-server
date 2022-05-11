@@ -39,13 +39,13 @@ public class Ball {
         return this.color;
     }
 
-    public Boolean checkBallInBase(Ball ball) {
-        if (BoardState.basePoints.contains(ball.getPosition())) return true;
+    public Boolean checkBallInBase() {
+        if (BoardState.basePoints.contains(this.getPosition())) return true;
         return false;
     }
 
-    public Boolean checkBallInHome(Ball ball) {
-        if (BoardState.homePoints.contains(ball.getPosition())) return true;
+    public Boolean checkBallInHome() {
+        if (BoardState.homePoints.contains(this.getPosition())) return true;
         return false;
     }
 

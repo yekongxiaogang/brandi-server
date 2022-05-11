@@ -20,11 +20,13 @@ public class GameLogicServerTest {
     @InjectMocks
     private final Ball green1 = new Ball(Color.GREEN, 1);
     private final Ball green0 = new Ball(Color.GREEN, 0);
-    private final Ball green64 = new Ball(Color.GREEN, 64);
     private final Ball green14 = new Ball(Color.GREEN, 14);
     private final Ball green16 = new Ball(Color.GREEN, 16);
     private final Ball green80 = new Ball(Color.GREEN, 80);
     private final Ball green63 = new Ball(Color.GREEN, 63);
+    private final Ball green64 = new Ball(Color.GREEN, 64);
+    private final Ball green65 = new Ball(Color.GREEN, 65);
+    private final Ball green66 = new Ball(Color.GREEN, 66);
     private final Ball green67 = new Ball(Color.GREEN, 67);
 
     private final Ball red84 = new Ball(Color.RED, 84);
@@ -76,6 +78,17 @@ public class GameLogicServerTest {
 
         assertEquals(Set.of(1), gameLogicService.checkBallOnTheWayOnStarting(green14, balls, testPossibleMoves1));
         assertEquals(Set.of(), gameLogicService.checkBallOnTheWayOnStarting(green63, balls, testPossibleMoves1));
+
+    }
+
+    @Test
+    public void checkBallOnTheWayInBaseTest() {
+
+        Set<Ball> balls = new HashSet<>(Set.of(green64, green66));
+
+        Set<Integer> testPossibleMoves1 = new HashSet<>(Set.of(1,2,3));
+
+        assertEquals(Set.of(1), gameLogicService.checkBallOnTheWayInBase(green64, balls, testPossibleMoves1));
 
     }
 
