@@ -88,42 +88,10 @@ public class GameLogicService {
         // IF BALL IN BASE EXCLUDE TOO LONG MOVES
         possibleMoves = excludeTooLongMoves(ball, possibleMoves);
 
-        // IF BALL ON THE WAY IN BASE DISABLE MOVES OVER IT
+        // IF BALL ON THE WAY IN BASE DISABLE MOVES OVER IT *ONLY FOR IN BASE BALLS*
         possibleMoves = checkBallOnTheWayInBase(ball, balls, possibleMoves);
 
         return possibleMoves;
-    }
-
-    public Set<Integer> checkBallOnTheWayInBase(Ball ball, Set<Ball> balls, Set<Integer> possibleMoves) {
-
-        if (ball.checkBallInBase()) {
-            int startPos = ball.getPosition();
-            Color color = ball.getColor();
-
-            Set<Integer> tempMoves = new HashSet<>(possibleMoves);
-            Set<Integer> toBeRemoved = new HashSet<>();
-
-            for (Ball b: balls) {
-                int pos = b.getPosition();
-                if (b.getColor() == color && b.checkBallInBase() && pos > startPos) {
-                    for (int possibleMove : tempMoves) {
-                        if (startPos + possibleMove >= pos) {
-                            toBeRemoved.add(possibleMove);
-                        }
-                    }
-                }
-
-            }
-
-            for (int i : toBeRemoved) {
-                tempMoves.remove(i);
-            }
-
-            return tempMoves;
-        }
-
-        return possibleMoves;
-
     }
 
     public Set<Integer> getPossibleDestinations (Set<Integer> possibleMoves, Ball ball) {
@@ -441,6 +409,38 @@ public class GameLogicService {
         }
 
         return tempMoves;
+    }
+
+    public Set<Integer> checkBallOnTheWayInBase(Ball ball, Set<Ball> balls, Set<Integer> possibleMoves) {
+
+        if (ball.checkBallInBase()) {
+            int startPos = ball.getPosition();
+            Color color = ball.getColor();
+
+            Set<Integer> tempMoves = new HashSet<>(possibleMoves);
+            Set<Integer> toBeRemoved = new HashSet<>();
+
+            for (Ball b: balls) {
+                int pos = b.getPosition();
+                if (b.getColor() == color && b.checkBallInBase() && pos > startPos) {
+                    for (int possibleMove : tempMoves) {
+                        if (startPos + possibleMove >= pos) {
+                            toBeRemoved.add(possibleMove);
+                        }
+                    }
+                }
+
+            }
+
+            for (int i : toBeRemoved) {
+                tempMoves.remove(i);
+            }
+
+            return tempMoves;
+        }
+
+        return possibleMoves;
+
     }
 
     // Compensate for the offset in the hole number by adding specific value

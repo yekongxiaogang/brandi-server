@@ -23,6 +23,10 @@ public class GameLogicServerTest {
     private final Ball green14 = new Ball(Color.GREEN, 14);
     private final Ball green16 = new Ball(Color.GREEN, 16);
     private final Ball green80 = new Ball(Color.GREEN, 80);
+    private final Ball green81 = new Ball(Color.GREEN, 81);
+    private final Ball green82 = new Ball(Color.GREEN, 82);
+    private final Ball green83 = new Ball(Color.GREEN, 83);
+
     private final Ball green63 = new Ball(Color.GREEN, 63);
     private final Ball green64 = new Ball(Color.GREEN, 64);
     private final Ball green65 = new Ball(Color.GREEN, 65);
@@ -30,17 +34,27 @@ public class GameLogicServerTest {
     private final Ball green67 = new Ball(Color.GREEN, 67);
 
     private final Ball red84 = new Ball(Color.RED, 84);
+    private final Ball red85 = new Ball(Color.RED, 85);
+    private final Ball red86 = new Ball(Color.RED, 86);
     private final Ball red68 = new Ball(Color.RED, 68);
     private final Ball red15 = new Ball(Color.RED, 15);
     private final Ball red16 = new Ball(Color.RED, 16);
+    private final Ball red17 = new Ball(Color.RED, 17);
 
     private final Ball yellow88 = new Ball(Color.YELLOW, 88);
+    private final Ball yellow89 = new Ball(Color.YELLOW, 89);
+    private final Ball yellow91 = new Ball(Color.YELLOW, 91);
     private final Ball yellow72 = new Ball(Color.YELLOW, 72);
     private final Ball yellow31 = new Ball(Color.YELLOW, 31);
     private final Ball yellow32 = new Ball(Color.YELLOW, 32);
+    private final Ball yellow33 = new Ball(Color.YELLOW, 33);
 
-    private final Ball blue48 = new Ball(Color.BLUE, 48);
     private final Ball blue47 = new Ball(Color.BLUE, 47);
+    private final Ball blue48 = new Ball(Color.BLUE, 48);
+    private final Ball blue49 = new Ball(Color.BLUE, 49);
+    private final Ball blue92 = new Ball(Color.BLUE, 92);
+    private final Ball blue93 = new Ball(Color.BLUE, 93);
+    private final Ball blue94 = new Ball(Color.BLUE, 94);
     private final Ball blue95 = new Ball(Color.BLUE, 95);
     private final Ball blue76 = new Ball(Color.BLUE, 76);
 
@@ -176,6 +190,45 @@ public class GameLogicServerTest {
         assertEquals(Set.of(1,2,3), gameLogicService.excludeTooLongMoves(red68, possibleMoves));
         assertEquals(Set.of(1,2,3), gameLogicService.excludeTooLongMoves(yellow72, possibleMoves));
         assertEquals(Set.of(1,2,3), gameLogicService.excludeTooLongMoves(blue76, possibleMoves));
+
+    }
+
+    @Test
+    public void getFreeHomeHolesTest() {
+
+        Set<Ball> balls = new HashSet<Ball>(Set.of(green81,green82,green83,
+                red84,red85,red86,
+                yellow88,yellow89,yellow91,
+                blue92,blue93,blue94));
+
+        Set<Ball> baseFull = new HashSet<Ball>(Set.of(green80,green81,green82,green83));
+
+        assertEquals(Set.of(80), gameLogicService.getFreeHomeHoles(Color.GREEN, balls));
+        assertEquals(Set.of(87), gameLogicService.getFreeHomeHoles(Color.RED, balls));
+        assertEquals(Set.of(90), gameLogicService.getFreeHomeHoles(Color.YELLOW, balls));
+        assertEquals(Set.of(95), gameLogicService.getFreeHomeHoles(Color.BLUE, balls));
+
+        assertEquals(Set.of(), gameLogicService.getFreeHomeHoles(Color.GREEN, baseFull));
+
+    }
+
+    @Test
+    public void ballBackToHomeTest() {
+
+        Set<Ball> balls = new HashSet<Ball>(Set.of(green1,green81,green82,green83,
+                red17,red84,red85,red86,
+                yellow33,yellow88,yellow89,yellow91,
+                blue49,blue92,blue93,blue94));
+
+        gameLogicService.ballBackToHome(green1, balls);
+        gameLogicService.ballBackToHome(red17, balls);
+        gameLogicService.ballBackToHome(yellow33, balls);
+        gameLogicService.ballBackToHome(blue49, balls);
+
+        assertEquals(80, green1.getPosition());
+        assertEquals(87, red17.getPosition());
+        assertEquals(90, yellow33.getPosition());
+        assertEquals(95, blue49.getPosition());
 
     }
 
