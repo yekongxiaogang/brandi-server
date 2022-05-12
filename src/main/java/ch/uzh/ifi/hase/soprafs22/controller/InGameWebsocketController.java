@@ -153,7 +153,7 @@ public class InGameWebsocketController {
 
         Set<Integer> possibleMoves = gameLogicService.getPossibleMoves(selectMarbleDTO.getRank(), balls, ball);
 
-        Set<Integer> highlightedHolesSet = gameLogicService.getPossibleDestinations(possibleMoves, ball);
+        Set<Integer> highlightedHolesSet = gameLogicService.getPossibleDestinations(possibleMoves, ball, balls);
 
         int[] highlightedHoles = highlightedHolesSet.stream().mapToInt(Integer::intValue).toArray();
 
