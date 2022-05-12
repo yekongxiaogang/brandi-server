@@ -19,7 +19,7 @@ public class GameLogicService {
         for (Ball ball : balls) {
 
             Set<Integer> possibleMoves = getPossibleMoves(cardRank, balls, ball);
-            Set<Integer> possibleDestinations = getPossibleDestinations(possibleMoves, ball);
+            Set<Integer> possibleDestinations = getPossibleDestinations(possibleMoves, ball, balls);
 
             int ballPos = ball.getPosition();
             if (ball.getColor().equals(playerColor)) {
@@ -94,13 +94,12 @@ public class GameLogicService {
         return possibleMoves;
     }
 
-    public Set<Integer> getPossibleDestinations (Set<Integer> possibleMoves, Ball ball) {
+    public Set<Integer> getPossibleDestinations (Set<Integer> possibleMoves, Ball ball, Set<Ball> balls) {
 
         Set<Integer> possibleDestinations = new HashSet<>();
 
         // IF BALL IN HOME
         if (ball.checkBallInHome()) {
-            System.out.println("BALL IN HOME");
 
             for (int possibleMove : possibleMoves) {
 
@@ -114,7 +113,6 @@ public class GameLogicService {
 
         // IF BALL IN BASE
         else if (ball.checkBallInBase()) {
-            System.out.println("BALL IN BASE");
 
             for (int possibleMove : possibleMoves) {
 
@@ -125,7 +123,6 @@ public class GameLogicService {
 
         // IF BALL ON BOARD
         else {
-            System.out.println("BALL ON BOARD");
 
             for (int possibleMove : possibleMoves) {
 
@@ -138,7 +135,15 @@ public class GameLogicService {
             }
         }
 
-        return possibleDestinations;
+        // DELETE DESTINATIONS OCCUPIED BY SAME COLOR BALLS
+        Set<Integer> toBeRemoved = new HashSet<>();
+        Set<Integer> newDestinations = possibleDestinations;
+        for (int possibleDestination : possibleDestinations) {
+            if (checkSameColorBallOnDestination(ball, balls, possibleDestination)) {toBeRemoved.add(possibleDestination);}
+        }
+        for(int i : toBeRemoved) {newDestinations.remove(i);}
+
+        return newDestinations;
     }
 
     private void addOnBoardDestinations(Ball ball, Set<Integer> possibleDestinations, int possibleMove) {
@@ -239,7 +244,7 @@ public class GameLogicService {
         return holesTraveled;
     }
 
-    public void ballBackToHome(Ball ball, Set<Ball> balls) {
+    public static void ballBackToHome(Ball ball, Set<Ball> balls) {
 
         if (ball.getColor().equals(Color.GREEN)) {
             ball.setPosition(getFreeHomeHoles(Color.GREEN, balls).stream().findAny().get());
@@ -255,7 +260,7 @@ public class GameLogicService {
         }
     }
 
-    public Set<Integer> getFreeHomeHoles(Color color, Set<Ball> balls) {
+    public static Set<Integer> getFreeHomeHoles(Color color, Set<Ball> balls) {
 
         if (color == Color.GREEN) {
             Set<Integer> freeHomeHoles = new HashSet<>(Set.of(80,81,82,83));
@@ -388,6 +393,14 @@ public class GameLogicService {
         }
 
         return tempMoves;
+    }
+
+    public Boolean checkSameColorBallOnDestination(Ball ball, Set<Ball> balls, int destination) {
+
+        for (Ball b : balls) {
+            if (b.getPosition() == destination && b.getColor().equals(ball.getColor())) {return true;}
+        }
+        return false;
     }
 
     public Set<Integer> checkBallOnTheWayInBase(Ball ball, Set<Ball> balls, Set<Integer> possibleMoves) {
