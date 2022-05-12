@@ -177,7 +177,7 @@ public class GameLogicService {
                     }
                 }
                 else {
-                    if (baseMove <= 67 && baseMove >= 64) {
+                    if (baseMove <= 67 && baseMove >= 64 ) {
                         possibleDestinations.add(baseMove);
                     }
                 }

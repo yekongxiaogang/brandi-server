@@ -9,6 +9,7 @@ public class Move {
     private Card playedCard;
     private Long ballId;
     private int destinationTile;
+    private int[] holesTravelled;
 
     private Long targetedBallId;
     private int targetedBallPosition;
@@ -41,17 +42,17 @@ public class Move {
 
     public void setTargetedBallId(Long targetedBallId) {this.targetedBallId = targetedBallId;}
 
-    public int getDestinationTile() {
-        return destinationTile;
-    }
+    public int getDestinationTile() {return destinationTile;}
 
     public void setDestinationTile(int destinationTile) {
         this.destinationTile = destinationTile;
     }
 
-    public int getTargetedBallPosition() {
-        return targetedBallPosition;
-    }
+    public int[] getHolesTravelled() {return holesTravelled;}
+
+    public void setHolesTravelled(int[] holesTravelled) {this.holesTravelled = holesTravelled;}
+
+    public int getTargetedBallPosition() {return targetedBallPosition;}
 
     public void setTargetedBallPosition(int targetedBallPosition) {
         this.targetedBallPosition = targetedBallPosition;

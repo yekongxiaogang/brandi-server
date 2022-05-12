@@ -9,6 +9,7 @@ public class MoveGetDTO {
     private Long ballId;
     private Long targetBallId;
     private int destinationTile;
+    private int[] holesTravelled;
 
     private int targetBallPosition;
     private Long cardId;
@@ -32,6 +33,10 @@ public class MoveGetDTO {
     public void setDestinationTile(int destinationTile) {
         this.destinationTile = destinationTile;
     }
+
+    public int[] getHolesTravelled() {return holesTravelled;}
+
+    public void setHolesTravelled(int[] holesTravelled) {this.holesTravelled = holesTravelled;}
 
     public int getTargetBallPosition() {return targetBallPosition;}
 
