@@ -7,7 +7,10 @@ import ch.uzh.ifi.hase.soprafs22.rest.mapper.DTOMapper;
 public class MoveGetDTO {
 
     private Long ballId;
+    private Long targetBallId;
     private int destinationTile;
+
+    private int targetBallPosition;
     private Long cardId;
 
     public Long getBallId() {
@@ -18,6 +21,10 @@ public class MoveGetDTO {
         this.ballId = ballId;
     }
 
+    public Long getTargetBallId() {return targetBallId;}
+
+    public void setTargetBallId(Long targetBallId) {this.targetBallId = targetBallId;}
+
     public int getDestinationTile() {
         return destinationTile;
     }
@@ -25,6 +32,10 @@ public class MoveGetDTO {
     public void setDestinationTile(int destinationTile) {
         this.destinationTile = destinationTile;
     }
+
+    public int getTargetBallPosition() {return targetBallPosition;}
+
+    public void setTargetBallPosition(int targetBallPosition) {this.targetBallPosition = targetBallPosition;}
 
     public Long getCardId() {
         return cardId;

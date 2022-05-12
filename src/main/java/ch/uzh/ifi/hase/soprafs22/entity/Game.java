@@ -11,6 +11,7 @@ import java.util.Set;
 
 import javax.persistence.*;
 
+import ch.uzh.ifi.hase.soprafs22.service.GameLogicService;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import ch.uzh.ifi.hase.soprafs22.constant.Color;
@@ -192,6 +193,16 @@ public class Game {
         // Remove played card from hand
         PlayerHand hand = this.getNextTurn().getPlayerHand();
         hand.deleteCard(move.getPlayedCard());
+
+        // If ball at destination then move it back to home
+        Ball targetBall = this.boardstate.getBallByPosition(move.getDestinationTile());
+
+        if (targetBall != null) {
+            System.out.println("BEFORE: " + targetBall.getPosition());
+            System.out.println("BALL MOVED BACK TO HOME");
+            GameLogicService.ballBackToHome(targetBall,this.boardstate.getBalls());
+            System.out.println("AFTER: " + targetBall.getPosition());
+        }
 
         //FIXME: Verify that move is a valid move
         ball.setPosition(move.getDestinationTile());

@@ -10,6 +10,9 @@ public class Move {
     private Long ballId;
     private int destinationTile;
 
+    private Long targetedBallId;
+    private int targetedBallPosition;
+
     public User getUser() {
         return user;
     }
@@ -34,11 +37,23 @@ public class Move {
         this.ballId = ballId;
     }
 
+    public Long getTargetedBallId() {return targetedBallId;}
+
+    public void setTargetedBallId(Long targetedBallId) {this.targetedBallId = targetedBallId;}
+
     public int getDestinationTile() {
         return destinationTile;
     }
 
     public void setDestinationTile(int destinationTile) {
         this.destinationTile = destinationTile;
+    }
+
+    public int getTargetedBallPosition() {
+        return targetedBallPosition;
+    }
+
+    public void setTargetedBallPosition(int targetedBallPosition) {
+        this.targetedBallPosition = targetedBallPosition;
     }
 }

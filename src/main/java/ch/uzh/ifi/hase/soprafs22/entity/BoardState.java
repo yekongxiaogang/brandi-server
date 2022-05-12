@@ -58,4 +58,11 @@ public class BoardState {
         return null;
     }
 
+    public Ball getBallByPosition(int position) {
+        for (Ball ball : balls) {
+            if (ball.getPosition().equals(position)) {return ball;}
+        }
+        return null;
+    }
+
 }
