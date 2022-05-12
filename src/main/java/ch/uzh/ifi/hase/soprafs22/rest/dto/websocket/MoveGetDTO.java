@@ -1,9 +1,5 @@
 package ch.uzh.ifi.hase.soprafs22.rest.dto.websocket;
 
-import ch.uzh.ifi.hase.soprafs22.entity.User;
-import ch.uzh.ifi.hase.soprafs22.rest.dto.UserGetDTO;
-import ch.uzh.ifi.hase.soprafs22.rest.mapper.DTOMapper;
-
 public class MoveGetDTO {
 
     private Long ballId;
@@ -11,7 +7,7 @@ public class MoveGetDTO {
     private int destinationTile;
     private int[] holesTravelled;
 
-    private int targetBallPosition;
+    private int targetBallNewPosition;
     private Long cardId;
 
     public Long getBallId() {
@@ -38,9 +34,9 @@ public class MoveGetDTO {
 
     public void setHolesTravelled(int[] holesTravelled) {this.holesTravelled = holesTravelled;}
 
-    public int getTargetBallPosition() {return targetBallPosition;}
+    public int getTargetBallNewPosition() {return targetBallNewPosition;}
 
-    public void setTargetBallPosition(int targetBallPosition) {this.targetBallPosition = targetBallPosition;}
+    public void setTargetBallNewPosition(int targetBallNewPosition) {this.targetBallNewPosition = targetBallNewPosition;}
 
     public Long getCardId() {
         return cardId;

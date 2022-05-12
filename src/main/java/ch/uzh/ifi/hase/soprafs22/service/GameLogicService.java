@@ -211,7 +211,7 @@ public class GameLogicService {
         possibleDestinations.add(inBaseMove);
     }
 
-    public List<Integer> getHolesTravelled(int destination, int ballPosition, Boolean withDestination) {
+    public static List<Integer> getHolesTravelled(int destination, int ballPosition, Boolean withDestination) {
 
         List<Integer> holesTraveled = new ArrayList<>();
 

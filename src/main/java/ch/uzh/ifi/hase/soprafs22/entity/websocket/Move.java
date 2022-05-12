@@ -12,7 +12,7 @@ public class Move {
     private int[] holesTravelled;
 
     private Long targetBallId;
-    private int targetBallPosition;
+    private int targetBallNewPosition;
 
     public User getUser() {
         return user;
@@ -52,9 +52,7 @@ public class Move {
 
     public void setHolesTravelled(int[] holesTravelled) {this.holesTravelled = holesTravelled;}
 
-    public int getTargetBallPosition() {return targetBallPosition;}
+    public int getTargetBallNewPosition() {return targetBallNewPosition;}
 
-    public void setTargetBallPosition(int targetBallPosition) {
-        this.targetBallPosition = targetBallPosition;
-    }
+    public void setTargetBallNewPosition(int targetBallNewPosition) {this.targetBallNewPosition = targetBallNewPosition;}
 }

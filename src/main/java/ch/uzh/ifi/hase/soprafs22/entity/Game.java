@@ -200,9 +200,16 @@ public class Game {
         if (targetBall != null) {
             System.out.println("BEFORE: " + targetBall.getPosition());
             System.out.println("BALL MOVED BACK TO HOME");
+
             GameLogicService.ballBackToHome(targetBall,this.boardstate.getBalls());
+
+            move.setTargetBallNewPosition(targetBall.getPosition());
+            move.setTargetBallId(targetBall.getId());
+
             System.out.println("AFTER: " + targetBall.getPosition());
         }
+
+        move.setHolesTravelled(GameLogicService.getHolesTravelled(move.getDestinationTile(), ball.getPosition(), true).stream().mapToInt(i->i).toArray());
 
         //FIXME: Verify that move is a valid move
         ball.setPosition(move.getDestinationTile());
