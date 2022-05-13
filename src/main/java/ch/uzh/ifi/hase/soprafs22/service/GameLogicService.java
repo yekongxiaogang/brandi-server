@@ -212,29 +212,35 @@ public class GameLogicService {
     }
 
     public static List<Integer> getHolesTravelled(int destination, int ballPosition, Boolean withDestination) {
-
+        System.out.println("moving from " + ballPosition + " to " + destination);
         List<Integer> holesTraveled = new ArrayList<>();
 
         int moveLength = destination - ballPosition;
+
+        if(BoardState.homePoints.contains(ballPosition)){
+            holesTraveled.add(ballPosition);
+            holesTraveled.add(destination);
+            return holesTraveled;
+        }
 
         if (!withDestination) {destination--;}
 
             // WHEN MOVING WITH 4
             if (moveLength == -4) {
-                for (int i = ballPosition - 1; i >= destination; i--) {
+                for (int i = ballPosition; i >= destination; i--) {
                     holesTraveled.add(i);
                 }
             }
             // WHEN CROSSING "THE END" OF THE BOARD
             else if (moveLength < 0) {
-                for (int i = ballPosition + 1; i <= destination + 64; i++) {
+                for (int i = ballPosition; i <= destination + 64; i++) {
                     holesTraveled.add(i);
                 }
                 holesTraveled.replaceAll(e -> e % 64);
             }
             // NORMAL CASE
             else if (moveLength <= 13) {
-                for (int i = ballPosition + 1; i <= destination; i++) {
+                for (int i = ballPosition; i <= destination; i++) {
                     holesTraveled.add(i);
                 }
             }
@@ -378,10 +384,10 @@ public class GameLogicService {
                     // IF HOLES ON THE WAY CONTAIN THIS BALL
                     int destination = possibleMove + startPos;
                     if (ball.getColor() != Color.GREEN
-                            && getHolesTravelled(destination%64, startPos, false).contains(ballPos)) {
+                            && getHolesTravelled(destination%64, startPos, false).stream().skip(1).anyMatch(x -> x == ballPos)) {
                             toBeRemoved.add(possibleMove);
                     }
-                    else if (getHolesTravelled(destination%63, startPos, false).contains(ballPos)) {
+                    else if (getHolesTravelled(destination%63, startPos, false).stream().skip(1).anyMatch(x -> x == ballPos)) {
                         toBeRemoved.add(possibleMove);
                     }
                 }

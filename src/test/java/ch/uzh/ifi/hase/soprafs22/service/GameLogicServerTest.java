@@ -172,12 +172,12 @@ public class GameLogicServerTest {
         List<Integer> from14to15 = gameLogicService.getHolesTravelled(15,14,true);
         List<Integer> from14to25 = gameLogicService.getHolesTravelled(25,14,true);
 
-        assertEquals(List.of(1,2,3,4,5,6), from0to6);
-        assertEquals(List.of(63,0,1,2,3,4), from62to4);
-        assertEquals(List.of(3,2,1,0), from4to0);
-        assertEquals(List.of(0), from63to0);
-        assertEquals(List.of(15), from14to15);
-        assertEquals(List.of(15,16,17,18,19,20,21,22,23,24,25), from14to25);
+        assertEquals(List.of(0,1,2,3,4,5,6), from0to6);
+        assertEquals(List.of(62,63,0,1,2,3,4), from62to4);
+        assertEquals(List.of(4,3,2,1,0), from4to0);
+        assertEquals(List.of(63,0), from63to0);
+        assertEquals(List.of(14,15), from14to15);
+        assertEquals(List.of(14,15,16,17,18,19,20,21,22,23,24,25), from14to25);
 
     }
 
