@@ -74,17 +74,19 @@ public class User implements Serializable {
     public User() {}
 
     /* Logic seems flawed, need to rework */
+    /**
+     * @param addGame Game to add
+     * @return Boolean gamewasAddedToUser
+     */
     public Boolean addGame(Game addGame){
-        if(!addGame.isGameOn()){
-            this.games.add(addGame);
-            return true;
-        } else {
+        // Only add game if no user has no other active game
+        if(addGame.isGameOn()){
             for(Game game: this.games){
                 if(game.isGameOn()) return false;
             }
-            return true;
         }
-        
+        this.games.add(addGame);
+        return true;
     }
 
     public void removeGame(Game game){
