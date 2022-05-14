@@ -216,6 +216,7 @@ public class GameLogicService {
         List<Integer> holesTraveled = new ArrayList<>();
 
         int moveLength = destination - ballPosition;
+        if (moveLength == 60) {moveLength = -4;}
 
         if(BoardState.homePoints.contains(ballPosition)){
             holesTraveled.add(ballPosition);
@@ -227,8 +228,18 @@ public class GameLogicService {
 
             // WHEN MOVING WITH 4
             if (moveLength == -4) {
-                for (int i = ballPosition; i >= destination; i--) {
-                    holesTraveled.add(i);
+                if (destination < ballPosition) {
+                    for (int i = ballPosition; i >= destination; i--) {
+                        holesTraveled.add(i);
+                    }
+                }
+                else {
+                    for (int i = ballPosition; i >= 0; i--) {
+                        holesTraveled.add(i);
+                    }
+                    for (int j = 63; j >= destination; j--) {
+                        holesTraveled.add(j);
+                    }
                 }
             }
             // WHEN CROSSING "THE END" OF THE BOARD
