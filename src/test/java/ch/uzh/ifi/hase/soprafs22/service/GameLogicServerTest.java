@@ -165,16 +165,29 @@ public class GameLogicServerTest {
     @Test
     public void getHolesTravelledTest() {
 
+        List<Integer> from80to0 = gameLogicService.getHolesTravelled(0,80,true);
+        List<Integer> from84to16 = gameLogicService.getHolesTravelled(16,84,true);
+        List<Integer> from88to32 = gameLogicService.getHolesTravelled(32,88,true);
+        List<Integer> from92to48 = gameLogicService.getHolesTravelled(48,92,true);
+
+
         List<Integer> from0to6 = gameLogicService.getHolesTravelled(6,0,true);
         List<Integer> from62to4 = gameLogicService.getHolesTravelled(4,62,true);
         List<Integer> from4to0 = gameLogicService.getHolesTravelled(0,4,true);
+        List<Integer> from0to61 = gameLogicService.getHolesTravelled(61,0,true);
         List<Integer> from63to0 = gameLogicService.getHolesTravelled(0,63,true);
         List<Integer> from14to15 = gameLogicService.getHolesTravelled(15,14,true);
         List<Integer> from14to25 = gameLogicService.getHolesTravelled(25,14,true);
 
+        assertEquals(List.of(80,0), from80to0);
+        assertEquals(List.of(84,16), from84to16);
+        assertEquals(List.of(88,32), from88to32);
+        assertEquals(List.of(92,48), from92to48);
+
         assertEquals(List.of(0,1,2,3,4,5,6), from0to6);
         assertEquals(List.of(62,63,0,1,2,3,4), from62to4);
         assertEquals(List.of(4,3,2,1,0), from4to0);
+        assertEquals(List.of(0,63,62,61), from0to61);
         assertEquals(List.of(63,0), from63to0);
         assertEquals(List.of(14,15), from14to15);
         assertEquals(List.of(14,15,16,17,18,19,20,21,22,23,24,25), from14to25);
