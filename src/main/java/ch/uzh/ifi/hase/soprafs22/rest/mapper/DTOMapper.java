@@ -28,6 +28,11 @@ public interface DTOMapper {
 
     @Mapping(source = "username", target = "username")
     @Mapping(source = "password", target = "password")
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "token", ignore = true)
+    @Mapping(target = "status", ignore = true)
+    @Mapping(target = "createdDate", ignore = true)
+    @Mapping(target = "games", ignore = true)
     User convertUserPostDTOtoEntity(UserPostDTO userPostDTO);
 
     @Mapping(source = "id", target = "id")
@@ -56,15 +61,21 @@ public interface DTOMapper {
     @Mapping(source = "targetBallId", target = "targetBallId")
     @Mapping(source = "targetBallNewPosition", target = "targetBallNewPosition")
     @Mapping(source = "holesTravelled", target = "holesTravelled")
+    @Mapping(target = "cardId", ignore = true)
     MoveGetDTO convertEntityToMoveGetDTO(Move Move);
 
     @Mapping(source = "ballId", target = "ballId")
     @Mapping(source = "destinationTile", target = "destinationTile")
     @Mapping(source = "playedCard", target = "playedCard")
+    @Mapping(target = "user", ignore = true)
+    @Mapping(target = "targetBallId", ignore = true)
+    @Mapping(target = "holesTravelled", ignore = true)
+    @Mapping(target = "targetBallNewPosition", ignore = true)
     Move convertMovePostDTOtoEntity(MovePostDTO Move);
 
 
     @Mapping(source = "rank", target = "rank")
     @Mapping(source = "suit", target = "suit")
+    @Mapping(target = "index", ignore = true)
     CardDTO convertEntityToCardDTO(Card Card);
 }
