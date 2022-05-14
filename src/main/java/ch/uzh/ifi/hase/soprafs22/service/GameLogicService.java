@@ -216,7 +216,7 @@ public class GameLogicService {
         List<Integer> holesTraveled = new ArrayList<>();
 
         int moveLength = destination - ballPosition;
-        if (moveLength == 60) {moveLength = -4;}
+        if (moveLength == 60 && !BoardState.homePoints.contains(destination)) {moveLength = -4;}
 
         if(BoardState.homePoints.contains(ballPosition)){
             holesTraveled.add(ballPosition);
@@ -395,10 +395,10 @@ public class GameLogicService {
                     // IF HOLES ON THE WAY CONTAIN THIS BALL
                     int destination = possibleMove + startPos;
                     if (ball.getColor() != Color.GREEN
-                            && getHolesTravelled(destination%64, startPos, false).stream().skip(1).anyMatch(x -> x == ballPos)) {
+                            && getHolesTravelled(destination%64, startPos, true).stream().skip(1).anyMatch(x -> x == ballPos)) {
                             toBeRemoved.add(possibleMove);
                     }
-                    else if (getHolesTravelled(destination%63, startPos, false).stream().skip(1).anyMatch(x -> x == ballPos)) {
+                    else if (getHolesTravelled(destination%63, startPos, true).stream().skip(1).anyMatch(x -> x == ballPos)) {
                         toBeRemoved.add(possibleMove);
                     }
                 }
