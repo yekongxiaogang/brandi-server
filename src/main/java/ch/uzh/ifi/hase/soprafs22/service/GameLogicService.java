@@ -51,13 +51,11 @@ public class GameLogicService {
             possibleMoves.add(4);
             possibleMoves.add(-4);
         }
-        // TODO: implement cooperation with team member
-        // and killing on the way
-        // probably just a special number for the move
-        // which then will be processed as for loop of 1 distance moves
+       
         else if (cardRank.equals(Rank.SEVEN)) {
             int holesTraveled = game.getHolesTravelled();
             // special move num
+            // FIXME: Do we actually need this?
             possibleMoves.add(107);
 
             for(int i = 1; i <= 7 - holesTraveled; i++){

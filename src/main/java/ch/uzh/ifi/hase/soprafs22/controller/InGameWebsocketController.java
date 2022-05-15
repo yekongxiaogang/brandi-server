@@ -66,7 +66,6 @@ public class InGameWebsocketController {
         // move == null means it wasnt users turn or no cards left, simply ignore 
         if(move == null) return;
 
-        //TODO: Make sure that user cant choose other card to make move when not finished with 7
         // Need to pass marblesset if card played was a seven
         Set<Ball> balls = game.getBoardstate().getBalls();
         Color userColor = game.getPlayerState(username).getColor();
