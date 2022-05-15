@@ -1,5 +1,7 @@
 package ch.uzh.ifi.hase.soprafs22.rest.dto.websocket;
 
+import java.util.List;
+
 public class MoveGetDTO {
 
     private Long ballId;
@@ -9,6 +11,16 @@ public class MoveGetDTO {
 
     private int targetBallNewPosition;
     private Long cardId;
+
+    private List<Long> ballIdsEliminated;
+
+    public List<Long> getBallIdsEliminated() {
+        return this.ballIdsEliminated;
+    }
+
+    public void setBallIdsEliminated(List<Long> ballIdsEliminated) {
+        this.ballIdsEliminated = ballIdsEliminated;
+    }
 
     public Long getBallId() {
         return ballId;

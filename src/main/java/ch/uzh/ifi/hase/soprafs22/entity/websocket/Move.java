@@ -1,5 +1,8 @@
 package ch.uzh.ifi.hase.soprafs22.entity.websocket;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import ch.uzh.ifi.hase.soprafs22.entity.Card;
 import ch.uzh.ifi.hase.soprafs22.entity.User;
 
@@ -16,6 +19,21 @@ public class Move {
     private Long targetBallId;
     private int targetBallNewPosition;
 
+    private List<Long> ballIdsEliminated;
+
+
+    public List<Long> getBallIdsEliminated() {
+        return this.ballIdsEliminated;
+    }
+
+    public void setBallIdsEliminated(List<Long> ballIdsEliminated) {
+        this.ballIdsEliminated = ballIdsEliminated;
+    }
+
+    public void addBallIdsEliminated(Long ballId){
+        if(this.ballIdsEliminated == null) this.ballIdsEliminated = new ArrayList<Long>();
+        this.ballIdsEliminated.add(ballId);
+    }
 
     public int getIndex() {
         return this.index;

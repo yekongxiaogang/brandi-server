@@ -235,6 +235,17 @@ public class Game {
 
         move.setHolesTravelled(GameLogicService.getHolesTravelled(move.getDestinationTile(), ball.getPosition(), true).stream().mapToInt(i->i).toArray());
 
+        if(move.getPlayedCard().getRank().equals(Rank.SEVEN)){
+            for(int position: move.getHolesTravelled()){
+                Ball ballToEliminate = boardstate.getBallByPosition(position);
+                if(ballToEliminate != null && !ballToEliminate.getId().equals(move.getBallId())){
+                    GameLogicService.ballBackToHome(ballToEliminate,this.boardstate.getBalls());
+                    move.addBallIdsEliminated(ballToEliminate.getId());
+                    System.out.println("Added ball" + ballToEliminate.getId() + "to list of balls to eliminate");
+                }
+            }
+        }
+
         //FIXME: Verify that move is a valid move
         ball.setPosition(move.getDestinationTile());
         return moveExecuted;        
