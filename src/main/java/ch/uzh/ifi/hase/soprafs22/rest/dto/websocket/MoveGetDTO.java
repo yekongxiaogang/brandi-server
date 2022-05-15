@@ -13,7 +13,16 @@ public class MoveGetDTO {
     private Long cardId;
 
     private List<Long> ballIdsEliminated;
+    private List<Integer> newPositions;
 
+    public List<Integer> getNewPositions() {
+        return this.newPositions;
+    }
+
+    public void setNewPositions(List<Integer> newPositions) {
+        this.newPositions = newPositions;
+    }
+    
     public List<Long> getBallIdsEliminated() {
         return this.ballIdsEliminated;
     }

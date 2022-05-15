@@ -20,7 +20,20 @@ public class Move {
     private int targetBallNewPosition;
 
     private List<Long> ballIdsEliminated;
+    private List<Integer> newPositions;
 
+    public List<Integer> getNewPositions() {
+        return this.newPositions;
+    }
+
+    public void setNewPositions(List<Integer> newPositions) {
+        this.newPositions = newPositions;
+    }
+
+    public void addNewPositions(Integer position){
+        if(this.newPositions == null) this.newPositions = new ArrayList<Integer>();
+        this.newPositions.add(position);
+    }
 
     public List<Long> getBallIdsEliminated() {
         return this.ballIdsEliminated;

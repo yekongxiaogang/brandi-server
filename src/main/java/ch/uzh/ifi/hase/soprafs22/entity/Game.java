@@ -235,12 +235,14 @@ public class Game {
 
         move.setHolesTravelled(GameLogicService.getHolesTravelled(move.getDestinationTile(), ball.getPosition(), true).stream().mapToInt(i->i).toArray());
 
+        // Move balls travelled over with a seven back to base
         if(move.getPlayedCard().getRank().equals(Rank.SEVEN)){
             for(int position: move.getHolesTravelled()){
                 Ball ballToEliminate = boardstate.getBallByPosition(position);
                 if(ballToEliminate != null && !ballToEliminate.getId().equals(move.getBallId())){
-                    GameLogicService.ballBackToHome(ballToEliminate,this.boardstate.getBalls());
+                    Integer newPosition = GameLogicService.ballBackToHome(ballToEliminate,this.boardstate.getBalls());
                     move.addBallIdsEliminated(ballToEliminate.getId());
+                    move.addNewPositions(newPosition);
                     System.out.println("Added ball" + ballToEliminate.getId() + "to list of balls to eliminate");
                 }
             }

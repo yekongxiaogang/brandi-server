@@ -257,7 +257,7 @@ public class GameLogicService {
         return holesTraveled;
     }
 
-    public static void ballBackToHome(Ball ball, Set<Ball> balls) {
+    public static Integer ballBackToHome(Ball ball, Set<Ball> balls) {
 
         if (ball.getColor().equals(Color.GREEN)) {
             ball.setPosition(getFreeHomeHoles(Color.GREEN, balls).stream().findAny().get());
@@ -271,6 +271,8 @@ public class GameLogicService {
         else {
             ball.setPosition(getFreeHomeHoles(Color.BLUE, balls).stream().findAny().get());
         }
+
+        return ball.getPosition();
     }
 
     public static Set<Integer> getFreeHomeHoles(Color color, Set<Ball> balls) {

@@ -62,6 +62,7 @@ public interface DTOMapper {
     @Mapping(source = "targetBallNewPosition", target = "targetBallNewPosition")
     @Mapping(source = "holesTravelled", target = "holesTravelled")
     @Mapping(source = "ballIdsEliminated", target = "ballIdsEliminated")
+    @Mapping(source = "newPositions", target = "newPositions")
     MoveGetDTO convertEntityToMoveGetDTO(Move Move);
 
     @Mapping(source = "ballId", target = "ballId")
